@@ -16,7 +16,9 @@ class FrontPageFeed extends AbstractFeed {
    * Load only paragraphs on "inspiration" pages.
    */
   public static function getFrontPageIds() {
-    return array_filter(array_values(variable_get('ereol_app_feeds_frontpage_ids', [])));
+    $value = ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'frontpage_ids', []);
+
+    return array_filter(array_values($value));
   }
 
   /**
@@ -51,7 +53,7 @@ class FrontPageFeed extends AbstractFeed {
   private function getThemes(array $paragraphIds) {
     $themes = $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_ALIAS_THEME_LIST, $paragraphIds);
 
-    // Preprend "Latest news".
+    // Prepend "Latest news".
     $latestNews = $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_ARTICLE_CAROUSEL, $paragraphIds);
     $themes = array_merge($latestNews, $themes);
 
