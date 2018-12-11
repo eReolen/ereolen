@@ -269,23 +269,6 @@ function ereol_frontend_default_search_api_server() {
             "type" : "integer",
             "boost" : "1.0"
           },
-          "node:field_ding_news_category" : {
-            "table" : "search_api_db_default_multiple_index",
-            "column" : "node_field_ding_news_category",
-            "type" : "integer",
-            "boost" : "1.0"
-          },
-          "node:field_ding_news_lead" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "node:field_ding_news_tags" : {
-            "table" : "search_api_db_default_multiple_index_node_field_ding_news_tags",
-            "column" : "value",
-            "type" : "list\\u003Cinteger\\u003E",
-            "boost" : "1.0"
-          },
           "node:field_ding_page_lead" : {
             "table" : "search_api_db_default_multiple_index_text",
             "type" : "text",
@@ -295,29 +278,6 @@ function ereol_frontend_default_search_api_server() {
             "table" : "search_api_db_default_multiple_index_node_field_ding_page_tags",
             "column" : "value",
             "type" : "list\\u003Cinteger\\u003E",
-            "boost" : "1.0"
-          },
-          "node:field_ding_event_category" : {
-            "table" : "search_api_db_default_multiple_index",
-            "column" : "node_field_ding_event_category",
-            "type" : "integer",
-            "boost" : "1.0"
-          },
-          "node:field_ding_event_lead" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "node:field_ding_event_tags" : {
-            "table" : "search_api_db_default_multiple_index_node_field_ding_event_tag",
-            "column" : "value",
-            "type" : "list\\u003Cinteger\\u003E",
-            "boost" : "1.0"
-          },
-          "node:field_ding_event_target" : {
-            "table" : "search_api_db_default_multiple_index",
-            "column" : "node_field_ding_event_target",
-            "type" : "integer",
             "boost" : "1.0"
           },
           "node:field_ding_library_fax_number" : {
@@ -385,42 +345,6 @@ function ereol_frontend_default_search_api_server() {
             "table" : "search_api_db_default_multiple_index",
             "column" : "node_url",
             "type" : "uri",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_department" : {
-            "table" : "search_api_db_default_multiple_index_user_profile_ding_staff_p",
-            "column" : "value",
-            "type" : "list\\u003Cinteger\\u003E",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_email" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_forename" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "2.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_phone" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_position" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_surname" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "2.0"
-          },
-          "user:profile_ding_staff_profile:field_ding_staff_work_areas" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
             "boost" : "1.0"
           }
         }
