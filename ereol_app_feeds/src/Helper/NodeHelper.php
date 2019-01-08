@@ -42,6 +42,8 @@ class NodeHelper {
    * Get list of paragraphs on a node.
    *
    * @param $entity
+   *
+   * @return \ParagraphsItemEntity[]
    */
   public function getParagraphs($entity) {
     $paragraphs = [];

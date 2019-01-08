@@ -3,6 +3,7 @@
 namespace Drupal\ereol_app_feeds\Feed;
 
 use Drupal\ereol_app_feeds\Helper\NodeHelper;
+use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 
 /**
  * Categories feed.
@@ -20,7 +21,20 @@ class CategoriesFeed extends AbstractFeed {
     foreach ($nodes as $node) {
       $paragraphs = $this->nodeHelper->getParagraphs($node);
       $content = array_values(array_map(function ($paragraph) {
-        return $this->paragraphHelper->getParagraphData($paragraph);
+        $data = $this->paragraphHelper->getParagraphData($paragraph);
+
+        switch ($paragraph->bundle()) {
+          case ParagraphHelper::PARAGRAPH_MATERIAL_CAROUSEL:
+            $data = [
+              'guid' => $this->paragraphHelper->getGuid($paragraph),
+              'type' => $this->paragraphHelper->getParagraphType($paragraph->bundle()),
+              'view' => $this->paragraphHelper->getView($paragraph),
+              'list' => $data,
+            ];
+            break;
+        }
+
+        return $data;
       }, $paragraphs));
 
       $data[] = [
