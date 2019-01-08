@@ -123,7 +123,7 @@ class ParagraphHelper {
    * @param object|\ParagraphsItemEntity $entity
    *   The entity.
    */
-  protected function getParagraphFields($entity) {
+  public function getParagraphFields($entity) {
     if ($entity instanceof \ParagraphsItemEntity) {
       $entity_type = NodeHelper::ENTITY_TYPE_PARAGRAPH;
       $bundle_name = $entity->bundle();
@@ -159,14 +159,19 @@ class ParagraphHelper {
   /**
    * Load paragraphs from a paragraphs field on an entity.
    */
-  private function loadParagraphs($entity, $field_name) {
+  public function loadParagraphs($entity, $field_name) {
+    $paragraphs = [];
+
     if ($this->isParagraphsField($field_name) && isset($entity->{$field_name}[LANGUAGE_NONE])) {
       $values = $entity->{$field_name}[LANGUAGE_NONE];
+      $ids = array_column($values, 'value');
 
-      return paragraphs_item_load_multiple(array_column($values, 'value'));
+      $paragraphs = paragraphs_item_load_multiple($ids);
+
+      NodeHelper::sortByIds($paragraphs, $ids, 'item_id');
     }
 
-    return [];
+    return $paragraphs;
   }
 
   /**
@@ -243,7 +248,7 @@ class ParagraphHelper {
         return $this->getReview($paragraph);
 
       case self::PARAGRAPH_SPOTLIGHT_BOX:
-        return $this->getSpotlightBox();
+        return $this->getSpotlightBox($paragraph);
 
       case self::PARAGRAPH_ARTICLE_CAROUSEL:
         return $this->getArticleCarousel($paragraph);
@@ -413,6 +418,24 @@ class ParagraphHelper {
     }
 
     return $list;
+  }
+
+  /**
+   * @param \ParagraphsItemEntity $paragraph
+   */
+  public function getSpotlightBox(\ParagraphsItemEntity $paragraph) {
+    $links = array_map([$this, 'getLink'], $this->loadParagraphs($paragraph, 'field_spotlight_row_2'));
+
+    return [
+      'guid' => $this->getGuid($paragraph),
+      'type' => $this->getType($paragraph),
+      'view' => $this->getView($paragraph),
+
+      'video' => $this->getVideoList($paragraph),
+      'reviews' => $this->getReviewList($paragraph),
+      'links' => $links,
+      'editor' => $this->getEditorList($paragraph),
+    ];
   }
 
   /**
