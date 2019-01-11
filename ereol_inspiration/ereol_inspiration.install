@@ -81,3 +81,10 @@ function ereol_inspiration_update_7110() {
 function ereol_inspiration_update_7111() {
   module_enable(array('reol_newsletter_paragraph'), TRUE);
 }
+
+/**
+ * Enable reol_promoted_review_paragraph.
+ */
+function ereol_inspiration_update_7112() {
+  module_enable(array('reol_promoted_review_paragraph'), TRUE);
+}
