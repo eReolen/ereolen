@@ -36,3 +36,35 @@ function ereol_base_form_alter(&$form, $form_state, $form_id) {
       break;
   }
 }
+
+/**
+ * Implements hook_field_default_field_instances_alter().
+ */
+function ereol_base_field_default_field_instances_alter(&$fields) {
+  if (isset($fields['ting_object-ting_object-ting_details_language'])) {
+    // Show language in "compact" view.
+    $fields['ting_object-ting_object-ting_details_language']['display']['compact'] = [
+      'label' => 'hidden',
+      'module' => 'ting_material_details',
+      'settings' => array(),
+      'type' => 'ting_details_single',
+      'weight' => 1,
+    ];
+  }
+
+  // Move cover before details_language.
+  if (isset($fields['ting_object-ting_object-ting_cover'])) {
+    $fields['ting_object-ting_object-ting_cover']['display']['compact']['weight'] = 0;
+  }
+
+  // Hide material type.
+  if (isset($fields['ting_object-ting_object-ting_details_type'])) {
+    $fields['ting_object-ting_object-ting_details_type']['display']['compact'] = [
+      'label' => 'hidden',
+      'module' => 'ting_material_details',
+      'settings' => array(),
+      'type' => 'hidden',
+      'weight' => 6,
+    ];
+  }
+}
