@@ -75,10 +75,13 @@ class NodeHelper {
 
   /**
    * Get ting identifiers.
+   *
+   * @return string[]
+   *   A list of identifiers.
    */
   public function getTingIdentifiers($entity, $field_name) {
     if (!isset($entity->{$field_name}[LANGUAGE_NONE])) {
-      return NULL;
+      return [];
     }
 
     $relations = $this->getFieldValue($entity, $field_name, 'value', TRUE);
