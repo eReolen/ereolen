@@ -123,7 +123,7 @@ class ParagraphHelper {
    * @param object|\ParagraphsItemEntity $entity
    *   The entity.
    */
-  protected function getParagraphFields($entity) {
+  public function getParagraphFields($entity) {
     if ($entity instanceof \ParagraphsItemEntity) {
       $entity_type = NodeHelper::ENTITY_TYPE_PARAGRAPH;
       $bundle_name = $entity->bundle();
@@ -158,15 +158,25 @@ class ParagraphHelper {
 
   /**
    * Load paragraphs from a paragraphs field on an entity.
+   *
+   * @param $entity
+   * @param $field_name
+   *
+   * @return \ParagraphsItemEntity[]
    */
-  private function loadParagraphs($entity, $field_name) {
+  public function loadParagraphs($entity, $field_name) {
+    $paragraphs = [];
+
     if ($this->isParagraphsField($field_name) && isset($entity->{$field_name}[LANGUAGE_NONE])) {
       $values = $entity->{$field_name}[LANGUAGE_NONE];
+      $ids = array_column($values, 'value');
 
-      return paragraphs_item_load_multiple(array_column($values, 'value'));
+      $paragraphs = paragraphs_item_load_multiple($ids);
+
+      NodeHelper::sortByIds($paragraphs, $ids, 'item_id');
     }
 
-    return [];
+    return $paragraphs;
   }
 
   /**
@@ -243,7 +253,7 @@ class ParagraphHelper {
         return $this->getReview($paragraph);
 
       case self::PARAGRAPH_SPOTLIGHT_BOX:
-        return $this->getSpotlightBox();
+        return $this->getSpotlightBox($paragraph);
 
       case self::PARAGRAPH_ARTICLE_CAROUSEL:
         return $this->getArticleCarousel($paragraph);
@@ -416,6 +426,41 @@ class ParagraphHelper {
   }
 
   /**
+   * @param \ParagraphsItemEntity $paragraph
+   */
+  public function getSpotlightBox(\ParagraphsItemEntity $paragraph) {
+    $list = $this->getVideoList($paragraph);
+    $videos = empty($list) ? [] : [
+      [
+        'guid' => ParagraphHelper::VALUE_NONE,
+        'type' => 'video_list',
+        'view' => ParagraphHelper::VIEW_DOTTED,
+        'list' => $list,
+      ],
+    ];
+    $links = array_values(array_map([$this, 'getLink'], $this->loadParagraphs($paragraph, 'field_spotlight_row_2')));
+
+    $editor = self::VALUE_NONE;
+    $item = $this->getEditor($paragraph);
+    if ($item['list']) {
+      $item['type'] = 'editor_recommends_list';
+      $item['guid'] .= '-editor';
+      $editor = $item;
+    }
+
+    return [
+      'guid' => $this->getGuid($paragraph),
+      'type' => $this->getType($paragraph),
+      'view' => $this->getView($paragraph),
+
+      'videos' => $videos,
+      'reviews' => $this->getReviewList($paragraph),
+      'links' => $links,
+      'editor' => $editor,
+    ];
+  }
+
+  /**
    * Get editor data.
    */
   public function getEditor(\ParagraphsItemEntity $paragraph) {
@@ -487,7 +532,7 @@ class ParagraphHelper {
    * Get video source.
    */
   private function getSource($url) {
-    if (preg_match('/^(?P<source>youtube):/', $url, $matches)) {
+    if (preg_match('/(?P<source>youtube)/', $url, $matches)) {
       return $matches['source'];
     }
 
@@ -574,7 +619,7 @@ class ParagraphHelper {
    *
    * The guid is NOT guaranteed bo be globally unique.
    */
-  protected function getGuid(\ParagraphsItemEntity $paragraph, $delta = NULL) {
+  public function getGuid(\ParagraphsItemEntity $paragraph, $delta = NULL) {
     $guid = $paragraph->identifier();
     if (NULL !== $delta) {
       $guid .= '-' . $delta;
@@ -628,7 +673,7 @@ class ParagraphHelper {
   /**
    * Get view for a paragraph.
    */
-  private function getView(\ParagraphsItemEntity $paragraph) {
+  public function getView(\ParagraphsItemEntity $paragraph) {
     $bundle = $paragraph->bundle();
 
     switch ($bundle) {

@@ -6,7 +6,6 @@
  */
 
 use Drupal\ereol_app_feeds\Controller\DefaultController;
-use Drupal\ereol_app_feeds\Feed\FrontPageFeed;
 
 /**
  * Implements hook_menu().
@@ -16,9 +15,10 @@ function ereol_app_feeds_menu() {
     'title' => 'App feed settings',
     'description' => 'Settings for the app feeds',
     'page callback' => 'drupal_get_form',
-    'page arguments' => ['ereol_app_feeds_admin'],
+    'page arguments' => ['ereol_app_feeds_admin_form'],
     'access arguments' => ['administer site configuration'],
     'type' => MENU_NORMAL_ITEM,
+    'file' => 'ereol_app_feeds.admin.inc',
   ];
 
   $items['app/feed/frontpage'] = [
@@ -46,109 +46,51 @@ function ereol_app_feeds_menu() {
 }
 
 /**
- * Admin page.
- */
-function ereol_app_feeds_admin() {
-  $form = [];
-
-  $options = [];
-
-  $query = new EntityFieldQuery();
-  $query
-    ->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'inspiration')
-    ->propertyCondition('status', NODE_PUBLISHED)
-    ->propertyOrderBy('title');
-  $result = $query->execute();
-  if (isset($result['node'])) {
-    $nodes = node_load_multiple(array_keys($result['node']));
-    $options = array_combine(array_keys($nodes), array_map(function ($node) {
-       return $node->title;
-    }, $nodes));
-  }
-
-  $group_name = 'ereol_app_feeds_frontpage';
-  $form[$group_name] = [
-    '#type' => 'fieldset',
-    '#title' => t('Frontpage feed'),
-    '#tree' => TRUE,
-  ];
-
-  $form[$group_name]['frontpage_ids'] = [
-    '#type' => 'checkboxes',
-    '#title' => t('Front pages'),
-    '#default_value' => FrontPageFeed::getFrontPageIds(),
-    '#options' => $options,
-    '#multiple' => TRUE,
-    '#description' => t('Frontpages used in feeds'),
-    '#required' => TRUE,
-  ];
-
-  $form[$group_name]['link_button_text'] = [
-    '#type' => 'textfield',
-    '#title' => t('Link button text'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'link_button_text'),
-    '#description' => t('Link button text'),
-    '#required' => TRUE,
-  ];
-
-  $form[$group_name]['theme_list_max_length'] = [
-    '#type' => 'textfield',
-    '#title' => t('Max number of themes in lists'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'theme_list_max_length', 6),
-    '#element_validate' => ['element_validate_integer_positive'],
-    '#description' => t('The maximum number of themes in theme lists'),
-    '#required' => TRUE,
-  ];
-
-  $form[$group_name]['max_news_count'] = [
-    '#type' => 'textfield',
-    '#title' => t('Max number items in latest news'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'max_news_count', 6),
-    '#element_validate' => ['element_validate_integer_positive'],
-    '#description' => t('The maximum number of items in the latest news list'),
-    '#required' => TRUE,
-  ];
-
-  $group_name = 'ereol_app_feeds_themes';
-  $form[$group_name] = [
-    '#type' => 'fieldset',
-    '#title' => t('Themes feed'),
-    '#tree' => TRUE,
-  ];
-
-  $form[$group_name]['max_number_of_items'] = [
-    '#type' => 'textfield',
-    '#title' => t('Max number of themes'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'max_number_of_items', 50),
-    '#element_validate' => ['element_validate_integer_positive'],
-    '#description' => t('The maximum number of themes'),
-    '#required' => TRUE,
-  ];
-
-  $form['ereol_app_feeds_feeds'] = [
-    '#type' => 'fieldset',
-    '#title' => t('Feeds'),
-
-    'content' => [
-      '#markup' => implode('', [
-        '<ul>',
-        '<li>' . l(t('Frontpage'), '/app/feed/frontpage') . '</li>',
-        '<li>' . l(t('Themes'), '/app/feed/themes') . '</li>',
-        '</ul>',
-      ]),
-    ],
-  ];
-
-  return system_settings_form($form);
-}
-
-/**
  * Get hierarchical variable.
  */
 function ereol_app_feeds_variable_get($group_name, $name, $default = NULL) {
   $group = variable_get($group_name);
   return isset($group[$name]) ? $group[$name] : $default;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ereol_app_feeds_theme($existing, $type, $theme, $path) {
+  $themes['ereol_app_feeds_admin_form'] = [
+    'render element' => 'form',
+    'file' => 'ereol_app_feeds.admin.inc',
+  ];
+
+  return $themes;
+}
+
+function theme_ereol_app_feeds_frontpages_components($vars) {
+  $element = $vars['element'];
+  drupal_add_tabledrag('ereol_app_feeds_frontpages_table', 'order', 'sibling', 'item-row-weight');
+
+  $header = array(
+    'label' => t('Title'),
+    'include' => t('Include'),
+    'weight' => t('Weight'),
+  );
+
+  $rows = array();
+  foreach (element_children($element) as $key) {
+    $row = array();
+    $row['data'] = array();
+    foreach ($header as $fieldname => $title) {
+      $row['data'][] = drupal_render($element[$key][$fieldname]);
+      $row['class'] = array('draggable');
+    }
+    $rows[] = $row;
+  }
+
+  return theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'ereol_app_feeds_frontpages_table'),
+  ));
 }
 
 /**

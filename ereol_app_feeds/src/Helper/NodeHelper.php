@@ -39,6 +39,26 @@ class NodeHelper {
   }
 
   /**
+   * Get list of paragraphs on a node.
+   *
+   * @param $entity
+   *
+   * @return \ParagraphsItemEntity[]
+   */
+  public function getParagraphs($entity) {
+    $paragraphs = [];
+
+    $helper = new ParagraphHelper();
+
+    $fields = $helper->getParagraphFields($entity);
+    foreach ($fields as $field_name => $field) {
+      $paragraphs += $helper->loadParagraphs($entity, $field_name);
+    }
+
+    return $paragraphs;
+  }
+
+  /**
    * Get text value.
    */
   private function getTextValue($value) {
@@ -187,6 +207,41 @@ class NodeHelper {
     $result = $query->execute();
 
     return isset($result[$entity_type][$nid]) ? node_load($nid) : NULL;
+  }
+
+  /**
+   * Load nodes ordered by specified order of node ids.
+   *
+   * @param $nids
+   *   The node ids.
+   *
+   * @return
+   *   An array of node objects indexed by nid.
+   */
+  public function loadNodes(array $nids, $status = NODE_PUBLISHED) {
+    $entity_type = self::ENTITY_TYPE_NODE;
+    $query = new EntityFieldQuery();
+    $query
+      ->entityCondition('entity_type', $entity_type)
+      ->propertyCondition('status', $status)
+      ->entityCondition('entity_id', $nids + [0]);
+    $result = $query->execute();
+
+    $nodes = isset($result[$entity_type]) ? node_load_multiple(array_keys($result[$entity_type])) : [];
+
+    self::sortByIds($nodes, $nids);
+
+    return $nodes;
+  }
+
+  public static function sortByIds(array &$items, array $ids, $id_key = 'nid') {
+    // Order by index in $nids.
+    uasort($items, function ($a, $b) use ($ids, $id_key) {
+      $a = array_search($a->{$id_key}, $ids);
+      $b = array_search($b->{$id_key}, $ids);
+
+      return $a - $b;
+    });
   }
 
   /**
