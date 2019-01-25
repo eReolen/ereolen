@@ -11,6 +11,8 @@ use Drupal\ereol_app_feeds\Controller\DefaultController;
  * Implements hook_menu().
  */
 function ereol_app_feeds_menu() {
+  $items = [];
+
   $items['admin/config/ereolen/ereol_app_feeds'] = [
     'title' => 'App feed settings',
     'description' => 'Settings for the app feeds',
@@ -46,17 +48,11 @@ function ereol_app_feeds_menu() {
 }
 
 /**
- * Get hierarchical variable.
- */
-function ereol_app_feeds_variable_get($group_name, $name, $default = NULL) {
-  $group = variable_get($group_name);
-  return isset($group[$name]) ? $group[$name] : $default;
-}
-
-/**
  * Implements hook_theme().
  */
 function ereol_app_feeds_theme($existing, $type, $theme, $path) {
+  $themes = [];
+
   $themes['ereol_app_feeds_admin_form'] = [
     'render element' => 'form',
     'file' => 'ereol_app_feeds.admin.inc',
@@ -65,36 +61,8 @@ function ereol_app_feeds_theme($existing, $type, $theme, $path) {
   return $themes;
 }
 
-function theme_ereol_app_feeds_frontpages_components($vars) {
-  $element = $vars['element'];
-  drupal_add_tabledrag('ereol_app_feeds_frontpages_table', 'order', 'sibling', 'item-row-weight');
-
-  $header = array(
-    'label' => t('Title'),
-    'include' => t('Include'),
-    'weight' => t('Weight'),
-  );
-
-  $rows = array();
-  foreach (element_children($element) as $key) {
-    $row = array();
-    $row['data'] = array();
-    foreach ($header as $fieldname => $title) {
-      $row['data'][] = drupal_render($element[$key][$fieldname]);
-      $row['class'] = array('draggable');
-    }
-    $rows[] = $row;
-  }
-
-  return theme('table', array(
-    'header' => $header,
-    'rows' => $rows,
-    'attributes' => array('id' => 'ereol_app_feeds_frontpages_table'),
-  ));
-}
-
 /**
- * Frontpage.
+ * Front page.
  */
 function ereol_app_feeds_frontpage() {
   $controller = new DefaultController();
@@ -124,3 +92,55 @@ function ereol_app_feeds_paragraphs($type) {
   $controller = new DefaultController();
   $controller->paragraphs($type);
 }
+
+/**
+ * Get hierarchical variable.
+ *
+ * @param $group_name
+ *   The name of the variable to fetch.
+ * @param $name
+ *   The index name for the group given in $group_name.
+ * @param mixed $default
+ *   Default value(s) to return. Defaults to NULL.
+ *
+ * @return mixed
+ *   The value(s) fetched or the default value.
+ */
+function _ereol_app_feeds_variable_get($group_name, $name, $default = NULL) {
+  $group = variable_get($group_name);
+  return isset($group[$name]) ? $group[$name] : $default;
+}
+
+/**
+ * Implements theme_hook().
+ *
+ * Default theme function for front page components.
+ */
+function theme_ereol_app_feeds_frontpages_components($vars) {
+  $element = $vars['element'];
+  drupal_add_tabledrag('ereol_app_feeds_frontpages_table', 'order', 'sibling', 'item-row-weight');
+
+  $header = array(
+    'label' => t('Title'),
+    'include' => t('Include'),
+    'weight' => t('Weight'),
+  );
+
+  $rows = array();
+  foreach (element_children($element) as $key) {
+    $row = array();
+    $row['data'] = array();
+    foreach ($header as $fieldname => $title) {
+      $row['data'][] = drupal_render($element[$key][$fieldname]);
+      $row['class'] = array('draggable');
+    }
+    $rows[] = $row;
+  }
+
+  return theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => 'ereol_app_feeds_frontpages_table'),
+  ));
+}
+

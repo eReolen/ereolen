@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @TODO: Missing @file doc-block.
+ *
+ * @TODO: It looks like a lot of the function in the class is doing the work
+ *        that's normally handled with the entity_metadata_wrapper?
+ * @See https://www.drupal.org/docs/7/api/entity-api/entity-metadata-wrappers
+ */
+
 namespace Drupal\ereol_app_feeds\Helper;
 
 use EntityFieldQuery;
@@ -13,6 +21,14 @@ class NodeHelper {
 
   /**
    * Get value of a field.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $entity
+   * @param $field_name
+   * @param null $sub_field_name
+   * @param bool $multiple
+   * @return array|mixed|null
    */
   public function getFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     if (!isset($entity->{$field_name}[LANGUAGE_NONE])) {
@@ -30,6 +46,14 @@ class NodeHelper {
 
   /**
    * Get text value of a field.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $entity
+   * @param $field_name
+   * @param null $sub_field_name
+   * @param bool $multiple
+   * @return array|mixed
    */
   public function getTextFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     $values = $this->getFieldValue($entity, $field_name, $sub_field_name, TRUE);
@@ -41,9 +65,10 @@ class NodeHelper {
   /**
    * Get list of paragraphs on a node.
    *
-   * @param $entity
+   * @TODO: Missing param and return doc-block.
    *
-   * @return \ParagraphsItemEntity[]
+   * @param $entity
+   * @return array|\ParagraphsItemEntity[]
    */
   public function getParagraphs($entity) {
     $paragraphs = [];
@@ -60,6 +85,11 @@ class NodeHelper {
 
   /**
    * Get text value.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $value
+   * @return null
    */
   private function getTextValue($value) {
     return isset($value['safe_value']) ? $value['safe_value'] : NULL;
@@ -67,6 +97,11 @@ class NodeHelper {
 
   /**
    * Get body from a node.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $node
+   * @return array|mixed
    */
   public function getBody($node) {
     return $this->getTextFieldValue($node, 'body', NULL, FALSE);
@@ -74,6 +109,12 @@ class NodeHelper {
 
   /**
    * Get image url.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $value
+   * @param bool $multiple
+   * @return array|mixed|null
    */
   public function getImage($value, $multiple = FALSE) {
     if (!isset($value[LANGUAGE_NONE])) {
@@ -88,6 +129,11 @@ class NodeHelper {
 
   /**
    * Get an absolute url from a "public:/" url.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $url
+   * @return bool|string
    */
   public function getUrl($url) {
     return file_create_url($url);
@@ -95,6 +141,11 @@ class NodeHelper {
 
   /**
    * Get ting identifiers.
+   *
+   * @TODO: Missing param doc-block.
+   *
+   * @param $entity
+   * @param $field_name
    *
    * @return string[]
    *   A list of identifiers.
@@ -120,6 +171,7 @@ class NodeHelper {
     $identifiers = $result->fetchCol();
 
     // Filter out any non "basis" identifiers.
+    // @TODO: Why filter out non basic?
     $identifiers = array_filter($identifiers, function ($identifier) {
       return preg_match('/-basis:/', $identifier);
     });
@@ -140,11 +192,11 @@ class NodeHelper {
     if (!empty($identifier)) {
       $entity_type = 'ting_object';
       $query = new EntityFieldQuery();
-      $query
-        ->entityCondition('entity_type', $entity_type)
+      $query->entityCondition('entity_type', $entity_type)
         ->propertyCondition('ding_entity_id', $identifier);
       $result = $query->execute();
 
+      //@TODO: Maybe look into ding_entity_load()/ding_entity_load_multiple().
       if (isset($result[$entity_type])) {
         $entities = entity_load($entity_type, array_keys($result[$entity_type]));
         return reset($entities);
@@ -156,6 +208,11 @@ class NodeHelper {
 
   /**
    * Get a ting identifier from a url.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $url
+   * @return string|null
    */
   public function getTingIdentifierFromUrl($url) {
     return preg_match('@/object/(?P<identifier>.+)$@', $url, $matches) ? urldecode($matches['identifier']) : NULL;
@@ -199,41 +256,51 @@ class NodeHelper {
   public function loadNode($node_type, $nid) {
     $entity_type = self::ENTITY_TYPE_NODE;
     $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
+    $query->entityCondition('entity_type', $entity_type)
       ->entityCondition('bundle', $node_type)
       ->propertyCondition('status', NODE_PUBLISHED)
       ->entityCondition('entity_id', $nid);
     $result = $query->execute();
 
+    // @TODO: Why not use entity_load?
     return isset($result[$entity_type][$nid]) ? node_load($nid) : NULL;
   }
 
   /**
    * Load nodes ordered by specified order of node ids.
    *
+   * @TODO: Missing some param doc-block.
+   *
    * @param $nids
    *   The node ids.
+   * @param int $status
    *
-   * @return
+   * @return array
    *   An array of node objects indexed by nid.
    */
   public function loadNodes(array $nids, $status = NODE_PUBLISHED) {
     $entity_type = self::ENTITY_TYPE_NODE;
     $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
+    $query->entityCondition('entity_type', $entity_type)
       ->propertyCondition('status', $status)
       ->entityCondition('entity_id', $nids + [0]);
     $result = $query->execute();
 
     $nodes = isset($result[$entity_type]) ? node_load_multiple(array_keys($result[$entity_type])) : [];
 
+    // @TODO: Why is the sort based on nid needed?
     self::sortByIds($nodes, $nids);
 
     return $nodes;
   }
 
+  /**
+   * @TODO: Missing doc-block.
+   *
+   * @param array $items
+   * @param array $ids
+   * @param string $id_key
+   */
   public static function sortByIds(array &$items, array $ids, $id_key = 'nid') {
     // Order by index in $nids.
     uasort($items, function ($a, $b) use ($ids, $id_key) {
@@ -257,6 +324,11 @@ class NodeHelper {
 
   /**
    * Get theme type.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $contentType
+   * @return mixed|string
    */
   public function getThemeType($contentType) {
     return isset(self::$themeTypes[$contentType]) ? self::$themeTypes[$contentType] : 'theme';

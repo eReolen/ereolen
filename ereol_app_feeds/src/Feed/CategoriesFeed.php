@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @TODO: Missing file description doc-block?
+ */
+
 namespace Drupal\ereol_app_feeds\Feed;
 
 use Drupal\ereol_app_feeds\Helper\NodeHelper;
@@ -12,6 +16,10 @@ class CategoriesFeed extends AbstractFeed {
 
   /**
    * Get feed data.
+   *
+   * @TODO: Missing return doc-block.
+   *
+   * @return array
    */
   public function getData() {
     $data = [];
@@ -46,10 +54,15 @@ class CategoriesFeed extends AbstractFeed {
     return $data;
   }
 
+  /**
+   * @TODO: Missing documentation?
+   *
+   * @return array
+   */
   private function getNodes() {
     $group_name = 'ereol_app_feeds_category';
     $field_name = 'page_ids';
-    $pages = ereol_app_feeds_variable_get($group_name, $field_name, []);
+    $pages = _ereol_app_feeds_variable_get($group_name, $field_name, []);
     $included = array_filter($pages, function ($page) {
       return isset($page['included']) && 1 === $page['included'];
     });

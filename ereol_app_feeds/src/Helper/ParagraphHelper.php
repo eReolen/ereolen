@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @TODO: Missing file documentation.
+ */
+
 namespace Drupal\ereol_app_feeds\Helper;
 
 use EntityFieldQuery;
@@ -41,6 +45,7 @@ class ParagraphHelper {
   const PARAGRAPH_ALIAS_LINK = self::PARAGRAPH_LINKBOX;
   const PARAGRAPH_ALIAS_THEME_LIST = self::PARAGRAPH_PICKED_ARTICLE_CAROUSEL;
 
+  // @TODO: dotted/scroll magic values?
   const VIEW_DOTTED = 'dotted';
   const VIEW_SCROLL = 'scroll';
 
@@ -62,6 +67,13 @@ class ParagraphHelper {
 
   /**
    * Get a list of paragraph ids on a list of nodes.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param array $nids
+   * @param null $node_type
+   * @param bool $recurse
+   * @return array
    */
   public function getParagraphIds(array $nids, $node_type = NULL, $recurse = TRUE) {
     $paragraphIds = [];
@@ -71,8 +83,7 @@ class ParagraphHelper {
 
     $entity_type = NodeHelper::ENTITY_TYPE_NODE;
     $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
+    $query->entityCondition('entity_type', $entity_type)
       ->propertyCondition('status', NODE_PUBLISHED)
       ->propertyCondition('nid', $nids ?: [0], 'IN');
     if (NULL !== $node_type) {
@@ -120,8 +131,12 @@ class ParagraphHelper {
   /**
    * Get paragraphs fields on an entity (node or paragraph).
    *
+   * @TODO: Missing return description?
+   *
    * @param object|\ParagraphsItemEntity $entity
    *   The entity.
+   *
+   * @return array
    */
   public function getParagraphFields($entity) {
     if ($entity instanceof \ParagraphsItemEntity) {
@@ -159,6 +174,8 @@ class ParagraphHelper {
   /**
    * Load paragraphs from a paragraphs field on an entity.
    *
+   * @TODO: Missing param and return doc-block.
+   *
    * @param $entity
    * @param $field_name
    *
@@ -173,6 +190,7 @@ class ParagraphHelper {
 
       $paragraphs = paragraphs_item_load_multiple($ids);
 
+      // @TODO: Why sort by id?
       NodeHelper::sortByIds($paragraphs, $ids, 'item_id');
     }
 
@@ -181,12 +199,22 @@ class ParagraphHelper {
 
   /**
    * Get data for a list of paragraphs.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $type
+   * @param array|NULL $paragraphIds
+   * @param callable|NULL $filter
+   *
+   *
+   * @return array|\ParagraphsItemEntity[]
    */
   public function getParagraphs($type, array $paragraphIds = NULL, callable $filter = NULL) {
+    $paragraphs = [];
+
     $entity_type = NodeHelper::ENTITY_TYPE_PARAGRAPH;
     $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
+    $query->entityCondition('entity_type', $entity_type)
       ->entityCondition('bundle', $type)
       ->entityCondition('entity_id', $paragraphIds ?: [0], 'IN');
     $result = $query->execute();
@@ -196,15 +224,19 @@ class ParagraphHelper {
       if (NULL !== $filter) {
         $paragraphs = array_filter($paragraphs, $filter);
       }
-
-      return $paragraphs;
     }
 
-    return [];
+    return $paragraphs;
   }
 
   /**
    * Get data for a list of paragraphs.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $type
+   * @param array $paragraphIds
+   * @return array
    */
   public function getParagraphsData($type, array $paragraphIds) {
     $paragraphs = $this->getParagraphs($type, $paragraphIds);
@@ -224,8 +256,13 @@ class ParagraphHelper {
   /**
    * Get data for a single paragraph.
    *
-   * @return array
-   *   The paragraph data.
+   * @TODO: Missing param doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   *
+   *
+   * @return array|null
+   *   The paragraph data. @TODO: but it might return NULL?
    */
   public function getParagraphData(\ParagraphsItemEntity $paragraph) {
     $bundle = $paragraph->bundle();
@@ -235,9 +272,11 @@ class ParagraphHelper {
         return $this->getAudio($paragraph);
 
       case self::PARAGRAPH_AUTHOR_PORTRAIT:
+        // @TODO: getAuthorPortrait function not found?
         return $this->getAuthorPortrait();
 
       case self::PARAGRAPH_AUTHOR_QUOTE:
+        // @TODO: getAuthorQuote function not found?
         return $this->getAuthorQuote();
 
       case self::PARAGRAPH_ALIAS_CAROUSEL:
@@ -270,9 +309,17 @@ class ParagraphHelper {
 
   /**
    * Get carousel data.
+   *
+   * @TODO: Missing param doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   *
+   *
+   * @return array
    */
   private function getCarousel(\ParagraphsItemEntity $paragraph) {
     $data = [];
+
     if (isset($paragraph->field_carousel[LANGUAGE_NONE])) {
       foreach ($paragraph->field_carousel[LANGUAGE_NONE] as $index => $value) {
         $data[] = [
@@ -290,12 +337,17 @@ class ParagraphHelper {
 
   /**
    * Get article carousel (aka "Latest news").
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getArticleCarousel(\ParagraphsItemEntity $paragraph) {
     $list = [];
     // Cf. ereol_article_get_articles().
     $query = new EntityFieldQuery();
-    $count = ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'max_news_count', 6);
+    $count = _ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'max_news_count', 6);
 
     $entityType = NodeHelper::ENTITY_TYPE_NODE;
     $query->entityCondition('entity_type', 'node')
@@ -319,6 +371,11 @@ class ParagraphHelper {
 
   /**
    * Get list of all nodes referenced from af theme paragraph.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getThemeList(\ParagraphsItemEntity $paragraph) {
     $items = $this->nodeHelper->loadReferences($paragraph, 'field_picked_articles');
@@ -329,7 +386,9 @@ class ParagraphHelper {
       return isset($item['identifiers']);
     }));
 
-    $list = array_slice($list, 0, (int) ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'theme_list_max_length', 6));
+    // @TODO: So we load more data then we need? Would it be possible to sort
+    //        and do range() in the query loading nodes.
+    $list = array_slice($list, 0, (int) _ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'theme_list_max_length', 6));
 
     return [
       'guid' => $this->getGuid($paragraph),
@@ -341,6 +400,11 @@ class ParagraphHelper {
 
   /**
    * Get theme data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $node
+   * @return array
    */
   public function getThemeData($node) {
     $view = $this->nodeHelper->getFieldValue($node, 'field_image_teaser', 'value') ? 'image' : 'covers';
@@ -361,11 +425,16 @@ class ParagraphHelper {
 
   /**
    * Get link data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getLink(\ParagraphsItemEntity $paragraph) {
     $buttonText = $this->nodeHelper->getFieldValue($paragraph, 'field_button_text', 'value');
     if (empty($buttonText)) {
-      $buttonText = ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'link_button_text', self::VALUE_NONE);
+      $buttonText = _ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'link_button_text', self::VALUE_NONE);
     }
 
     return [
@@ -381,6 +450,11 @@ class ParagraphHelper {
 
   /**
    * Get absolute url.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $url
+   * @return string
    */
   private function getAbsoluteUrl($url) {
     return url($url, ['absolute' => TRUE]);
@@ -388,6 +462,11 @@ class ParagraphHelper {
 
   /**
    * Get review data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getReview(\ParagraphsItemEntity $paragraph) {
     return [
@@ -400,14 +479,21 @@ class ParagraphHelper {
 
   /**
    * Get review list.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getReviewList(\ParagraphsItemEntity $paragraph) {
     $list = [];
     if ($reviews = reol_review_get_random_reviews()) {
       foreach ($reviews as $review) {
-        /** @var \TingEntity $ting */
+        // @var \TingEntity $ting
         $ting = $review->ting_entity;
         $creator = $ting->getCreators() ? implode(', ', $ting->getCreators()) : self::VALUE_NONE;
+
+        // @TODO: Why this filtering? So sometimes it's 'Litteratursiden' else a link?
         $source = preg_match('@//litteratursiden.dk/@', $review->link) ? 'Litteratursiden' : $review->link;
         $list[] = [
           'guid' => $review->rrid,
@@ -426,7 +512,12 @@ class ParagraphHelper {
   }
 
   /**
+   * @TODO: Missing function documentation?
+   *
+   * @TODO: Missing param and return doc-block.
+   *
    * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   public function getSpotlightBox(\ParagraphsItemEntity $paragraph) {
     $list = $this->getVideoList($paragraph);
@@ -452,7 +543,6 @@ class ParagraphHelper {
       'guid' => $this->getGuid($paragraph),
       'type' => $this->getType($paragraph),
       'view' => $this->getView($paragraph),
-
       'videos' => $videos,
       'reviews' => $this->getReviewList($paragraph),
       'links' => $links,
@@ -462,6 +552,11 @@ class ParagraphHelper {
 
   /**
    * Get editor data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   public function getEditor(\ParagraphsItemEntity $paragraph) {
     return [
@@ -474,6 +569,11 @@ class ParagraphHelper {
 
   /**
    * Get editor list.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   private function getEditorList(\ParagraphsItemEntity $paragraph) {
     $subParagraphIds = $this->nodeHelper->getFieldValue($paragraph, 'field_spotlight_row_3', 'value', TRUE);
@@ -492,6 +592,11 @@ class ParagraphHelper {
 
   /**
    * Get editor data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array
    */
   protected function getVideo(\ParagraphsItemEntity $paragraph) {
     // Wrap all videos in a fake list element.
@@ -505,6 +610,10 @@ class ParagraphHelper {
 
   /**
    * Get video data.
+   *
+   * @TODO: Missing param doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
    *
    * @return array
    *   The data.
@@ -520,7 +629,7 @@ class ParagraphHelper {
         'type' => $this->getType($subParagraph),
         'title' => $this->getTitle($video->title),
         'image' => self::VALUE_NONE,
-        'source' => $this->getSource($url),
+        'source' => $this->getVideoSource($url),
         'url' => $this->nodeHelper->getUrl($url),
       ];
     }, $subParagraphs));
@@ -530,8 +639,13 @@ class ParagraphHelper {
 
   /**
    * Get video source.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $url
+   * @return string
    */
-  private function getSource($url) {
+  private function getVideoSource($url) {
     if (preg_match('/(?P<source>youtube)/', $url, $matches)) {
       return $matches['source'];
     }
@@ -541,6 +655,11 @@ class ParagraphHelper {
 
   /**
    * Get audio data.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return array|null
    */
   private function getAudio(\ParagraphsItemEntity $paragraph) {
     $url = $this->nodeHelper->getTextFieldValue($paragraph, 'field_preview_material');
@@ -581,6 +700,20 @@ class ParagraphHelper {
   private function getAudioMetadata($isbn) {
     $audioMetadata = &drupal_static(__METHOD__);
 
+    /**
+     * @TODO: Use the Publizon client
+     *
+     * $client = \PublizonProductClient::getClient();
+     * $product = $client->getProduct($isbn);
+     *
+     * If the PublizonProduct calls don't parse the need data it may need to be
+     * extended in it's parse function. Currently it only parse the data that
+     * have been needed.
+     *
+     * If the PublizonProduct can not be used the data fetched here should be
+     * cached with cache_set/cache_get as the data is not likely to change.
+     */
+
     if (!isset($audioMetadata[$isbn])) {
       try {
         $metadata = [];
@@ -608,6 +741,7 @@ class ParagraphHelper {
         $audioMetadata[$isbn] = [$audioUrl, $metadata];
       }
       catch (\Exception $exception) {
+        // @TODO: why catch all?
       }
     }
 
@@ -618,6 +752,12 @@ class ParagraphHelper {
    * Get guid (generally unique id) for a paragraph.
    *
    * The guid is NOT guaranteed bo be globally unique.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @param null $delta
+   * @return string|null
    */
   public function getGuid(\ParagraphsItemEntity $paragraph, $delta = NULL) {
     $guid = $paragraph->identifier();
@@ -630,6 +770,11 @@ class ParagraphHelper {
 
   /**
    * Get data type for a paragraph.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return string|null
    */
   private function getType(\ParagraphsItemEntity $paragraph) {
     $bundle = $paragraph->bundle();
@@ -672,6 +817,11 @@ class ParagraphHelper {
 
   /**
    * Get view for a paragraph.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param \ParagraphsItemEntity $paragraph
+   * @return string
    */
   public function getView(\ParagraphsItemEntity $paragraph) {
     $bundle = $paragraph->bundle();
@@ -697,6 +847,13 @@ class ParagraphHelper {
 
   /**
    * Get real paragraph type from an alias.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @TODO: is the const and string not the same?
+   *
+   * @param $alias
+   * @return string
    */
   public function getParagraphType($alias) {
     switch ($alias) {
@@ -742,6 +899,11 @@ class ParagraphHelper {
 
   /**
    * Decode entities in title.
+   *
+   * @TODO: Missing param and return doc-block.
+   *
+   * @param $title
+   * @return string
    */
   private function getTitle($title) {
     return html_entity_decode($title);

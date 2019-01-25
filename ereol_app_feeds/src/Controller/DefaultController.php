@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Default controller for the module.
+ */
+
 namespace Drupal\ereol_app_feeds\Controller;
 
 use Drupal\ereol_app_feeds\Feed\CategoriesFeed;
@@ -13,13 +18,14 @@ use Drupal\ereol_app_feeds\Feed\ThemesFeed;
 class DefaultController {
 
   /**
-   * Render frontpage data.
+   * Render front page data.
    */
   public function frontpage() {
     $feed = new FrontPageFeed();
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -30,6 +36,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -40,10 +47,14 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
    * Render paragraphs data.
+   *
+   * @param $type
+   *   The type of paragraphs to render.
    */
   public function paragraphs($type) {
     $nids = $this->getQueryParameter('nids', FrontPageFeed::getFrontPageIds());
@@ -52,10 +63,18 @@ class DefaultController {
     $data = $feed->getData($nids, $type);
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
    * Get a query parameter.
+   *
+   * @TODO: Missing param and return descriptions?
+   *
+   * @param $name
+   * @param null $defaultValue
+   *
+   * @return array|null
    */
   protected function getQueryParameter($name, $defaultValue = NULL) {
     $query_parameters = drupal_get_query_parameters();
