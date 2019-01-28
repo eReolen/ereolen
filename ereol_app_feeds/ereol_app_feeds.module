@@ -38,12 +38,6 @@ function ereol_app_feeds_menu() {
     'access arguments' => ['access content'],
   ];
 
-  $items['app/feed/paragraphs/%'] = [
-    'page callback' => 'ereol_app_feeds_paragraphs',
-    'page arguments' => [3],
-    'access arguments' => ['access content'],
-  ];
-
   return $items;
 }
 
@@ -83,14 +77,6 @@ function ereol_app_feeds_themes() {
 function ereol_app_feeds_categories() {
   $controller = new DefaultController();
   $controller->categories();
-}
-
-/**
- * Paragraphs.
- */
-function ereol_app_feeds_paragraphs($type) {
-  $controller = new DefaultController();
-  $controller->paragraphs($type);
 }
 
 /**
@@ -143,4 +129,3 @@ function theme_ereol_app_feeds_frontpages_components($vars) {
     'attributes' => array('id' => 'ereol_app_feeds_frontpages_table'),
   ));
 }
-
