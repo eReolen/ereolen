@@ -187,7 +187,7 @@ class ParagraphHelper {
 
       $paragraphs = paragraphs_item_load_multiple($ids);
 
-      // @TODO: Why sort by id?
+      // Sort the paragraphs in the same order as on the pages.
       NodeHelper::sortByIds($paragraphs, $ids, 'item_id');
     }
 
