@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @TODO: Missing file description doc-block?
- */
-
 namespace Drupal\ereol_app_feeds\Feed;
 
 use Drupal\ereol_app_feeds\Helper\NodeHelper;
@@ -12,10 +8,10 @@ use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 /**
  * Abstract feed.
  */
-class AbstractFeed {
+abstract class AbstractFeed {
 
   /**
-   * The node helper;
+   * The node helper.
    *
    * @var \Drupal\ereol_app_feeds\Helper\NodeHelper
    */
@@ -35,7 +31,12 @@ class AbstractFeed {
     $this->paragraphHelper = new ParagraphHelper();
   }
 
-  // @TODO: It seams that all the child class as an getData() function should
-  //        an default be here?
+  /**
+   * Get feed data.
+   *
+   * @return array
+   *   The feed data.
+   */
+  abstract public function getData();
 
 }
