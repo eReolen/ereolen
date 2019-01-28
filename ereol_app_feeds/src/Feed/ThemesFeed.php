@@ -1,25 +1,25 @@
 <?php
 
-/**
- * @TODO: Missing file description doc-block?
- */
-
 namespace Drupal\ereol_app_feeds\Feed;
 
 use Drupal\ereol_app_feeds\Helper\NodeHelper;
 use EntityFieldQuery;
 
 /**
- * Paragraphs feed.
+ * Themes feed.
+ *
+ * @package Drupal\ereol_app_feeds\Feed
  */
 class ThemesFeed extends AbstractFeed {
 
   /**
-   * Get feed data.
+   * Get themes feed data.
    *
-   * @TODO: Missing return doc-block
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.ewzbsz8i5way
+   * for details on the feed structure.
    *
    * @return array
+   *   The feed data.
    */
   public function getData() {
     $max_number_of_items = (int) _ereol_app_feeds_variable_get('ereol_app_feeds_themes', 'max_number_of_items', 50);

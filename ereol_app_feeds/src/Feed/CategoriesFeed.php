@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @TODO: Missing file description doc-block?
- */
-
 namespace Drupal\ereol_app_feeds\Feed;
 
 use Drupal\ereol_app_feeds\Helper\NodeHelper;
@@ -11,15 +7,19 @@ use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 
 /**
  * Categories feed.
+ *
+ * @package Drupal\ereol_app_feeds\Feed
  */
 class CategoriesFeed extends AbstractFeed {
 
   /**
-   * Get feed data.
+   * Get categories feed data.
    *
-   * @TODO: Missing return doc-block.
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.r3okoat4q87f
+   * for details on the feed structure.
    *
    * @return array
+   *   The feed data.
    */
   public function getData() {
     $data = [];
@@ -55,9 +55,10 @@ class CategoriesFeed extends AbstractFeed {
   }
 
   /**
-   * @TODO: Missing documentation?
+   * Get the nodes to include in the categories feed.
    *
    * @return array
+   *   The nodes.
    */
   private function getNodes() {
     $group_name = 'ereol_app_feeds_category';
