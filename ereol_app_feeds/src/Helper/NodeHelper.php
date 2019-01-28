@@ -1,19 +1,15 @@
 <?php
 
-/**
- * @TODO: Missing @file doc-block.
- *
- * @TODO: It looks like a lot of the function in the class is doing the work
- *        that's normally handled with the entity_metadata_wrapper?
- * @See https://www.drupal.org/docs/7/api/entity-api/entity-metadata-wrappers
- */
-
 namespace Drupal\ereol_app_feeds\Helper;
 
 use EntityFieldQuery;
 
 /**
  * Node helper.
+ *
+ * @TODO: It looks like a lot of the function in the class is doing the work
+ *        that's normally handled with the entity_metadata_wrapper?
+ * @See https://www.drupal.org/docs/7/api/entity-api/entity-metadata-wrappers
  */
 class NodeHelper {
   const ENTITY_TYPE_NODE = 'node';
@@ -22,13 +18,18 @@ class NodeHelper {
   /**
    * Get value of a field.
    *
-   * @TODO: Missing param and return doc-block.
-   *
-   * @param $entity
-   * @param $field_name
-   * @param null $sub_field_name
+   * @param object $entity
+   *   The entity.
+   * @param string $field_name
+   *   The field names.
+   * @param string|null $sub_field_name
+   *   The optional sub-field names.
    * @param bool $multiple
+   *   If set, multiple field values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
    * @return array|mixed|null
+   *   The field value.
    */
   public function getFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     if (!isset($entity->{$field_name}[LANGUAGE_NONE])) {
@@ -47,13 +48,18 @@ class NodeHelper {
   /**
    * Get text value of a field.
    *
-   * @TODO: Missing param and return doc-block.
-   *
-   * @param $entity
-   * @param $field_name
-   * @param null $sub_field_name
+   * @param object $entity
+   *   The entity.
+   * @param string $field_name
+   *   The field names.
+   * @param string|null $sub_field_name
+   *   The optional sub-field names.
    * @param bool $multiple
-   * @return array|mixed
+   *   If set, multiple field values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
+   * @return array|mixed|null
+   *   The text field value.
    */
   public function getTextFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     $values = $this->getFieldValue($entity, $field_name, $sub_field_name, TRUE);
@@ -65,10 +71,11 @@ class NodeHelper {
   /**
    * Get list of paragraphs on a node.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param object $entity
+   *   The entity.
    *
-   * @param $entity
    * @return array|\ParagraphsItemEntity[]
+   *   The paragraphs.
    */
   public function getParagraphs($entity) {
     $paragraphs = [];
@@ -86,22 +93,24 @@ class NodeHelper {
   /**
    * Get text value.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param mixed $value
+   *   The value.
    *
-   * @param $value
-   * @return null
+   * @return string|null
+   *   The text value if any.
    */
   private function getTextValue($value) {
     return isset($value['safe_value']) ? $value['safe_value'] : NULL;
   }
 
   /**
-   * Get body from a node.
+   * Get body text value from a node.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param object $node
+   *   The node.
    *
-   * @param $node
-   * @return array|mixed
+   * @return string|null
+   *   The body text value if any.
    */
   public function getBody($node) {
     return $this->getTextFieldValue($node, 'body', NULL, FALSE);
@@ -110,11 +119,14 @@ class NodeHelper {
   /**
    * Get image url.
    *
-   * @TODO: Missing param and return doc-block.
-   *
-   * @param $value
+   * @param mixed $value
+   *   The value.
    * @param bool $multiple
-   * @return array|mixed|null
+   *   If set, multiple values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
+   * @return string[]|string|null
+   *   The image url(s).
    */
   public function getImage($value, $multiple = FALSE) {
     if (!isset($value[LANGUAGE_NONE])) {
@@ -130,10 +142,11 @@ class NodeHelper {
   /**
    * Get an absolute url from a "public:/" url.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param string $url
+   *   The file url.
    *
-   * @param $url
    * @return bool|string
+   *   The absolute url if any.
    */
   public function getUrl($url) {
     return file_create_url($url);
@@ -142,10 +155,10 @@ class NodeHelper {
   /**
    * Get ting identifiers.
    *
-   * @TODO: Missing param doc-block.
-   *
-   * @param $entity
-   * @param $field_name
+   * @param object $entity
+   *   The entity.
+   * @param string $field_name
+   *   The field name.
    *
    * @return string[]
    *   A list of identifiers.
@@ -196,7 +209,7 @@ class NodeHelper {
         ->propertyCondition('ding_entity_id', $identifier);
       $result = $query->execute();
 
-      //@TODO: Maybe look into ding_entity_load()/ding_entity_load_multiple().
+      // @TODO: Maybe look into ding_entity_load()/ding_entity_load_multiple().
       if (isset($result[$entity_type])) {
         $entities = entity_load($entity_type, array_keys($result[$entity_type]));
         return reset($entities);
@@ -209,10 +222,11 @@ class NodeHelper {
   /**
    * Get a ting identifier from a url.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param string $url
+   *   The url.
    *
-   * @param $url
    * @return string|null
+   *   The identifier if any.
    */
   public function getTingIdentifierFromUrl($url) {
     return preg_match('@/object/(?P<identifier>.+)$@', $url, $matches) ? urldecode($matches['identifier']) : NULL;
@@ -269,11 +283,10 @@ class NodeHelper {
   /**
    * Load nodes ordered by specified order of node ids.
    *
-   * @TODO: Missing some param doc-block.
-   *
-   * @param $nids
+   * @param array $nids
    *   The node ids.
    * @param int $status
+   *   The optional node status.
    *
    * @return array
    *   An array of node objects indexed by nid.
@@ -288,18 +301,20 @@ class NodeHelper {
 
     $nodes = isset($result[$entity_type]) ? node_load_multiple(array_keys($result[$entity_type])) : [];
 
-    // @TODO: Why is the sort based on nid needed?
     self::sortByIds($nodes, $nids);
 
     return $nodes;
   }
 
   /**
-   * @TODO: Missing doc-block.
+   * Sort a list of items (typically a list of nodes) by id.
    *
-   * @param array $items
+   * @param objects[] $items
+   *   The items.
    * @param array $ids
+   *   The ids to sort by.
    * @param string $id_key
+   *   The optional id key in the items.
    */
   public static function sortByIds(array &$items, array $ids, $id_key = 'nid') {
     // Order by index in $nids.
@@ -325,10 +340,13 @@ class NodeHelper {
   /**
    * Get theme type.
    *
-   * @TODO: Missing param and return doc-block.
+   * @param string $contentType
+   *   The content type.
    *
-   * @param $contentType
-   * @return mixed|string
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.u2ztxyfu4egy
+   *
+   * @return string
+   *   The theme type.
    */
   public function getThemeType($contentType) {
     return isset(self::$themeTypes[$contentType]) ? self::$themeTypes[$contentType] : 'theme';
