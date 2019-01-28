@@ -20,27 +20,23 @@ use Drupal\ereol_app_feeds\Feed\FrontPageFeed;
  */
 function ereol_app_feeds_admin_form(array $form, array &$form_state) {
   $inspiration_pages = [];
-  $options = [];
+  $inspiration_pages_options = [];
 
   $form['#theme'] = 'ereol_app_feeds_admin_form';
 
   // Find all inspiration pages.
-  // @TODO: It seams a little overkill to load complete nodes which loads all
-  //        paragraphs etc. to just get node title? An simple db_query could
-  //        do the same alot faster an less memory usage.
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'inspiration')
-    ->propertyCondition('status', NODE_PUBLISHED)
-    ->propertyOrderBy('title');
+  $query = db_select('node', 'n')
+    ->condition('type', 'inspiration')
+    ->condition('status', NODE_PUBLISHED)
+    ->fields('n', ['nid', 'title']);
   $result = $query->execute();
-
-  if (isset($result['node'])) {
-    $inspiration_pages = node_load_multiple(array_keys($result['node']));
-    $options = array_combine(array_keys($inspiration_pages), array_map(function ($node) {
-       return $node->title;
-    }, $inspiration_pages));
+  foreach ($result as $record) {
+    $inspiration_pages[$record->nid] = $record;
   }
+
+  $inspiration_pages_options = array_combine(array_keys($inspiration_pages), array_map(function ($node) {
+    return $node->title;
+  }, $inspiration_pages));
 
   $group_name = 'ereol_app_feeds_frontpage';
   $form[$group_name] = [
@@ -53,7 +49,7 @@ function ereol_app_feeds_admin_form(array $form, array &$form_state) {
     '#type' => 'checkboxes',
     '#title' => t('Front pages'),
     '#default_value' => FrontPageFeed::getFrontPageIds(),
-    '#options' => $options,
+    '#options' => $inspiration_pages_options,
     '#multiple' => TRUE,
     '#description' => t('Frontpages used in feeds'),
     '#required' => TRUE,
@@ -95,15 +91,20 @@ function ereol_app_feeds_admin_form(array $form, array &$form_state) {
     '#description' => t('Select pages to include in category feed and specify order.'),
   ];
 
-  // @TODO: A comment about what this magic array thing do would be nice?
   $form[$group_name][$field_name]['#tree'] = TRUE;
-  $default_values = array_map(function ($node) {
-    return [];
-  }, $inspiration_pages);
-  $default_values = _ereol_app_feeds_variable_get($group_name, $field_name, $default_values);
-  // @TODO Magic 10 max value?
-  $max_weight = max(10, count($inspiration_pages));
-  foreach ($default_values as $nid => $data) {
+
+  // Get info on pages that have been included in the feed.
+  $category_feed_pages = _ereol_app_feeds_variable_get($group_name, $field_name);
+  if (NULL === $category_feed_pages) {
+    // If no pages info can be found, use an empty array for each page.
+    $category_feed_pages = array_map(function ($node) {
+      return [];
+    }, $inspiration_pages);
+  }
+
+  // The max weight used when sorting pages.
+  $max_weight = count($inspiration_pages);
+  foreach ($category_feed_pages as $nid => $data) {
     $node = $inspiration_pages[$nid];
     $form[$group_name][$field_name][$nid] = [
       'name' => [
