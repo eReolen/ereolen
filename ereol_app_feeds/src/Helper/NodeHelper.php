@@ -134,7 +134,7 @@ class NodeHelper {
     }
     $values = $value[LANGUAGE_NONE];
     $uris = array_column($values, 'uri');
-    $urls = array_map([$this, 'getUrl'], $uris);
+    $urls = array_map([$this, 'getFileUrl'], $uris);
 
     return $multiple ? $urls : reset($urls);
   }
@@ -148,7 +148,7 @@ class NodeHelper {
    * @return bool|string
    *   The absolute url if any.
    */
-  public function getUrl($url) {
+  public function getFileUrl($url) {
     return file_create_url($url);
   }
 
