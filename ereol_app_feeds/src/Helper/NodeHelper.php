@@ -257,30 +257,6 @@ class NodeHelper {
   }
 
   /**
-   * Load a single node of a specific type by nid.
-   *
-   * @param string $node_type
-   *   The node type.
-   * @param int $nid
-   *   The node id.
-   *
-   * @return bool|mixed|null
-   *   The node if any.
-   */
-  public function loadNode($node_type, $nid) {
-    $entity_type = self::ENTITY_TYPE_NODE;
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', $entity_type)
-      ->entityCondition('bundle', $node_type)
-      ->propertyCondition('status', NODE_PUBLISHED)
-      ->entityCondition('entity_id', $nid);
-    $result = $query->execute();
-
-    // @TODO: Why not use entity_load?
-    return isset($result[$entity_type][$nid]) ? node_load($nid) : NULL;
-  }
-
-  /**
    * Load nodes ordered by specified order of node ids.
    *
    * @param array $nids
