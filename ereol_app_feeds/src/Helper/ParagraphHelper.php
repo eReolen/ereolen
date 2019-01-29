@@ -689,7 +689,7 @@ class ParagraphHelper {
     $url = $this->nodeHelper->getTextFieldValue($paragraph, 'field_preview_material');
     $identifier = $this->nodeHelper->getTingIdentifierFromUrl($url);
     if (NULL !== $identifier) {
-      $ting = $this->nodeHelper->loadTingObject($identifier);
+      $ting = ding_entity_load($identifier);
       if ($ting) {
         $isbn = $ting->getIsbn();
         $isbn = reset($isbn);
