@@ -694,15 +694,15 @@ class ParagraphHelper {
         $isbn = $ting->getIsbn();
         $isbn = reset($isbn);
 
-        list($audioUrl, $metadata) = $this->getAudioMetadata($isbn);
+        $metadata = $this->getAudioMetadata($isbn);
 
         return [
           'guid' => $this->getGuid($paragraph),
           'type' => $this->getType($paragraph),
           'identifier' => $identifier,
           'title' => $this->getTitle($ting->getTitle()),
-          'url' => $audioUrl,
-          'metadata' => $metadata,
+          'url' => isset($metadata['url']) ? $metadata['url'] : NULL,
+          'metadata' => isset($metadata['metadata']) ? $metadata['metadata'] : NULL,
         ];
       }
     }
@@ -713,63 +713,62 @@ class ParagraphHelper {
   /**
    * Get audio metadata.
    *
+   * Note: The Publizon product client (\PublizonProductClient) does not
+   * provide information on audio clip size and format so we perform a few
+   * http requests to get this information.
+   *
    * Warning: this performs 2 http requests!
    *
    * @param string $isbn
    *   The isbn.
    *
-   * @return array
-   *   [audio url, metadata] or [null, null]
+   * @return array|null
+   *   The audio metadata if any. Keys: 'url', 'metadata'.
    */
   private function getAudioMetadata($isbn) {
-    $audioMetadata = &drupal_static(__METHOD__);
+    $cache_key = __METHOD__ . '-' . $isbn;
 
-    /**
-     * @TODO: Use the Publizon client
-     *
-     * $client = \PublizonProductClient::getClient();
-     * $product = $client->getProduct($isbn);
-     *
-     * If the PublizonProduct calls don't parse the need data it may need to be
-     * extended in it's parse function. Currently it only parse the data that
-     * have been needed.
-     *
-     * If the PublizonProduct can not be used the data fetched here should be
-     * cached with cache_set/cache_get as the data is not likely to change.
-     */
-
-    if (!isset($audioMetadata[$isbn])) {
-      try {
-        $metadata = [];
-
-        $metadataUrl = 'https://audio.api.streaming.pubhub.dk/v1/samples/' . $isbn;
-        $audioUrl = 'https://audio.api.streaming.pubhub.dk/Sample.ashx?isbn=' . $isbn;
-
-        $client = new Client();
-        $response = $client->get($metadataUrl);
-        $data = json_decode((string) $response->getBody(), TRUE);
-
-        $metadata['length'] = $data['duration'];
-
-        $response = $client->head($audioUrl);
-        $header = $response->getHeader('content-range');
-        $contentRange = reset($header);
-        if (preg_match('@bytes (?P<range_start>[0-9]+)-(?P<range_end>[0-9]+)/(?P<size>[0-9]+)@',
-                       $contentRange, $matches)) {
-          $metadata['size'] = (int) $matches['size'];
-        }
-
-        $header = $response->getHeader('content-type');
-        $metadata['format'] = reset($header);
-
-        $audioMetadata[$isbn] = [$audioUrl, $metadata];
-      }
-      catch (\Exception $exception) {
-        // We don't want any exceptions to break the feed.
-      }
+    if ($cached = cache_get($cache_key)) {
+      return $cached->data;
     }
 
-    return isset($audioMetadata[$isbn]) ? $audioMetadata[$isbn] : [NULL, NULL];
+    try {
+      $metadata = [];
+
+      $metadataUrl = 'https://audio.api.streaming.pubhub.dk/v1/samples/' . $isbn;
+      $audioUrl = 'https://audio.api.streaming.pubhub.dk/Sample.ashx?isbn=' . $isbn;
+
+      $client = new Client();
+      $response = $client->get($metadataUrl);
+      $data = json_decode((string) $response->getBody(), TRUE);
+
+      $metadata['length'] = $data['duration'];
+
+      // Get size of audio sample.
+      $response = $client->head($audioUrl);
+      $header = $response->getHeader('content-range');
+      $contentRange = reset($header);
+      if (preg_match('@bytes (?P<range_start>[0-9]+)-(?P<range_end>[0-9]+)/(?P<size>[0-9]+)@',
+                     $contentRange, $matches)) {
+        $metadata['size'] = (int) $matches['size'];
+      }
+
+      // Get audio format.
+      $header = $response->getHeader('content-type');
+      $metadata['format'] = reset($header);
+
+      $result = ['url' => $audioUrl, 'metadata' => $metadata];
+
+      // Store result in cache.
+      cache_set($cache_key, $result);
+
+      return $result;
+    }
+    catch (\Exception $exception) {
+      // We don't want any exceptions to break the feed.
+    }
+
+    return NULL;
   }
 
   /**
