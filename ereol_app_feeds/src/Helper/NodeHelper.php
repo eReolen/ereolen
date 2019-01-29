@@ -19,7 +19,7 @@ class NodeHelper {
    * Get value of a field.
    *
    * @param object $entity
-   *   The entity.
+   *   The entity (a node or a \ParagraphsItemEntity).
    * @param string $field_name
    *   The field names.
    * @param string|null $sub_field_name
