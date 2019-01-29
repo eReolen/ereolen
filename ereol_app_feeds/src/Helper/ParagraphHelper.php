@@ -373,6 +373,13 @@ class ParagraphHelper {
    *   The theme list data.
    */
   private function getThemeList(\ParagraphsItemEntity $paragraph) {
+    // Get all items.
+    //
+    // Note: We may get more data than actually needed, but due to non-trivial
+    // filtering on "identifiers" (see below) we have to load all items.
+    //
+    // @TODO: Can we improve this so we don't have to load all items and throw
+    // away some of them?
     $items = $this->nodeHelper->loadReferences($paragraph, 'field_picked_articles');
 
     $list = array_values(array_map([$this, 'getThemeData'], $items));
@@ -381,7 +388,7 @@ class ParagraphHelper {
       return isset($item['identifiers']);
     }));
 
-    // @TODO: So we load more data then we need? Would it be possible to sort and do range() in the query loading nodes.
+    // Slice the list to the maximum allowed length.
     $list = array_slice($list, 0, (int) _ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'theme_list_max_length', 6));
 
     return [
