@@ -6,10 +6,6 @@ use EntityFieldQuery;
 
 /**
  * Node helper.
- *
- * @TODO: It looks like a lot of the function in the class is doing the work
- *        that's normally handled with the entity_metadata_wrapper?
- * @See https://www.drupal.org/docs/7/api/entity-api/entity-metadata-wrappers
  */
 class NodeHelper {
   const ENTITY_TYPE_NODE = 'node';
@@ -17,6 +13,11 @@ class NodeHelper {
 
   /**
    * Get value of a field.
+   *
+   * If the requested field does not exist, NULL will be returned.
+   *
+   * Note: This function is very similar to what the `entity_metadata_wrapper`
+   * provides, but this function handles non-existing fields gracefully.
    *
    * @param object $entity
    *   The entity (a node or a \ParagraphsItemEntity).
