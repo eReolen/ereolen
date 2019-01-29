@@ -183,12 +183,6 @@ class NodeHelper {
     $result = db_query('SELECT o.ding_entity_id FROM {ting_object} o WHERE o.tid in (:ids)', [':ids' => $ids]);
     $identifiers = $result->fetchCol();
 
-    // Filter out any non "basis" identifiers.
-    // @TODO: Why filter out non basic?
-    $identifiers = array_filter($identifiers, function ($identifier) {
-      return preg_match('/-basis:/', $identifier);
-    });
-
     return array_values($identifiers);
   }
 
