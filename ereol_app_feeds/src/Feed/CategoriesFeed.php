@@ -27,28 +27,45 @@ class CategoriesFeed extends AbstractFeed {
     $nodes = $this->getNodes();
 
     foreach ($nodes as $node) {
+      $subcategories = [];
+
       $paragraphs = $this->nodeHelper->getParagraphs($node);
-      $content = array_values(array_map(function ($paragraph) {
-        $data = $this->paragraphHelper->getParagraphData($paragraph);
+      foreach ($paragraphs as $paragraph) {
+        $wrapper = entity_metadata_wrapper($paragraph->entityType(), $paragraph);
 
         switch ($paragraph->bundle()) {
-          case ParagraphHelper::PARAGRAPH_MATERIAL_CAROUSEL:
-            $data = [
-              'guid' => $this->paragraphHelper->getGuid($paragraph),
-              'type' => $this->paragraphHelper->getParagraphType($paragraph->bundle()),
-              'view' => $this->paragraphHelper->getView($paragraph),
-              'list' => $data,
+          case ParagraphHelper::PARAGRAPH_PICKED_ARTICLE_CAROUSEL:
+            $paragraphData = $this->paragraphHelper->getParagraphData($paragraph);
+            $subcategories[] = [
+              'title' => $wrapper->field_picked_title->value(),
+              'query' => ParagraphHelper::VALUE_NONE,
+              'attachment' => isset($paragraphData['list']) ? $paragraphData['list'] : ParagraphHelper::VALUE_NONE,
             ];
             break;
+
+          case ParagraphHelper::PARAGRAPH_MATERIAL_CAROUSEL:
+            // @TODO: Can we use entity_metadata_wrapper to get the list of carousels?
+            foreach ($paragraph->field_carousel[LANGUAGE_NONE] as $carousel) {
+              $subcategories[] = [
+                'title' => $carousel['title'],
+                'query' => $carousel['search'],
+                'attachment' => ParagraphHelper::VALUE_NONE,
+              ];
+            }
+            break;
+
+          case ParagraphHelper::PARAGRAPH_SPOTLIGHT_BOX:
+            // @TODO: Do something clever with "author portraits"?
         }
+      }
 
-        return $data;
-      }, $paragraphs));
-
-      $data[] = [
-        'title' => $node->title,
-        'content' => $content,
-      ];
+      if (!empty($subcategories)) {
+        $data[] = [
+          'title' => $node->title,
+          'query' => ParagraphHelper::VALUE_NONE,
+          'subcategories' => $subcategories,
+        ];
+      }
     }
 
     return $data;
