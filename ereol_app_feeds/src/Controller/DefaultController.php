@@ -55,6 +55,22 @@ class DefaultController {
   }
 
   /**
+   * Render Overdrive mappings.
+   */
+  public function overdriveMapping() {
+    $triggers = overdrive_triggers_load();
+
+    $data = array_map(function ($trigger) {
+      return [
+        'trigger' => $trigger['search_trigger'],
+        'query' => $trigger['search_query'],
+      ];
+    }, $triggers);
+
+    drupal_json_output($data);
+  }
+
+  /**
    * Get a query parameter.
    */
   protected function getQueryParameter($name, $defaultValue = NULL) {

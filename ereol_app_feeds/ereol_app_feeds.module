@@ -42,6 +42,11 @@ function ereol_app_feeds_menu() {
     'access arguments' => ['access content'],
   ];
 
+  $items['app/feed/overdrive/mapping'] = [
+    'page callback' => 'ereol_app_feeds_overdrive_mapping',
+    'access arguments' => ['access content'],
+  ];
+
   return $items;
 }
 
@@ -123,4 +128,12 @@ function ereol_app_feeds_categories() {
 function ereol_app_feeds_paragraphs($type) {
   $controller = new DefaultController();
   $controller->paragraphs($type);
+}
+
+/**
+ * Overdrive mapping.
+ */
+function ereol_app_feeds_overdrive_mapping() {
+  $controller = new DefaultController();
+  $controller->overdriveMapping();
 }
