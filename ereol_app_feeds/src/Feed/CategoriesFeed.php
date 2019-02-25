@@ -38,6 +38,7 @@ class CategoriesFeed extends AbstractFeed {
             $paragraphData = $this->paragraphHelper->getParagraphData($paragraph);
             $subcategories[] = [
               'title' => $wrapper->field_picked_title->value(),
+              'type' => 'sub_category',
               'query' => ParagraphHelper::VALUE_NONE,
               'attachment' => isset($paragraphData['list']) ? $paragraphData['list'] : ParagraphHelper::VALUE_NONE,
             ];
@@ -48,6 +49,7 @@ class CategoriesFeed extends AbstractFeed {
             foreach ($paragraph->field_carousel[LANGUAGE_NONE] as $carousel) {
               $subcategories[] = [
                 'title' => $carousel['title'],
+                'type' => 'sub_category',
                 'query' => $carousel['search'],
                 'attachment' => ParagraphHelper::VALUE_NONE,
               ];
@@ -62,6 +64,7 @@ class CategoriesFeed extends AbstractFeed {
       if (!empty($subcategories)) {
         $data[] = [
           'title' => $node->title,
+          'type' => 'category',
           'query' => ParagraphHelper::VALUE_NONE,
           'subcategories' => $subcategories,
         ];
