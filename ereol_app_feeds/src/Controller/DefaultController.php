@@ -68,6 +68,7 @@ class DefaultController {
     }, $triggers);
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
