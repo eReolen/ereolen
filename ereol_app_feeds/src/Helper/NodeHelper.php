@@ -13,6 +13,24 @@ class NodeHelper {
 
   /**
    * Get value of a field.
+   *
+   * If the requested field does not exist, NULL will be returned.
+   *
+   * Note: This function is very similar to what the `entity_metadata_wrapper`
+   * provides, but this function handles non-existing fields gracefully.
+   *
+   * @param object $entity
+   *   The entity (a node or a \ParagraphsItemEntity).
+   * @param string $field_name
+   *   The field names.
+   * @param string|null $sub_field_name
+   *   The optional sub-field names.
+   * @param bool $multiple
+   *   If set, multiple field values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
+   * @return array|mixed|null
+   *   The field value.
    */
   public function getFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     if (!isset($entity->{$field_name}[LANGUAGE_NONE])) {
@@ -30,6 +48,19 @@ class NodeHelper {
 
   /**
    * Get text value of a field.
+   *
+   * @param object $entity
+   *   The entity.
+   * @param string $field_name
+   *   The field names.
+   * @param string|null $sub_field_name
+   *   The optional sub-field names.
+   * @param bool $multiple
+   *   If set, multiple field values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
+   * @return array|mixed|null
+   *   The text field value.
    */
   public function getTextFieldValue($entity, $field_name, $sub_field_name = NULL, $multiple = FALSE) {
     $values = $this->getFieldValue($entity, $field_name, $sub_field_name, TRUE);
@@ -41,9 +72,11 @@ class NodeHelper {
   /**
    * Get list of paragraphs on a node.
    *
-   * @param $entity
+   * @param object $entity
+   *   The entity.
    *
-   * @return \ParagraphsItemEntity[]
+   * @return array|\ParagraphsItemEntity[]
+   *   The paragraphs.
    */
   public function getParagraphs($entity) {
     $paragraphs = [];
@@ -60,13 +93,25 @@ class NodeHelper {
 
   /**
    * Get text value.
+   *
+   * @param mixed $value
+   *   The value.
+   *
+   * @return string|null
+   *   The text value if any.
    */
   private function getTextValue($value) {
     return isset($value['safe_value']) ? $value['safe_value'] : NULL;
   }
 
   /**
-   * Get body from a node.
+   * Get body text value from a node.
+   *
+   * @param object $node
+   *   The node.
+   *
+   * @return string|null
+   *   The body text value if any.
    */
   public function getBody($node) {
     return $this->getTextFieldValue($node, 'body', NULL, FALSE);
@@ -74,6 +119,15 @@ class NodeHelper {
 
   /**
    * Get image url.
+   *
+   * @param mixed $value
+   *   The value.
+   * @param bool $multiple
+   *   If set, multiple values will be returned as an array. Otherwise,
+   *   only the first value will be returned.
+   *
+   * @return string[]|string|null
+   *   The image url(s).
    */
   public function getImage($value, $multiple = FALSE) {
     if (!isset($value[LANGUAGE_NONE])) {
@@ -81,20 +135,31 @@ class NodeHelper {
     }
     $values = $value[LANGUAGE_NONE];
     $uris = array_column($values, 'uri');
-    $urls = array_map([$this, 'getUrl'], $uris);
+    $urls = array_map([$this, 'getFileUrl'], $uris);
 
     return $multiple ? $urls : reset($urls);
   }
 
   /**
    * Get an absolute url from a "public:/" url.
+   *
+   * @param string $url
+   *   The file url.
+   *
+   * @return bool|string
+   *   The absolute url if any.
    */
-  public function getUrl($url) {
+  public function getFileUrl($url) {
     return file_create_url($url);
   }
 
   /**
    * Get ting identifiers.
+   *
+   * @param object $entity
+   *   The entity.
+   * @param string $field_name
+   *   The field name.
    *
    * @return string[]
    *   A list of identifiers.
@@ -119,43 +184,17 @@ class NodeHelper {
     $result = db_query('SELECT o.ding_entity_id FROM {ting_object} o WHERE o.tid in (:ids)', [':ids' => $ids]);
     $identifiers = $result->fetchCol();
 
-    // Filter out any non "basis" identifiers.
-    $identifiers = array_filter($identifiers, function ($identifier) {
-      return preg_match('/-basis:/', $identifier);
-    });
-
     return array_values($identifiers);
   }
 
   /**
-   * Load a ting object by identifier.
-   *
-   * @param string $identifier
-   *   Ting identifier.
-   *
-   * @return \TingEntity|null
-   *   The ting object if any.
-   */
-  public function loadTingObject($identifier) {
-    if (!empty($identifier)) {
-      $entity_type = 'ting_object';
-      $query = new EntityFieldQuery();
-      $query
-        ->entityCondition('entity_type', $entity_type)
-        ->propertyCondition('ding_entity_id', $identifier);
-      $result = $query->execute();
-
-      if (isset($result[$entity_type])) {
-        $entities = entity_load($entity_type, array_keys($result[$entity_type]));
-        return reset($entities);
-      }
-    }
-
-    return NULL;
-  }
-
-  /**
    * Get a ting identifier from a url.
+   *
+   * @param string $url
+   *   The url.
+   *
+   * @return string|null
+   *   The identifier if any.
    */
   public function getTingIdentifierFromUrl($url) {
     return preg_match('@/object/(?P<identifier>.+)$@', $url, $matches) ? urldecode($matches['identifier']) : NULL;
@@ -186,43 +225,20 @@ class NodeHelper {
   }
 
   /**
-   * Load a single node of a specific type by nid.
-   *
-   * @param string $node_type
-   *   The node type.
-   * @param int $nid
-   *   The node id.
-   *
-   * @return bool|mixed|null
-   *   The node if any.
-   */
-  public function loadNode($node_type, $nid) {
-    $entity_type = self::ENTITY_TYPE_NODE;
-    $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
-      ->entityCondition('bundle', $node_type)
-      ->propertyCondition('status', NODE_PUBLISHED)
-      ->entityCondition('entity_id', $nid);
-    $result = $query->execute();
-
-    return isset($result[$entity_type][$nid]) ? node_load($nid) : NULL;
-  }
-
-  /**
    * Load nodes ordered by specified order of node ids.
    *
-   * @param $nids
+   * @param array $nids
    *   The node ids.
+   * @param int $status
+   *   The optional node status.
    *
-   * @return
+   * @return array
    *   An array of node objects indexed by nid.
    */
   public function loadNodes(array $nids, $status = NODE_PUBLISHED) {
     $entity_type = self::ENTITY_TYPE_NODE;
     $query = new EntityFieldQuery();
-    $query
-      ->entityCondition('entity_type', $entity_type)
+    $query->entityCondition('entity_type', $entity_type)
       ->propertyCondition('status', $status)
       ->entityCondition('entity_id', $nids + [0]);
     $result = $query->execute();
@@ -234,6 +250,16 @@ class NodeHelper {
     return $nodes;
   }
 
+  /**
+   * Sort a list of items (typically a list of nodes) by id.
+   *
+   * @param objects[] $items
+   *   The items.
+   * @param array $ids
+   *   The ids to sort by.
+   * @param string $id_key
+   *   The optional id key in the items.
+   */
   public static function sortByIds(array &$items, array $ids, $id_key = 'nid') {
     // Order by index in $nids.
     uasort($items, function ($a, $b) use ($ids, $id_key) {
@@ -257,6 +283,14 @@ class NodeHelper {
 
   /**
    * Get theme type.
+   *
+   * @param string $contentType
+   *   The content type.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.u2ztxyfu4egy
+   *
+   * @return string
+   *   The theme type.
    */
   public function getThemeType($contentType) {
     return isset(self::$themeTypes[$contentType]) ? self::$themeTypes[$contentType] : 'theme';

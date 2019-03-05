@@ -4,7 +4,6 @@ namespace Drupal\ereol_app_feeds\Controller;
 
 use Drupal\ereol_app_feeds\Feed\CategoriesFeed;
 use Drupal\ereol_app_feeds\Feed\FrontPageFeed;
-use Drupal\ereol_app_feeds\Feed\ParagraphsFeed;
 use Drupal\ereol_app_feeds\Feed\ThemesFeed;
 
 /**
@@ -13,7 +12,7 @@ use Drupal\ereol_app_feeds\Feed\ThemesFeed;
 class DefaultController {
 
   /**
-   * Render frontpage data.
+   * Render front page data.
    */
   public function frontpage() {
     $feed = new FrontPageFeed();

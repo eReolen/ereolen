@@ -8,10 +8,10 @@ use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 /**
  * Abstract feed.
  */
-class AbstractFeed {
+abstract class AbstractFeed {
 
   /**
-   * The node helper;
+   * The node helper.
    *
    * @var \Drupal\ereol_app_feeds\Helper\NodeHelper
    */
@@ -30,5 +30,13 @@ class AbstractFeed {
     $this->nodeHelper = new NodeHelper();
     $this->paragraphHelper = new ParagraphHelper();
   }
+
+  /**
+   * Get feed data.
+   *
+   * @return array
+   *   The feed data.
+   */
+  abstract public function getData();
 
 }

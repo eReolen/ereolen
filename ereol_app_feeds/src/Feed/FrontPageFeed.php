@@ -5,24 +5,33 @@ namespace Drupal\ereol_app_feeds\Feed;
 use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 
 /**
- * Frontpage helper.
+ * Class FrontPageFeed.
+ *
+ * @package Drupal\ereol_app_feeds\Feed
  */
 class FrontPageFeed extends AbstractFeed {
   const NODE_TYPE_INSPIRATION = 'inspiration';
 
   /**
-   * {@inheritdoc}
+   * Get front page ids from app feed settings.
    *
-   * Load only paragraphs on "inspiration" pages.
+   * @return array
+   *   The front page ids.
    */
   public static function getFrontPageIds() {
-    $value = ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'frontpage_ids', []);
+    $value = _ereol_app_feeds_variable_get('ereol_app_feeds_frontpage', 'frontpage_ids', []);
 
     return array_filter(array_values($value));
   }
 
   /**
-   * Get frontpage data.
+   * Get front page feed data.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.12un1qdppa6x
+   * for details on the feed structure.
+   *
+   * @return array
+   *   The feed data.
    */
   public function getData() {
     $frontPageIds = self::getFrontPageIds();
@@ -42,6 +51,14 @@ class FrontPageFeed extends AbstractFeed {
 
   /**
    * Get carousels.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.51b3v5z38ank
+   *
+   * @return array
+   *   The carousels data.
    */
   private function getCarousels(array $paragraphIds) {
     return $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_ALIAS_CAROUSEL, $paragraphIds);
@@ -49,6 +66,14 @@ class FrontPageFeed extends AbstractFeed {
 
   /**
    * Get themes.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.vpgrki5b8gg
+   *
+   * @return array
+   *   The themes data.
    */
   private function getThemes(array $paragraphIds) {
     $themes = $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_ALIAS_THEME_LIST, $paragraphIds);
@@ -63,14 +88,15 @@ class FrontPageFeed extends AbstractFeed {
   }
 
   /**
-   * Get links.
-   */
-  private function getLinks(array $paragraphIds) {
-    return $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_ALIAS_LINK, $paragraphIds);
-  }
-
-  /**
    * Get reviews.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.qh5qjlx68dde
+   *
+   * @return array
+   *   The reviews data.
    */
   private function getReviews(array $paragraphIds) {
     return $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_REVIEW, $paragraphIds);
@@ -78,6 +104,14 @@ class FrontPageFeed extends AbstractFeed {
 
   /**
    * Get editors.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.isl1hf5mbnf
+   *
+   * @return array
+   *   The editors data.
    */
   protected function getEditors(array $paragraphIds) {
     $data = [];
@@ -97,6 +131,14 @@ class FrontPageFeed extends AbstractFeed {
 
   /**
    * Get videos.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.aw3cqhhwfwa0
+   *
+   * @return array
+   *   The videos data.
    */
   private function getVideos(array $paragraphIds) {
     // Wrap all videos in a fake list element.
@@ -125,6 +167,14 @@ class FrontPageFeed extends AbstractFeed {
 
   /**
    * Get audio.
+   *
+   * @param array $paragraphIds
+   *   The paragraph ids.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.awje1hlhr91
+   *
+   * @return array
+   *   The audio data.
    */
   private function getAudios(array $paragraphIds) {
     // Wrap all videos audio samples in a fake list element.

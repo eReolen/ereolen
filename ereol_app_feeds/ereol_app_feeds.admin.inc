@@ -8,27 +8,35 @@
 use Drupal\ereol_app_feeds\Feed\FrontPageFeed;
 
 /**
- * Admin page.
+ * The administration form for this module.
+ *
+ * @param array $form
+ *   The form input.
+ * @param array $form_state
+ *   The state of the form.
+ *
+ * @return array
+ *   The finished form.
  */
-function ereol_app_feeds_admin_form() {
-  $form = [];
-
+function ereol_app_feeds_admin_form(array $form, array &$form_state) {
   $inspiration_pages = [];
-  $options = [];
+  $inspiration_pages_options = [];
 
-  $query = new EntityFieldQuery();
-  $query
-    ->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'inspiration')
-    ->propertyCondition('status', NODE_PUBLISHED)
-    ->propertyOrderBy('title');
+  $form['#theme'] = 'ereol_app_feeds_admin_form';
+
+  // Find all inspiration pages.
+  $query = db_select('node', 'n')
+    ->condition('type', 'inspiration')
+    ->condition('status', NODE_PUBLISHED)
+    ->fields('n', ['nid', 'title']);
   $result = $query->execute();
-  if (isset($result['node'])) {
-    $inspiration_pages = node_load_multiple(array_keys($result['node']));
-    $options = array_combine(array_keys($inspiration_pages), array_map(function ($node) {
-       return $node->title;
-    }, $inspiration_pages));
+  foreach ($result as $record) {
+    $inspiration_pages[$record->nid] = $record;
   }
+
+  $inspiration_pages_options = array_combine(array_keys($inspiration_pages), array_map(function ($node) {
+    return $node->title;
+  }, $inspiration_pages));
 
   $group_name = 'ereol_app_feeds_frontpage';
   $form[$group_name] = [
@@ -41,7 +49,7 @@ function ereol_app_feeds_admin_form() {
     '#type' => 'checkboxes',
     '#title' => t('Front pages'),
     '#default_value' => FrontPageFeed::getFrontPageIds(),
-    '#options' => $options,
+    '#options' => $inspiration_pages_options,
     '#multiple' => TRUE,
     '#description' => t('Frontpages used in feeds'),
     '#required' => TRUE,
@@ -50,7 +58,7 @@ function ereol_app_feeds_admin_form() {
   $form[$group_name]['link_button_text'] = [
     '#type' => 'textfield',
     '#title' => t('Link button text'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'link_button_text'),
+    '#default_value' => _ereol_app_feeds_variable_get($group_name, 'link_button_text'),
     '#description' => t('Link button text'),
     '#required' => TRUE,
   ];
@@ -58,7 +66,7 @@ function ereol_app_feeds_admin_form() {
   $form[$group_name]['theme_list_max_length'] = [
     '#type' => 'textfield',
     '#title' => t('Max number of themes in lists'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'theme_list_max_length', 6),
+    '#default_value' => _ereol_app_feeds_variable_get($group_name, 'theme_list_max_length', 6),
     '#element_validate' => ['element_validate_integer_positive'],
     '#description' => t('The maximum number of themes in theme lists'),
     '#required' => TRUE,
@@ -67,7 +75,7 @@ function ereol_app_feeds_admin_form() {
   $form[$group_name]['max_news_count'] = [
     '#type' => 'textfield',
     '#title' => t('Max number items in latest news'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'max_news_count', 6),
+    '#default_value' => _ereol_app_feeds_variable_get($group_name, 'max_news_count', 6),
     '#element_validate' => ['element_validate_integer_positive'],
     '#description' => t('The maximum number of items in the latest news list'),
     '#required' => TRUE,
@@ -84,12 +92,19 @@ function ereol_app_feeds_admin_form() {
   ];
 
   $form[$group_name][$field_name]['#tree'] = TRUE;
-  $default_values = array_map(function ($node) {
-    return [];
-  }, $inspiration_pages);
-  $default_values = ereol_app_feeds_variable_get($group_name, $field_name, $default_values);
-  $max_weight = max(10, count($inspiration_pages));
-  foreach ($default_values as $nid => $data) {
+
+  // Get info on pages that have been included in the feed.
+  $category_feed_pages = _ereol_app_feeds_variable_get($group_name, $field_name);
+  if (NULL === $category_feed_pages) {
+    // If no pages info can be found, use an empty array for each page.
+    $category_feed_pages = array_map(function ($node) {
+      return [];
+    }, $inspiration_pages);
+  }
+
+  // The max weight used when sorting pages.
+  $max_weight = count($inspiration_pages);
+  foreach ($category_feed_pages as $nid => $data) {
     $node = $inspiration_pages[$nid];
     $form[$group_name][$field_name][$nid] = [
       'name' => [
@@ -121,7 +136,7 @@ function ereol_app_feeds_admin_form() {
   $form[$group_name]['max_number_of_items'] = [
     '#type' => 'textfield',
     '#title' => t('Max number of themes'),
-    '#default_value' => ereol_app_feeds_variable_get($group_name, 'max_number_of_items', 50),
+    '#default_value' => _ereol_app_feeds_variable_get($group_name, 'max_number_of_items', 50),
     '#element_validate' => ['element_validate_integer_positive'],
     '#description' => t('The maximum number of themes'),
     '#required' => TRUE,
@@ -130,7 +145,6 @@ function ereol_app_feeds_admin_form() {
   $form['ereol_app_feeds_feeds'] = [
     '#type' => 'fieldset',
     '#title' => t('Feeds'),
-
     'content' => [
       '#markup' => implode('', [
         '<ul>',
@@ -143,14 +157,11 @@ function ereol_app_feeds_admin_form() {
     ],
   ];
 
-  $form['actions'] = ['#type' => 'actions'];
-  $form['actions']['submit'] = ['#type' => 'submit', '#value' => t('Save Changes')];
-
-  return $form;
+  return system_settings_form($form);
 }
 
 /**
- * Theme callback for the ereol_app_feeds_admin_form form.
+ * Default theme function for ereol_app_feeds_admin_form.
  */
 function theme_ereol_app_feeds_admin_form($variables) {
   $form = $variables['form'];
@@ -199,7 +210,18 @@ function theme_ereol_app_feeds_admin_form($variables) {
   return drupal_render_children($form);
 }
 
-function ereol_app_feeds_admin_form_submit($form, &$form_state) {
+/**
+ * Validate handler for the administration form.
+ *
+ * Sort 'ereol_app_feeds_category' array by weight before it's saved to the
+ * database in the submit handler.
+ *
+ * @param array $form
+ *   The form input.
+ * @param array $form_state
+ *   The state of the form.
+ */
+function ereol_app_feeds_admin_form_validate($form, &$form_state) {
   $items = &$form_state['values']['ereol_app_feeds_category']['page_ids'];
   foreach ($items as &$item) {
     if (1 !== $item['included']) {
@@ -210,6 +232,4 @@ function ereol_app_feeds_admin_form_submit($form, &$form_state) {
   uasort($items, function ($a, $b) {
     return $a['weight'] - $b['weight'];
   });
-
-  system_settings_form_submit($form, $form_state);
 }

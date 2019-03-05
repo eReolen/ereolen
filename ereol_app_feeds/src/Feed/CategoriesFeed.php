@@ -7,11 +7,19 @@ use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 
 /**
  * Categories feed.
+ *
+ * @package Drupal\ereol_app_feeds\Feed
  */
 class CategoriesFeed extends AbstractFeed {
 
   /**
-   * Get feed data.
+   * Get categories feed data.
+   *
+   * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#heading=h.r3okoat4q87f
+   * for details on the feed structure.
+   *
+   * @return array
+   *   The feed data.
    */
   public function getData() {
     $data = [];
@@ -46,10 +54,16 @@ class CategoriesFeed extends AbstractFeed {
     return $data;
   }
 
+  /**
+   * Get the nodes to include in the categories feed.
+   *
+   * @return array
+   *   The nodes.
+   */
   private function getNodes() {
     $group_name = 'ereol_app_feeds_category';
     $field_name = 'page_ids';
-    $pages = ereol_app_feeds_variable_get($group_name, $field_name, []);
+    $pages = _ereol_app_feeds_variable_get($group_name, $field_name, []);
     $included = array_filter($pages, function ($page) {
       return isset($page['included']) && 1 === $page['included'];
     });
