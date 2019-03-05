@@ -20,6 +20,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -30,6 +31,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -40,6 +42,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -52,6 +55,7 @@ class DefaultController {
     $data = $feed->getData($nids, $type);
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
