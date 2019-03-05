@@ -151,6 +151,7 @@ function ereol_app_feeds_admin_form(array $form, array &$form_state) {
         '<li>' . l(t('Frontpage'), '/app/feed/frontpage') . '</li>',
         '<li>' . l(t('Themes'), '/app/feed/themes') . '</li>',
         '<li>' . l(t('Categories'), '/app/feed/categories') . '</li>',
+        '<li>' . l(t('Overdrive mapping'), '/app/feed/overdrive/mapping') . '</li>',
         '</ul>',
       ]),
     ],
