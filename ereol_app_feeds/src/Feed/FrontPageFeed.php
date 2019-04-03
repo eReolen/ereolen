@@ -40,7 +40,7 @@ class FrontPageFeed extends AbstractFeed {
     $data = [
       'carousels' => $this->getCarousels($paragraphIds),
       'themes' => $this->getThemes($paragraphIds),
-      'reviews' => $this->getReviews($paragraphIds),
+      'reviews' => $this->getReviews(),
       'editor' => $this->getEditors($paragraphIds),
       'videos' => $this->getVideos($paragraphIds),
       'audio' => $this->getAudios($paragraphIds),
@@ -90,16 +90,13 @@ class FrontPageFeed extends AbstractFeed {
   /**
    * Get reviews.
    *
-   * @param array $paragraphIds
-   *   The paragraph ids.
-   *
    * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.qh5qjlx68dde
    *
    * @return array
    *   The reviews data.
    */
-  private function getReviews(array $paragraphIds) {
-    return $this->paragraphHelper->getParagraphsData(ParagraphHelper::PARAGRAPH_REVIEW, $paragraphIds);
+  private function getReviews() {
+    return $this->paragraphHelper->getReviewList(5);
   }
 
   /**
