@@ -10,6 +10,27 @@
 function ereol_inspiration_field_default_field_bases() {
   $field_bases = array();
 
+  // Exported field_base: 'field_category_query'.
+  $field_bases['field_category_query'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_category_query',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'profile2_private' => FALSE,
+    ),
+    'translatable' => 0,
+    'type' => 'text_long',
+  );
+
   // Exported field_base: 'field_inspiration_paragraphs'.
   $field_bases['field_inspiration_paragraphs'] = array(
     'active' => 1,

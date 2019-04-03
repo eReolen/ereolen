@@ -40,7 +40,12 @@ class CategoriesFeed extends AbstractFeed {
               'title' => $wrapper->field_picked_title->value(),
               'type' => 'sub_category',
               'query' => ParagraphHelper::VALUE_NONE,
-              'attachment' => isset($paragraphData['list']) ? $paragraphData['list'] : ParagraphHelper::VALUE_NONE,
+              'attachment' => !empty($paragraphData['list'])
+              ? [
+                'view' => 'scroll',
+                'elements' => $paragraphData['list'],
+              ]
+              : ParagraphHelper::VALUE_NONE,
             ];
             break;
 
@@ -62,10 +67,14 @@ class CategoriesFeed extends AbstractFeed {
       }
 
       if (!empty($subcategories)) {
+        $wrapper = entity_metadata_wrapper('node', $node);
+
         $data[] = [
           'title' => $node->title,
           'type' => 'category',
-          'query' => ParagraphHelper::VALUE_NONE,
+          'query' => !empty($wrapper->field_category_query->value())
+          ? $wrapper->field_category_query->value()
+          : ParagraphHelper::VALUE_NONE,
           'subcategories' => $subcategories,
         ];
       }
