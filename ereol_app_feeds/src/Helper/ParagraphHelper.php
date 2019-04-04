@@ -484,24 +484,24 @@ class ParagraphHelper {
       'guid' => $this->getGuid($paragraph),
       'type' => 'review_list',
       'view' => $this->getView($paragraph),
-      'list' => $this->getReviewList($paragraph),
+      'list' => $this->getReviewList(),
     ];
   }
 
   /**
    * Get review list.
    *
-   * @param \ParagraphsItemEntity $paragraph
-   *   The paragraph.
+   * @param int $count
+   *   The number of reviews.
    *
    * @see https://docs.google.com/document/d/1lJ3VPAJf7DAbBWAQclRHfcltzZefUG3iGCec-z97KlA/edit?ts=5c4ef9d5#bookmark=id.i6m7t7hau5bo
    *
    * @return array
    *   The review list data.
    */
-  private function getReviewList(\ParagraphsItemEntity $paragraph) {
+  public function getReviewList($count = 1) {
     $list = [];
-    if ($reviews = reol_review_get_random_reviews()) {
+    if ($reviews = reol_review_get_random_reviews(NULL, $count)) {
       foreach ($reviews as $review) {
         // @var \TingEntity $ting
         $ting = $review->ting_entity;
@@ -558,7 +558,7 @@ class ParagraphHelper {
       'type' => $this->getType($paragraph),
       'view' => $this->getView($paragraph),
       'videos' => $videos,
-      'reviews' => $this->getReviewList($paragraph),
+      'reviews' => $this->getReviewList(),
       'links' => $links,
       'editor' => $editor,
     ];
