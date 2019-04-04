@@ -36,11 +36,18 @@ class CategoriesFeed extends AbstractFeed {
         switch ($paragraph->bundle()) {
           case ParagraphHelper::PARAGRAPH_PICKED_ARTICLE_CAROUSEL:
             $paragraphData = $this->paragraphHelper->getParagraphData($paragraph);
+            $attachment = ParagraphHelper::VALUE_NONE;
+            if (!empty($paragraphData['list'])) {
+              $attachment = [
+                'view' => 'scroll',
+                'elements' => $paragraphData['list'],
+              ];
+            }
             $subcategories[] = [
               'title' => $wrapper->field_picked_title->value(),
               'type' => 'sub_category',
               'query' => ParagraphHelper::VALUE_NONE,
-              'attachment' => isset($paragraphData['list']) ? $paragraphData['list'] : ParagraphHelper::VALUE_NONE,
+              'attachment' => $attachment,
             ];
             break;
 
@@ -62,10 +69,15 @@ class CategoriesFeed extends AbstractFeed {
       }
 
       if (!empty($subcategories)) {
+        $wrapper = entity_metadata_wrapper('node', $node);
+        $query = ParagraphHelper::VALUE_NONE;
+        if (!empty($wrapper->field_category_query->value())) {
+          $query = $wrapper->field_category_query->value();
+        }
         $data[] = [
           'title' => $node->title,
           'type' => 'category',
-          'query' => ParagraphHelper::VALUE_NONE,
+          'query' => $query,
           'subcategories' => $subcategories,
         ];
       }
