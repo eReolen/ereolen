@@ -6,7 +6,16 @@
  */
 
 /**
- * Migrate frontpage feed settings to hierarchical settings.
+ * Implements hook_uninstall().
+ */
+function ereol_app_feeds_uninstall() {
+  variable_del('ereol_app_feeds_frontpage');
+  variable_del('ereol_app_feeds_category');
+  variable_del('ereol_app_feeds_themes');
+}
+
+/**
+ * Migrate front page feed settings to hierarchical settings.
  */
 function ereol_app_feeds_update_7101() {
   $variable_names = [

@@ -4,7 +4,6 @@ namespace Drupal\ereol_app_feeds\Controller;
 
 use Drupal\ereol_app_feeds\Feed\CategoriesFeed;
 use Drupal\ereol_app_feeds\Feed\FrontPageFeed;
-use Drupal\ereol_app_feeds\Feed\ParagraphsFeed;
 use Drupal\ereol_app_feeds\Feed\ThemesFeed;
 
 /**
@@ -13,13 +12,14 @@ use Drupal\ereol_app_feeds\Feed\ThemesFeed;
 class DefaultController {
 
   /**
-   * Render frontpage data.
+   * Render front page data.
    */
   public function frontpage() {
     $feed = new FrontPageFeed();
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -30,6 +30,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -40,6 +41,7 @@ class DefaultController {
     $data = $feed->getData();
 
     drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
@@ -52,6 +54,24 @@ class DefaultController {
     $data = $feed->getData($nids, $type);
 
     drupal_json_output($data);
+    drupal_exit();
+  }
+
+  /**
+   * Render Overdrive mappings.
+   */
+  public function overdriveMapping() {
+    $triggers = overdrive_triggers_load();
+
+    $data = array_map(function ($trigger) {
+      return [
+        'trigger' => $trigger['search_trigger'],
+        'query' => $trigger['search_query'],
+      ];
+    }, $triggers);
+
+    drupal_json_output($data);
+    drupal_exit();
   }
 
   /**
