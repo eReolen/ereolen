@@ -93,17 +93,22 @@ function ereol_app_feeds_admin_form(array $form, array &$form_state) {
 
   $form[$group_name][$field_name]['#tree'] = TRUE;
 
-  // Get info on pages that have been included in the feed.
-  $category_feed_pages = _ereol_app_feeds_variable_get($group_name, $field_name);
-  if (NULL === $category_feed_pages) {
-    // If no pages info can be found, use an empty array for each page.
-    $category_feed_pages = array_map(function ($node) {
-      return [];
-    }, $inspiration_pages);
-  }
-
   // The max weight used when sorting pages.
   $max_weight = count($inspiration_pages);
+
+  // Get info on pages that have been included in the feed.
+  $category_feed_pages = _ereol_app_feeds_variable_get($group_name, $field_name, []);
+
+  // Add any new/missing inspiration pages to category feed pages.
+  foreach ($inspiration_pages as $nid => $page) {
+    if (!isset($category_feed_pages[$nid])) {
+      $category_feed_pages[$nid] = [
+        'included' => 0,
+        'weight' => $max_weight,
+      ];
+    }
+  }
+
   foreach ($category_feed_pages as $nid => $data) {
     $node = $inspiration_pages[$nid];
     $form[$group_name][$field_name][$nid] = [
