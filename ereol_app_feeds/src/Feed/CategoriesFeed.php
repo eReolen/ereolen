@@ -39,12 +39,13 @@ class CategoriesFeed extends AbstractFeed {
             $attachment = ParagraphHelper::VALUE_NONE;
             if (!empty($paragraphData['list'])) {
               $attachment = [
-                'view' => 'scroll',
+                'view' => ParagraphHelper::VIEW_DOTTED,
                 'elements' => $paragraphData['list'],
               ];
             }
             $subcategories[] = [
               'title' => $wrapper->field_picked_title->value(),
+              'view' => ParagraphHelper::VIEW_SCROLL,
               'type' => 'sub_category',
               'query' => ParagraphHelper::VALUE_NONE,
               'attachment' => $attachment,
@@ -76,6 +77,7 @@ class CategoriesFeed extends AbstractFeed {
         }
         $data[] = [
           'title' => $node->title,
+          'guid' => $node->nid,
           'type' => 'category',
           'query' => $query,
           'subcategories' => $subcategories,
