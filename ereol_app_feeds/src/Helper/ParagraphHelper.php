@@ -521,7 +521,14 @@ class ParagraphHelper {
       }
     }
 
-    return $list;
+    return [
+      [
+        'guid' => self::VALUE_NONE,
+        'type' => 'review_list',
+        'view' => self::VIEW_DOTTED,
+        'list' => $list,
+      ],
+    ];
   }
 
   /**
