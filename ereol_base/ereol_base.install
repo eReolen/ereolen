@@ -69,3 +69,32 @@ function ereol_base_update_7107() {
 function ereol_base_update_7108() {
   module_enable(array('reol_widget'), TRUE);
 }
+
+/**
+ * Enable and configure appbanners.
+ */
+function ereol_base_update_7109() {
+  module_enable(array('appbanners'), TRUE);
+
+  // Default variable values.
+  $variables = array(
+    'appbanners_android_app_id' => 'dk.redia.eReolen',
+    'appbanners_android_icon' => '/sites/all/themes/orwell/images/favicon/play-store-icon-192.png',
+    'appbanners_android_name' => 'eReolen app',
+    'appbanners_android_short_name' => 'eReolen app',
+
+    // Include banner on all pages.
+    'appbanners_pages' => '*',
+    'appbanners_visibility' => 'include',
+  );
+
+  // Get iOS app id.
+  if ($app_id = variable_get('reol_base_itunes_app_id')) {
+    $variables['appbanners_ios_app_id'] = $app_id;
+    variable_del('reol_base_itunes_app_id');
+  }
+
+  foreach ($variables as $name => $value) {
+    variable_set($name, $value);
+  }
+}
