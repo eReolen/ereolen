@@ -280,26 +280,6 @@ function ereol_frontend_default_search_api_server() {
             "type" : "list\\u003Cinteger\\u003E",
             "boost" : "1.0"
           },
-          "node:field_ding_library_fax_number" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "node:field_ding_library_lead" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "node:field_ding_library_mail" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
-          "node:field_ding_library_phone_number" : {
-            "table" : "search_api_db_default_multiple_index_text",
-            "type" : "text",
-            "boost" : "1.0"
-          },
           "node:field_ding_group_lead" : {
             "table" : "search_api_db_default_multiple_index_text",
             "type" : "text",
@@ -320,12 +300,6 @@ function ereol_frontend_default_search_api_server() {
           "user:status" : {
             "table" : "search_api_db_default_multiple_index",
             "column" : "user_status",
-            "type" : "integer",
-            "boost" : "1.0"
-          },
-          "user:profile_ding_staff_profile" : {
-            "table" : "search_api_db_default_multiple_index",
-            "column" : "user_profile_ding_staff_profile",
             "type" : "integer",
             "boost" : "1.0"
           },

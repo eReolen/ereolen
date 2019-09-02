@@ -534,7 +534,7 @@ search/ting
     $pane->panel = 'branding';
     $pane->type = 'reol_profile_link';
     $pane->subtype = 'reol_profile_link';
-    $pane->shown = TRUE;
+    $pane->shown = FALSE;
     $pane->access = array();
     $pane->configuration = array(
       'override_title' => 1,
@@ -814,32 +814,6 @@ search/ting
     $pane->uuid = '42da6d6c-e8e4-49b8-89d6-35c1f48aa665';
     $display->content['new-42da6d6c-e8e4-49b8-89d6-35c1f48aa665'] = $pane;
     $display->panels['header'][1] = 'new-42da6d6c-e8e4-49b8-89d6-35c1f48aa665';
-    $pane = new stdClass();
-    $pane->pid = 'new-407ab43a-dfc4-49ea-a537-292b9d04c95c';
-    $pane->panel = 'header';
-    $pane->type = 'block';
-    $pane->subtype = 'user-login';
-    $pane->shown = TRUE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'override_title' => 1,
-      'override_title_text' => '',
-      'override_title_heading' => 'h2',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array(
-      'css_id' => '',
-      'css_class' => 'main-login-form',
-    );
-    $pane->extras = array();
-    $pane->position = 2;
-    $pane->locks = array();
-    $pane->uuid = '407ab43a-dfc4-49ea-a537-292b9d04c95c';
-    $display->content['new-407ab43a-dfc4-49ea-a537-292b9d04c95c'] = $pane;
-    $display->panels['header'][2] = 'new-407ab43a-dfc4-49ea-a537-292b9d04c95c';
   $display->hide_title = PANELS_TITLE_NONE;
   $display->title_pane = '0';
   $handler->conf['display'] = $display;

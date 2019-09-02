@@ -43,13 +43,13 @@ function ereol_frontend_views_default_views() {
   $handler->display->display_options['pager']['options']['tags']['last'] = 'sidste »';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'fields';
-  /* Opførsel ved ingen resultater: Global: Ufiltreret tekst */
+  /* No results behavior: Global: Unfiltered text */
   $handler->display->display_options['empty']['area_text_custom']['id'] = 'area_text_custom';
   $handler->display->display_options['empty']['area_text_custom']['table'] = 'views';
   $handler->display->display_options['empty']['area_text_custom']['field'] = 'area_text_custom';
   $handler->display->display_options['empty']['area_text_custom']['empty'] = TRUE;
   $handler->display->display_options['empty']['area_text_custom']['content'] = '<span>No items found in your search.</span>';
-  /* Felt: Indhold: Rendered Indholdselement */
+  /* Field: Content: Rendered Node */
   $handler->display->display_options['fields']['rendered_entity']['id'] = 'rendered_entity';
   $handler->display->display_options['fields']['rendered_entity']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['rendered_entity']['field'] = 'rendered_entity';
@@ -59,7 +59,7 @@ function ereol_frontend_views_default_views() {
   $handler->display->display_options['fields']['rendered_entity']['display'] = 'view';
   $handler->display->display_options['fields']['rendered_entity']['view_mode'] = 'teaser';
   $handler->display->display_options['fields']['rendered_entity']['bypass_access'] = 0;
-  /* Kontekstuelt filter: Søg: Fulltext search */
+  /* Contextual filter: Search: Fulltext search */
   $handler->display->display_options['arguments']['search_api_views_fulltext']['id'] = 'search_api_views_fulltext';
   $handler->display->display_options['arguments']['search_api_views_fulltext']['table'] = 'search_api_index_ereol_index';
   $handler->display->display_options['arguments']['search_api_views_fulltext']['field'] = 'search_api_views_fulltext';
@@ -90,6 +90,7 @@ function ereol_frontend_views_default_views() {
     t('<span>No items found in your search.</span>'),
     t('Alle'),
     t('Content pane'),
+    t('more'),
     t('View panes'),
   );
   $export['ereol_search'] = $view;
