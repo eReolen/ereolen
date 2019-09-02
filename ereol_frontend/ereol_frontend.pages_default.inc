@@ -530,66 +530,6 @@ search/ting
     $display->content['new-2703a01e-83e1-4344-aa75-91d3ba70f2ff'] = $pane;
     $display->panels['branding'][1] = 'new-2703a01e-83e1-4344-aa75-91d3ba70f2ff';
     $pane = new stdClass();
-    $pane->pid = 'new-8c79c7df-e311-4af4-965f-50d239f6ecec';
-    $pane->panel = 'branding';
-    $pane->type = 'reol_profile_link';
-    $pane->subtype = 'reol_profile_link';
-    $pane->shown = FALSE;
-    $pane->access = array();
-    $pane->configuration = array(
-      'override_title' => 1,
-      'override_title_text' => '',
-      'override_title_heading' => 'h2',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 2;
-    $pane->locks = array();
-    $pane->uuid = '8c79c7df-e311-4af4-965f-50d239f6ecec';
-    $display->content['new-8c79c7df-e311-4af4-965f-50d239f6ecec'] = $pane;
-    $display->panels['branding'][2] = 'new-8c79c7df-e311-4af4-965f-50d239f6ecec';
-    $pane = new stdClass();
-    $pane->pid = 'new-76338aa5-3ee9-4256-9414-eab9979db07b';
-    $pane->panel = 'content';
-    $pane->type = 'page_tabs';
-    $pane->subtype = 'page_tabs';
-    $pane->shown = TRUE;
-    $pane->access = array(
-      'plugins' => array(
-        2 => array(
-          'name' => 'path_visibility',
-          'settings' => array(
-            'visibility_setting' => '1',
-            'paths' => 'user/*',
-          ),
-          'context' => 'empty',
-          'not' => TRUE,
-        ),
-      ),
-      'logic' => 'and',
-    );
-    $pane->configuration = array(
-      'type' => 'both',
-      'id' => 'tabs',
-      'override_title' => 1,
-      'override_title_text' => '',
-    );
-    $pane->cache = array();
-    $pane->style = array(
-      'settings' => NULL,
-    );
-    $pane->css = array();
-    $pane->extras = array();
-    $pane->position = 0;
-    $pane->locks = array();
-    $pane->uuid = '76338aa5-3ee9-4256-9414-eab9979db07b';
-    $display->content['new-76338aa5-3ee9-4256-9414-eab9979db07b'] = $pane;
-    $display->panels['content'][0] = 'new-76338aa5-3ee9-4256-9414-eab9979db07b';
-    $pane = new stdClass();
     $pane->pid = 'new-1769a64d-2cbe-490d-87aa-a2c3ee082997';
     $pane->panel = 'content';
     $pane->type = 'page_messages';
