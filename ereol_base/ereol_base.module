@@ -36,6 +36,15 @@ function ereol_base_preprocess_menu_link(&$variables) {
       $element['#localized_options']['attributes']['class'][] = 'user-logged-in-link';
     }
   }
+
+  if (module_exists('ding_adgangsplatformen')) {
+    // Rewrite login links if adgangsplatformen is enabled.
+    if (isset($element['#original_link']['menu_name']) && $element['#original_link']['menu_name'] == 'main-menu') {
+      if ($element['#href'] == 'login/nojs') {
+        $element['#href'] = DING_ADGANGSPLATFORMEN_LOGIN_URL;
+      }
+    }
+  }
 }
 
 /**
