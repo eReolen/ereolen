@@ -547,11 +547,11 @@ search/ting
       'css_class' => 'system-messages',
     );
     $pane->extras = array();
-    $pane->position = 1;
+    $pane->position = 0;
     $pane->locks = '';
     $pane->uuid = '1769a64d-2cbe-490d-87aa-a2c3ee082997';
     $display->content['new-1769a64d-2cbe-490d-87aa-a2c3ee082997'] = $pane;
-    $display->panels['content'][1] = 'new-1769a64d-2cbe-490d-87aa-a2c3ee082997';
+    $display->panels['content'][0] = 'new-1769a64d-2cbe-490d-87aa-a2c3ee082997';
     $pane = new stdClass();
     $pane->pid = 'new-bae52ec8-286d-435c-8d38-eb2e157996ac';
     $pane->panel = 'content';
@@ -569,11 +569,36 @@ search/ting
     );
     $pane->css = array();
     $pane->extras = array();
-    $pane->position = 2;
+    $pane->position = 1;
     $pane->locks = array();
     $pane->uuid = 'bae52ec8-286d-435c-8d38-eb2e157996ac';
     $display->content['new-bae52ec8-286d-435c-8d38-eb2e157996ac'] = $pane;
-    $display->panels['content'][2] = 'new-bae52ec8-286d-435c-8d38-eb2e157996ac';
+    $display->panels['content'][1] = 'new-bae52ec8-286d-435c-8d38-eb2e157996ac';
+    $pane = new stdClass();
+    $pane->pid = 'new-316c75f0-d5d5-4412-a187-5a1e2739765d';
+    $pane->panel = 'content';
+    $pane->type = 'page_tabs';
+    $pane->subtype = 'page_tabs';
+    $pane->shown = TRUE;
+    $pane->access = array();
+    $pane->configuration = array(
+      'type' => 'both',
+      'id' => 'tabs',
+      'override_title' => 1,
+      'override_title_text' => '',
+      'override_title_heading' => 'h2',
+    );
+    $pane->cache = array();
+    $pane->style = array(
+      'settings' => NULL,
+    );
+    $pane->css = array();
+    $pane->extras = array();
+    $pane->position = 2;
+    $pane->locks = array();
+    $pane->uuid = '316c75f0-d5d5-4412-a187-5a1e2739765d';
+    $display->content['new-316c75f0-d5d5-4412-a187-5a1e2739765d'] = $pane;
+    $display->panels['content'][2] = 'new-316c75f0-d5d5-4412-a187-5a1e2739765d';
     $pane = new stdClass();
     $pane->pid = 'new-4637ed6a-8c15-46bb-ae3b-4de4089e860d';
     $pane->panel = 'content';
