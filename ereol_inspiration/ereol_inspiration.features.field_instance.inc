@@ -203,6 +203,7 @@ function ereol_inspiration_field_default_field_instances() {
         'newsletter_signup' => 'newsletter_signup',
         'picked_article_carousel' => 'picked_article_carousel',
         'recommended_material' => -1,
+        'newsletter_signup' => 'newsletter_signup',
         'review' => -1,
         'spotlight_box' => 'spotlight_box',
         'video' => -1,
@@ -231,7 +232,7 @@ function ereol_inspiration_field_default_field_instances() {
       'module' => 'paragraphs',
       'settings' => array(),
       'type' => 'paragraphs_embed',
-      'weight' => 7,
+      'weight' => 5,
     ),
   );
 
@@ -241,7 +242,7 @@ function ereol_inspiration_field_default_field_instances() {
   t('App feed image');
   t('Category query');
   t('Elementer');
-  t('Søgestreng for hovedkategorien');
+  t('Query for the main category');
 
   return $field_instances;
 }
