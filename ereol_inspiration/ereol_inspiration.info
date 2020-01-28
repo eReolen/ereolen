@@ -28,7 +28,6 @@ features[field_instance][] = node-inspiration-field_app_feed_color
 features[field_instance][] = node-inspiration-field_app_feed_image
 features[field_instance][] = node-inspiration-field_category_query
 features[field_instance][] = node-inspiration-field_inspiration_paragraphs
-features[image][] = app_feed_image
 features[node][] = inspiration
 features[variable][] = comment_anonymous_inspiration
 features[variable][] = comment_default_mode_inspiration
