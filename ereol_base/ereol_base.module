@@ -77,4 +77,12 @@ function ereol_base_field_default_field_instances_alter(&$fields) {
       'weight' => 6,
     ];
   }
+
+  $fields['ting_object-ting_object-ting_series']['display']['search_result'] = [
+    'label' => 'hidden',
+    'module' => 'reol_base',
+    'settings' => array(),
+    'type' => 'reol_base_series',
+    'weight' => 3,
+  ];
 }
