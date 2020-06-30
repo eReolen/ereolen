@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * ereol_author_portrait.features.inc

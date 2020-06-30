@@ -176,7 +176,7 @@ function theme_ereol_app_feeds_admin_form($variables) {
 
   $group_name = 'ereol_app_feeds_category';
   foreach (element_children($form[$group_name]['page_ids']) as $id) {
-    $form[$group_name]['page_ids'][$id]['weight']['#attributes']['class'] = [$group_name.'-item-weight'];
+    $form[$group_name]['page_ids'][$id]['weight']['#attributes']['class'] = [$group_name . '-item-weight'];
 
     // We are now ready to add each element of our $form data to the $rows
     // array, so that they end up as individual table cells when rendered
@@ -210,7 +210,7 @@ function theme_ereol_app_feeds_admin_form($variables) {
     ]),
   ];
 
-  drupal_add_tabledrag($table_id, 'order', 'sibling', $group_name.'-item-weight');
+  drupal_add_tabledrag($table_id, 'order', 'sibling', $group_name . '-item-weight');
 
   return drupal_render_children($form);
 }
