@@ -226,7 +226,7 @@ function theme_ereol_app_feeds_admin_form($variables) {
  * @param array $form_state
  *   The state of the form.
  */
-function ereol_app_feeds_admin_form_validate($form, &$form_state) {
+function ereol_app_feeds_admin_form_validate(array $form, array &$form_state) {
   $items = &$form_state['values']['ereol_app_feeds_category']['page_ids'];
   foreach ($items as &$item) {
     if (1 !== $item['included']) {
