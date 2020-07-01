@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_article.views_default.inc

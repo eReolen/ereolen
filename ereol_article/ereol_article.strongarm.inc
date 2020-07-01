@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_article.strongarm.inc
