@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_video.views_default.inc

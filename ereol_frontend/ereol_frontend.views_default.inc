@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_frontend.views_default.inc
