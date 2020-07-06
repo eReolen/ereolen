@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_page.features.field_base.inc
