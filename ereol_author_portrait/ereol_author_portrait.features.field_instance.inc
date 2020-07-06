@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * ereol_author_portrait.features.field_instance.inc
