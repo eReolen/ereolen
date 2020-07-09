@@ -1,0 +1,126 @@
+<?php
+/**
+ * @file
+ * Prepare site for ereolen support module.
+ */
+
+/**
+ * Setup terms and vocabularies during install.
+ */
+function ereolen_support_install() {
+  // Define product list.
+  $product_terms =[
+    'eReolen app'
+  ];
+  $vocabulary = new stdClass();
+  $vocabulary->name = 'Ereolen support form products';
+  $vocabulary->machine_name = "ereolen_support_product";
+  $vocabulary->description = t('List of products used in support form');
+  $vocabulary->module = 'taxonomy';
+
+  taxonomy_vocabulary_save($vocabulary);
+  $vid = $vocabulary->vid;
+  _ereolen_support_create_terms($product_terms, $vid);
+
+  // Define problem list.
+  $problem_terms = [
+    'Log ind/Log ud',
+    'Søgning',
+    'Lån og aflevering',
+    'Streaming',
+    'Download',
+    'Reservering',
+    'Sidetal og bogmærker',
+    'Fejlbeskeder',
+    'Manglende titel i serie',
+    'Fejl i titel',
+    'Andet',
+
+  ];
+  $vocabulary = new stdClass();
+  $vocabulary->name = 'Ereolen support form problems';
+  $vocabulary->machine_name = "ereolen_support_problem";
+  $vocabulary->description = t('List of problems used in support form');
+  $vocabulary->module = 'taxonomy';
+
+  taxonomy_vocabulary_save($vocabulary);
+  $vid = $vocabulary->vid;
+  _ereolen_support_create_terms($problem_terms, $vid);
+
+  // Define device list.
+  $device_terms = [
+    'Desktop/Laptop computer',
+    'Tablet',
+    'Mobiltelefon',
+    'Andet'
+  ];
+  $vocabulary = new stdClass();
+  $vocabulary->name = 'Ereolen support form devices';
+  $vocabulary->machine_name = "ereolen_support_device";
+  $vocabulary->description = t('List of devices used in support form');
+  $vocabulary->module = 'taxonomy';
+
+  taxonomy_vocabulary_save($vocabulary);
+  $vid = $vocabulary->vid;
+  _ereolen_support_create_terms($device_terms, $vid);
+}
+
+/**
+ * Create terms programmatically.
+ *
+ * @param array $termnames
+ *   A list of term names to add to a vocabulary.
+ * @param $vid
+ *   The vocabulary id.
+ */
+function _ereolen_support_create_terms($termnames, $vid) {
+  foreach ($termnames as $termname) {
+    // Create terms.
+    $newterm = new stdClass();
+    $newterm->name = $termname;
+    $newterm->vid = $vid;
+    $newterm->parent = 0;
+    taxonomy_term_save($newterm);
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function ereolen_support_schema() {
+  $schema['ereolen_support_errors'] = array(
+    'description' => 'Table for errors during support form submit',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for an entry',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'timestamp' => array(
+        'description' => 'The time of the error',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'request' => array(
+        'description' => 'The request sent to Jira',
+        'type' => 'varchar',
+        'length' => 2048,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'not null' => TRUE,
+        'size' => 'big',
+        'description' => 'Serialized array of data array that resulted in error',
+      ),
+    ),
+    'primary key' => array(
+      'id',
+    ),
+  );
+  return $schema;
+}
