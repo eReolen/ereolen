@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * ereol_frontend.strongarm.inc
