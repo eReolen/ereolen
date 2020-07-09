@@ -17,8 +17,9 @@
  * @throws \Exception
  */
 function _ereolen_support_search_jira_user($user, $form_state) {
+  $form_email = $form_state['values']['ereolen_support_email'];
   $requestParts = _ereolen_support_get_request_parts('GET');
-  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $user->mail, $requestParts['options']);
+  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
   $resultArray = json_decode($result->data);
   _ereolen_support_log_error($result);
 
@@ -26,7 +27,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
   // multiple results.
   if(!empty($resultArray)) {
     foreach ($resultArray as $jiraUser) {
-      if($jiraUser->name == $user->mail) {
+      if($jiraUser->name == $form_email) {
         // If user is deactivated in Jira we need to activate it.
         if ($jiraUser->active == false) {
           $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
@@ -53,10 +54,11 @@ function _ereolen_support_search_jira_user($user, $form_state) {
  * @throws \Exception
  */
 function _ereolen_support_create_jira_user($user, $form_state) {
+  $form_email = $form_state['values']['ereolen_support_email'];
   $data = [
-    'name' => $user->mail,
-    'emailAddress' => $user->mail,
-    'displayName' => $user->mail,
+    'name' => $form_email,
+    'emailAddress' => $form_email,
+    'displayName' => $form_email,
   ];
 
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
