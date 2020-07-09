@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * Add eReolen support.
+ */
+
+// Required to load form with fields.
+module_load_include('inc', 'ereolen_support', 'ereolen_support.form');
+
+/**
+ * Implements hook_menu().
+ */
+function ereolen_support_menu() {
+  $items['admin/config/ereolen_support'] = [
+    'title' => 'eReolen support',
+    'description' => 'Configuration for eReolen support form',
+    'position' => 'left',
+    'weight' => 0,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => ['alter ereolen support form fields'],
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  ];
+
+  $items['admin/config/ereolen_support/config'] = [
+    'title' => 'eReolen support configuration',
+    'description' => 'Administer eReolen support form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['ereolen_support_config_form'],
+    'access arguments' => ['alter ereolen support form fields'],
+    'file' => 'ereolen_support.admin.form.inc',
+  ];
+
+  $items['support-formular'] = [
+    'title' => 'eReolen support',
+    'description' => 'eReolen support form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['ereolen_support_form'],
+    'file' => 'ereolen_support.form.inc',
+    'access callback' => TRUE,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ereolen_support_permission() {
+  return array(
+    'administer ereolen support form' => array(
+      'title' => t('Administer ereolen support form'),
+    ),
+    'alter ereolen support form fields' => array(
+      'title' => t('Alter ereolen support form fields'),
+    ),
+  );
+}
+
+/**
+ * Fetch a drupal form.
+ *
+ * @param $id
+ *   The form id
+ *
+ * @return array|mixed
+ *   A form array.
+ */
+function _ereolen_support_retrieve_form($id) {
+  $form = drupal_get_form($id);
+  return $form;
+}
