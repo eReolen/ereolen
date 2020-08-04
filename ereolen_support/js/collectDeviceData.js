@@ -85,7 +85,7 @@
 
       deviceSelect.addEventListener('change', function(){
         // @todo Change comparison value when dropdown is defined.
-        if (productSelect.value == 'a') {
+        if (productSelect.options[productSelect.selectedIndex].text === 'eReolen app') {
           let deviceInput = document.getElementById('edit-ereolen-support-model');
           let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
           if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
