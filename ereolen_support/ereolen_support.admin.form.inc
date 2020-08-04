@@ -107,5 +107,19 @@ function ereolen_support_config_form($form, &$form_state) {
     }
   }
 
+  $form['publizon'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Publizon settings'),
+    '#group' => 'support_form',
+    '#collapsible' => FALSE,
+    '#access'=> user_access('administer ereolen support form')
+  );
+
+  $form['publizon']['publizon_support_email'] = array(
+    '#type' => 'emailfield',
+    '#title' => t('Publizon support email'),
+    '#default_value' => variable_get('publizon_support_email'),
+  );
+
   return system_settings_form($form);
 }

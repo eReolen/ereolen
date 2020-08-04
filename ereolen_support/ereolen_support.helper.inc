@@ -17,8 +17,9 @@
  * @throws \Exception
  */
 function _ereolen_support_search_jira_user($user, $form_state) {
+  $form_email = $form_state['values']['ereolen_support_email'];
   $requestParts = _ereolen_support_get_request_parts('GET');
-  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $user->mail, $requestParts['options']);
+  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
   $resultArray = json_decode($result->data);
   _ereolen_support_log_error($result);
 
@@ -26,7 +27,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
   // multiple results.
   if(!empty($resultArray)) {
     foreach ($resultArray as $jiraUser) {
-      if($jiraUser->name == $user->mail) {
+      if($jiraUser->name == $form_email) {
         // If user is deactivated in Jira we need to activate it.
         if ($jiraUser->active == false) {
           $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
@@ -53,10 +54,11 @@ function _ereolen_support_search_jira_user($user, $form_state) {
  * @throws \Exception
  */
 function _ereolen_support_create_jira_user($user, $form_state) {
+  $form_email = $form_state['values']['ereolen_support_email'];
   $data = [
-    'name' => $user->mail,
-    'emailAddress' => $user->mail,
-    'displayName' => $user->mail,
+    'name' => $form_email,
+    'emailAddress' => $form_email,
+    'displayName' => $form_email,
   ];
 
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
@@ -209,7 +211,7 @@ function _ereolen_support_create_select_list($vocab_machine_name) {
   if ($terms) {
     $list = [];
     foreach ($terms as $term) {
-      $list[$term->tid] = str_repeat('-', $term->depth) . $term->name;
+      $list[$term->name] = str_repeat('-', $term->depth) . $term->name;
     }
 
     return $list;
@@ -218,14 +220,33 @@ function _ereolen_support_create_select_list($vocab_machine_name) {
 }
 
 /**
+ * Set array keys as values for use in select list.
+ *
+ * @param $array
+ *  An array of values.
+ * @return array
+ *   An array with keys like values.
+ */
+function _ereolen_support_array_as_select($array) {
+  $list = [];
+  foreach ($array as $value) {
+    $list[$value] = $value;
+  }
+
+  return $list;
+}
+/**
  * Provide a support ID grabbed from Drupal user.
  *
- * @param \stdClass $user
- *   A drupal user.
- * @return null
+ * @return string|null
  */
-function _ereolen_support_get_support_id($user) {
-  // @todo If user is logged in provide a Support id.
+function _ereolen_support_get_support_id() {
+  if (user_is_logged_in() && isset($_SESSION['ding_user']['user']['data'])) {
+    $user_data = $_SESSION['ding_user']['user']['data'];
+    if (isset($user_data['support_id'])) {
+      return $user_data['support_id'];
+    }
+  }
   return NULL;
 }
 
