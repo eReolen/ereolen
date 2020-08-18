@@ -177,24 +177,24 @@ function _ereolen_support_get_request_parts($method_type, $data = []) {
   $encoded_auth = base64_encode($jiraUsername . ':' . $jiraPassword);
   $jira_api_path = variable_get('jira_domain') . '/rest/api/latest';
 
-  $options = array(
+  $options = [
     'method' => $method_type,
     'timeout' => 15, // Seconds.
-    'headers' => array(
+    'headers' => [
       'Content-Type' => 'application/json',
       'Authorization' => 'Basic '. $encoded_auth
-    ),
-  );
+    ],
+  ];
 
   // Add data variable to POST and PUT requests.
   if ($method_type == 'POST' || $method_type == 'PUT' ) {
     $options['data'] = json_encode($data);
   }
 
-  $requestParts = array(
+  $requestParts = [
     'jira_path' => $jira_api_path,
     'options' => $options
-  );
+  ];
 
   return $requestParts;
 }
@@ -266,11 +266,11 @@ function _ereolen_support_get_support_id() {
 function _ereolen_support_log_error($result) {
   if ($result->code !== '200' && $result->code !== '201') {
     $id = db_insert('ereolen_support_errors')
-      ->fields(array(
+      ->fields([
         'timestamp' => format_date(time()),
         'request' => $result->request,
         'data' => serialize($result->data),
-      ))->execute();
+      ])->execute();
     drupal_set_message(t('An error occurred. Your support issue was not registered.'), 'error');
   }
   else {

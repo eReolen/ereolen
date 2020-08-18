@@ -37,14 +37,14 @@ function ereolen_support_menu() {
  * Implements hook_permission().
  */
 function ereolen_support_permission() {
-  return array(
-    'administer ereolen support form' => array(
+  return [
+    'administer ereolen support form' => [
       'title' => t('Administer ereolen support form'),
-    ),
-    'alter ereolen support form fields' => array(
+    ],
+    'alter ereolen support form fields' => [
       'title' => t('Alter ereolen support form fields'),
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -69,15 +69,15 @@ function ereolen_support_mail($key, &$message, $params) {
  * Implements hook_theme().
  */
 function ereolen_support_theme($existing, $type, $theme, $path) {
-  return array(
-    'ereolen_support_mail_publizon' => array(
-      'variables' => array(
+  return [
+    'ereolen_support_mail_publizon' => [
+      'variables' => [
         'form_input' => NULL,
         'user' => NULL,
         'time' => NULL
-      ),
+      ],
       'template' => 'ereolen-support--mail-publizon',
       'path' => $path . '/templates/'
-    ),
-  );
+    ],
+  ];
 }
