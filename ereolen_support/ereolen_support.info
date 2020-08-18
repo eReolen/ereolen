@@ -4,3 +4,4 @@ core = 7.x
 package = eReolen
 dependencies[] = date_popup
 dependencies[] = elements
+dependencies[] = publizon

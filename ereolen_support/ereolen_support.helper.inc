@@ -211,7 +211,7 @@ function _ereolen_support_create_select_list($vocab_machine_name) {
   if ($terms) {
     $list = [];
     foreach ($terms as $term) {
-      $list[$term->tid] = str_repeat('-', $term->depth) . $term->name;
+      $list[$term->name] = str_repeat('-', $term->depth) . $term->name;
     }
 
     return $list;
@@ -220,14 +220,33 @@ function _ereolen_support_create_select_list($vocab_machine_name) {
 }
 
 /**
+ * Set array keys as values for use in select list.
+ *
+ * @param $array
+ *  An array of values.
+ * @return array
+ *   An array with keys like values.
+ */
+function _ereolen_support_array_as_select($array) {
+  $list = [];
+  foreach ($array as $value) {
+    $list[$value] = $value;
+  }
+
+  return $list;
+}
+/**
  * Provide a support ID grabbed from Drupal user.
  *
- * @param \stdClass $user
- *   A drupal user.
- * @return null
+ * @return string|null
  */
-function _ereolen_support_get_support_id($user) {
-  // @todo If user is logged in provide a Support id.
+function _ereolen_support_get_support_id() {
+  if (user_is_logged_in() && isset($_SESSION['ding_user']['user']['data'])) {
+    $user_data = $_SESSION['ding_user']['user']['data'];
+    if (isset($user_data['support_id'])) {
+      return $user_data['support_id'];
+    }
+  }
   return NULL;
 }
 

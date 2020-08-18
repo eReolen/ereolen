@@ -18,7 +18,6 @@ include_once 'ereolen_support.helper.inc';
  * @return mixed
  */
 function ereolen_support_form($form, &$form_state) {
-  global $user;
   $form['#attributes'] = array(
     'name' => 'ereolen_support_form',
     'class' => array('node-webform')
@@ -35,12 +34,11 @@ function ereolen_support_form($form, &$form_state) {
     ),
   );
 
-  // @todo libraries array.
-  $libraries = ['a' => '1', 'b' => '2'];
+  $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
   $form['ereolen_support_library'] = array(
     '#type' => 'select',
     '#title' => t('Library'),
-    '#options' => $libraries,
+    '#options' => _ereolen_support_array_as_select($libraries),
     '#description' => variable_get('ereolen_support_library_description'),
     '#required' => variable_get('ereolen_support_library_required'),
   );
@@ -64,7 +62,7 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Support ID'),
     '#description' => variable_get('ereolen_support_id_description'),
     '#required' => variable_get('ereolen_support_id_required'),
-    '#default_value' => _ereolen_support_get_support_id($user)
+    '#default_value' => _ereolen_support_get_support_id()
   );
 
   $form['ereolen_support_product'] = array(
@@ -148,20 +146,36 @@ function ereolen_support_form($form, &$form_state) {
  */
 function ereolen_support_form_submit($form, &$form_state) {
   global $user;
+
   // Check for and create user in Jira
   $jiraUser = _ereolen_support_search_jira_user($user, $form_state);
   if (!$jiraUser) {
     $jiraUser = _ereolen_support_create_jira_user($user, $form_state);
   }
 
+  // @todo switch between jira and email This functionality is awaiting customer.
+
+  // Sometimes send to publizon mail.
+  $language = $user->uid ? user_preferred_language($user) : language_default();
+  $headers = array(
+    'MIME-Version' => '1.0',
+    'Content-Type' => 'text/html; charset=UTF-8; format=flowed; delsp=yes',
+    'Content-Transfer-Encoding' => '8Bit',
+    'X-Mailer' => 'Drupal',
+  );
+
+  $mail_params = array(
+    'headers' => $headers,
+    'form_state' => $form_state
+  );
+
+  //drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
+
+  // Sometimes send to Jira.
   // Create issue in Jira.
   if (!empty($jiraUser)) {
     _ereolen_support_send_to_jira($form, $form_state, $jiraUser);
   }
-
-
-
 }
-
 
 
