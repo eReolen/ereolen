@@ -25,13 +25,14 @@ function _ereolen_support_search_jira_user($user, $form_state) {
 
   // Searches for matches in full name, username and email, so we may have
   // multiple results.
-  if(!empty($resultArray)) {
+  if (!empty($resultArray)) {
     foreach ($resultArray as $jiraUser) {
-      if($jiraUser->name == $form_email) {
+      if (is_object($jiraUser) && $jiraUser->name == $form_email) {
         // If user is deactivated in Jira we need to activate it.
         if ($jiraUser->active == false) {
           $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
         }
+
         return $jiraUser;
       }
     }
@@ -119,13 +120,14 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
       'issuetype' => [
         'id' => variable_get('jira_issue_type_id'),
       ],
-      'summary' => substr(preg_replace('/\s+/', ' ', trim($form_state['values']['ereolen_support_description'])), 0, 20),
+      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereolen_support_description']))), 0, 20),
       'description' => $form_state['values']['ereolen_support_description'],
       'reporter' => [
         'name' => $jiraUser->emailAddress,
       ],
     ],
   ];
+
   foreach ($form as $key => $element) {
     if(is_array($element)) {
       // Look for form fields.
@@ -135,13 +137,13 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
         // Make sure the config is set and has proper type.
         if (!empty($jira_field_id) && is_numeric($jira_field_id)) {
           // Add custom field to data array.
-          $data['fields']['customfield_' . $jira_field_id] = $form_state['values'][$key];
+          $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
           if($element['#type'] == 'select') {
             // Use Label as output from select lists.
-            $data['fields']['customfield_' . $jira_field_id] = $element['#options'][$form_state['values'][$key]];
+            $data['fields']['customfield_' . $jira_field_id] = check_plain($element['#options'][$form_state['values'][$key]]);
           }
           else {
-            $data['fields']['customfield_' . $jira_field_id] = $form_state['values'][$key];
+            $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
           }
         }
       }
@@ -177,7 +179,7 @@ function _ereolen_support_get_request_parts($method_type, $data = []) {
 
   $options = array(
     'method' => $method_type,
-    'timeout' => 15,
+    'timeout' => 15, // Seconds.
     'headers' => array(
       'Content-Type' => 'application/json',
       'Authorization' => 'Basic '. $encoded_auth
@@ -252,6 +254,9 @@ function _ereolen_support_get_support_id() {
 
 /**
  * Add an entry to the eReolen support error log.
+ * We use a separate error log for easier access to potential errors. This also
+ * allows for future development of tools for supporters to locate errors.
+ * @todo Cleanup and return value for fail/pass. Also rename function.
  *
  * @param \stdClass $result
  *   The result of a jira http request.

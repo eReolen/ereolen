@@ -16,12 +16,16 @@
  * @return mixed
  */
 function ereolen_support_config_form($form, &$form_state) {
+  // The types of field we allow building through a loop later on.
   $fieldTypesBuild = ['select', 'textfield', 'textarea', 'emailfield', 'date_popup'];
-  $frontendForm = _ereolen_support_retrieve_form('ereolen_support_form');
+
+  // The form array used in frontend to which we create form groups later on.
+  $frontendForm = drupal_get_form('ereolen_support_form');
 
   $form['support_form'] = array (
     '#type' => 'vertical_tabs',
   );
+
   $form['jira_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Jira settings'),
@@ -29,36 +33,43 @@ function ereolen_support_config_form($form, &$form_state) {
     '#collapsible' => FALSE,
     '#access'=> user_access('administer ereolen support form')
   );
+
   $form['field_config'] = array(
     '#type' => 'fieldset',
     '#title' => t('Field config'),
     '#group' => 'support_form',
     '#collapsible' => FALSE,
   );
+
+  // The domain of a jira installation.
   $form['jira_settings']['jira_domain'] = array(
     '#type' => 'textfield',
     '#title' => t('Jira domain'),
     '#default_value' => variable_get('jira_domain'),
   );
 
+  // A Jira username.
   $form['jira_settings']['jira_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Jira username'),
     '#default_value' => variable_get('jira_username'),
   );
 
+  // The jira users password.
   $form['jira_settings']['jira_password'] = array(
     '#type' => 'password',
     '#title' => t('Jira user password'),
     '#default_value' => variable_get('jira_password'),
   );
 
+  // The jira project id fetched from a jira project.
   $form['jira_settings']['jira_project_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Jira project id'),
     '#default_value' => variable_get('jira_project_id'),
   );
 
+  // The desired issue type id fetched from a jira project
   $form['jira_settings']['jira_issue_type_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Jira issue type id'),

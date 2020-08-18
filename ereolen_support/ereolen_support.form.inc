@@ -22,6 +22,8 @@ function ereolen_support_form($form, &$form_state) {
     'name' => 'ereolen_support_form',
     'class' => array('node-webform')
   );
+
+  $form['#attached'] = array();
   $form['#attached']['js'] = array(
     drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
     array(
@@ -91,7 +93,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_date'] = array(
     '#type' => 'date_popup',
     '#title' => t('Dato'),
-    '#date_format' => 'd/m/Y',
+    '#date_format' => array_pop(system_get_date_formats('ding_material_lists_date'))['format'],
     '#date_label_position' => 'none',
     '#description' => variable_get('ereolen_support_date_description'),
     '#required' => variable_get('ereolen_support_date_required')
@@ -145,6 +147,7 @@ function ereolen_support_form($form, &$form_state) {
  * @throws \Exception
  */
 function ereolen_support_form_submit($form, &$form_state) {
+
   global $user;
 
   // Check for and create user in Jira
@@ -177,5 +180,3 @@ function ereolen_support_form_submit($form, &$form_state) {
     _ereolen_support_send_to_jira($form, $form_state, $jiraUser);
   }
 }
-
-

@@ -12,18 +12,7 @@ module_load_include('inc', 'ereolen_support', 'ereolen_support.form');
  * Implements hook_menu().
  */
 function ereolen_support_menu() {
-  $items['admin/config/ereolen_support'] = [
-    'title' => 'eReolen support',
-    'description' => 'Configuration for eReolen support form',
-    'position' => 'left',
-    'weight' => 0,
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => ['alter ereolen support form fields'],
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
-  ];
-
-  $items['admin/config/ereolen_support/config'] = [
+  $items['admin/config/ereolen/support'] = [
     'title' => 'eReolen support configuration',
     'description' => 'Administer eReolen support form',
     'page callback' => 'drupal_get_form',
@@ -91,18 +80,4 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
       'path' => $path . '/templates/'
     ),
   );
-}
-
-/**
- * Fetch a drupal form.
- *
- * @param $id
- *   The form id
- *
- * @return array|mixed
- *   A form array.
- */
-function _ereolen_support_retrieve_form($id) {
-  $form = drupal_get_form($id);
-  return $form;
 }
