@@ -88,39 +88,41 @@ function _ereolen_support_create_terms($termnames, $vid) {
  * Implements hook_schema().
  */
 function ereolen_support_schema() {
-  $schema['ereolen_support_errors'] = array(
+  $schema['ereolen_support_errors'] = [
     'description' => 'Table for errors during support form submit',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
         'description' => 'The primary identifier for an entry',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'timestamp' => array(
+      ],
+      'timestamp' => [
         'description' => 'The time of the error',
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'request' => array(
+      ],
+      'request' => [
         'description' => 'The request sent to Jira',
         'type' => 'varchar',
         'length' => 2048,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'data' => array(
+      ],
+      'data' => [
         'type' => 'blob',
         'not null' => TRUE,
         'size' => 'big',
         'description' => 'Serialized array of data array that resulted in error',
-      ),
-    ),
-    'primary key' => array(
+      ],
+    ],
+    'primary key' => [
       'id',
-    ),
-  );
+    ],
+  ];
   return $schema;
 }
+
+// @todo hook_uninstall() to clean up.
