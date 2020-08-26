@@ -120,7 +120,7 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
       'issuetype' => [
         'id' => variable_get('jira_issue_type_id'),
       ],
-      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereolen_support_description']))), 0, 20),
+      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereolen_support_problem']))), 0, 20),
       'description' => $form_state['values']['ereolen_support_description'],
       'reporter' => [
         'name' => $jiraUser->emailAddress,
@@ -150,6 +150,14 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
     }
   }
 
+  // Set Jira customer request type.
+  // https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+  $data = _ereolen_support_set_request_type(
+    $data,
+    variable_get('jira_support_request_type_field_id'),
+    variable_get('jira_support_request_type_field_value')
+  );
+
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
@@ -170,12 +178,17 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
  *
  * @return array
  */
-function _ereolen_support_get_request_parts($method_type, $data = []) {
+  function _ereolen_support_get_request_parts($method_type, $data = [], $api = NULL) {
   $jiraUsername = variable_get('jira_username');
   $jiraPassword = variable_get('jira_password');
   // Jira requires base64_encode auth.
   $encoded_auth = base64_encode($jiraUsername . ':' . $jiraPassword);
-  $jira_api_path = variable_get('jira_domain') . '/rest/api/latest';
+  if ($api == 'servicedesk') {
+    $jira_api_path = variable_get('jira_domain') . '/rest/servicedeskapi';
+  }
+  else {
+    $jira_api_path = variable_get('jira_domain') . '/rest/api/latest';
+  }
 
   $options = [
     'method' => $method_type,
@@ -276,4 +289,24 @@ function _ereolen_support_log_error($result) {
   else {
     drupal_set_message(t('The form has been submitted.'));
   }
+}
+
+/**
+ * Set a Jira customer request type.
+ *
+ * @param array $data
+ *   An array of submitted data about to be sent to Jira.
+ * @param $customfield_id
+ *   The id of the Customer request type custom field.
+ * @param $request_type_value
+ *   The value of the request type format (project_key/requesttype_key) fetched
+ *   from db table "AO_54307E_VIEWPORTFORM", db column "KEY".
+ *   https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+ *
+ * @return mixed
+ *   An array of submitted data with requesttype.
+ */
+function _ereolen_support_set_request_type($data, $customfield_id, $request_type_value) {
+  $data['fields']['customfield_' . $customfield_id] = $request_type_value;
+  return $data;
 }

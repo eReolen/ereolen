@@ -93,7 +93,8 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_date'] = [
     '#type' => 'date_popup',
     '#title' => t('Dato'),
-    '#date_format' => array_pop(system_get_date_formats('ding_material_lists_date'))['format'],
+    '#date_format' => 'd/m/Y',
+    //'#date_format' => array_pop(system_get_date_formats('ding_material_lists_date'))['format'],
     '#date_label_position' => 'none',
     '#description' => variable_get('ereolen_support_date_description'),
     '#required' => variable_get('ereolen_support_date_required')
