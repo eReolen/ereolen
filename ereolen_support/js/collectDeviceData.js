@@ -11,17 +11,17 @@
         options: [],
         header: [navigator.platform, navigator.userAgent, navigator.appVersion, navigator.vendor, window.opera],
         dataos: [
-          { name: 'Windows Phone', value: 'Windows Phone', version: 'OS' },
-          { name: 'Windows', value: 'Win', version: 'NT' },
-          { name: 'iPhone', value: 'iPhone', version: 'OS' },
-          { name: 'iPad', value: 'iPad', version: 'OS' },
-          { name: 'Kindle', value: 'Silk', version: 'Silk' },
-          { name: 'Android', value: 'Android', version: 'Android' },
-          { name: 'PlayBook', value: 'PlayBook', version: 'OS' },
-          { name: 'BlackBerry', value: 'BlackBerry', version: '/' },
-          { name: 'Macintosh', value: 'Mac', version: 'OS X' },
-          { name: 'Linux', value: 'Linux', version: 'rv' },
-          { name: 'Palm', value: 'Palm', version: 'PalmOS' }
+          { name: 'Windows Phone', value: 'Windows Phone', version: 'OS', type: 'Mobiltelefon' },
+          { name: 'Windows', value: 'Win', version: 'NT', type: 'Desktop/Laptop computer' },
+          { name: 'iPhone', value: 'iPhone', version: 'OS', type: 'Mobiltelefon' },
+          { name: 'iPad', value: 'iPad', version: 'OS', type: 'Tablet' },
+          { name: 'Kindle', value: 'Silk', version: 'Silk', type: 'Andet' },
+          { name: 'Android', value: 'Android', version: 'Android', type: 'Mobiltelefon' },
+          { name: 'PlayBook', value: 'PlayBook', version: 'OS', type: 'Tablet'  },
+          { name: 'BlackBerry', value: 'BlackBerry', version: '/', type: 'Andet' },
+          { name: 'Macintosh', value: 'Mac', version: 'OS X', type: 'Desktop/Laptop computer' },
+          { name: 'Linux', value: 'Linux', version: 'rv', type: 'Desktop/Laptop computer' },
+          { name: 'Palm', value: 'Palm', version: 'PalmOS', type: 'Andet'  }
         ],
         databrowser: [
           { name: 'Chrome', value: 'Chrome', version: 'Chrome' },
@@ -71,7 +71,8 @@
               }
               return {
                 name: data[i].name,
-                version: parseFloat(version)
+                version: parseFloat(version),
+                type: data[i].type,
               };
             }
           }
@@ -84,16 +85,23 @@
       let productSelect = document.getElementById('edit-ereolen-support-product');
 
       deviceSelect.addEventListener('change', function(){
-        // @todo Change comparison value when dropdown is defined.
-        if (productSelect.options[productSelect.selectedIndex].text === 'eReolen app') {
-          let deviceInput = document.getElementById('edit-ereolen-support-model');
-          let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
-          if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
-            deviceInput.value = navigator.appVersion;
+        let selectedDeviceType = deviceSelect.options[deviceSelect.selectedIndex].text;
+        let deviceInput = document.getElementById('edit-ereolen-support-model');
+        let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
+        if (selectedDeviceType === e.os.type) {
+          // @todo Change comparison value when dropdown is defined.
+          if (productSelect.options[productSelect.selectedIndex].text === 'eReolen app') {
+            if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
+              deviceInput.value = navigator.appVersion;
+            }
+            if(document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
+              operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
+            }
           }
-          if(document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
-            operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
-          }
+        }
+        else {
+          deviceInput.value = '';
+          operatingSystemInput.value = '';
         }
       });
     }

@@ -3,10 +3,13 @@
 /**
  * @file
  * Contains helper functions for the support form.
+ *
+ * @todo Add hook_cron to clean up log after 30 days.
  */
 
 /**
- * Search for a drupal user email in Jira.
+ * Search for a drupal user email in Jira. We must make sure the email address
+ * is not in use before attempting to create a user from it.
  *
  * @param \stdClass $user
  *   A drupal user.
@@ -20,8 +23,13 @@ function _ereolen_support_search_jira_user($user, $form_state) {
   $form_email = $form_state['values']['ereolen_support_email'];
   $requestParts = _ereolen_support_get_request_parts('GET');
   $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
+
+  // Inspect result.
+  if(!_ereolen_support_result_confirmed($result)) {
+    return FALSE;
+  };
+
   $resultArray = json_decode($result->data);
-  _ereolen_support_log_error($result);
 
   // Searches for matches in full name, username and email, so we may have
   // multiple results.
@@ -29,6 +37,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
     foreach ($resultArray as $jiraUser) {
       if (is_object($jiraUser) && $jiraUser->name == $form_email) {
         // If user is deactivated in Jira we need to activate it.
+
         if ($jiraUser->active == false) {
           $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
         }
@@ -65,7 +74,11 @@ function _ereolen_support_create_jira_user($user, $form_state) {
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/user', $requestParts['options']);
-  _ereolen_support_log_error($result);
+
+  if(!_ereolen_support_result_confirmed($result)) {
+    return NULL;
+  }
+
   $userCreated = json_decode($result->data);
   if (!empty($userCreated)) {
     return $userCreated;
@@ -93,8 +106,9 @@ function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
   ];
   $requestParts = _ereolen_support_get_request_parts('PUT', $data);
   $result = drupal_http_request($requestParts['jira_path'] . '/user?username=' . $jiraUser->name, $requestParts['options']);
-  _ereolen_support_log_error($result);
-  $jiraUser = json_decode($result->data);
+  if(_ereolen_support_result_confirmed($result)){
+    $jiraUser = json_decode($result->data);
+  }
 
   return $jiraUser;
 }
@@ -108,6 +122,9 @@ function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
  *   The state of the support form.
  * @param \stdClass $jiraUser
  *   A user in Jira.
+ *
+ * @return object|null
+ *   The result of a create issue call to Jira or Null if the call failed.
  *
  * @throws \Exception
  */
@@ -161,7 +178,12 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
-  _ereolen_support_log_error($result);
+
+  if(_ereolen_support_result_confirmed($result)) {
+    return $result;
+  }
+
+  return NULL;
 }
 
 /**
@@ -250,6 +272,7 @@ function _ereolen_support_array_as_select($array) {
 
   return $list;
 }
+
 /**
  * Provide a support ID grabbed from Drupal user.
  *
@@ -269,14 +292,16 @@ function _ereolen_support_get_support_id() {
  * Add an entry to the eReolen support error log.
  * We use a separate error log for easier access to potential errors. This also
  * allows for future development of tools for supporters to locate errors.
- * @todo Cleanup and return value for fail/pass. Also rename function.
  *
  * @param \stdClass $result
  *   The result of a jira http request.
  *
+ * @return bool
+ *   Whether the result code implies success or failure.
+ *
  * @throws \Exception
  */
-function _ereolen_support_log_error($result) {
+function _ereolen_support_result_confirmed($result) {
   if ($result->code !== '200' && $result->code !== '201') {
     $id = db_insert('ereolen_support_errors')
       ->fields([
@@ -285,10 +310,11 @@ function _ereolen_support_log_error($result) {
         'data' => serialize($result->data),
       ])->execute();
     drupal_set_message(t('An error occurred. Your support issue was not registered.'), 'error');
+
+    return FALSE;
   }
-  else {
-    drupal_set_message(t('The form has been submitted.'));
-  }
+
+  return TRUE;
 }
 
 /**

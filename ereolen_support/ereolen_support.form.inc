@@ -3,6 +3,7 @@
 /**
  * @file
  * Add eReolen support form.
+ * @todo Add form validation to ensure no cpr numbers are added.
  */
 
 include_once 'ereolen_support.helper.inc';
@@ -152,9 +153,9 @@ function ereolen_support_form_submit($form, &$form_state) {
   global $user;
 
   // Check for and create user in Jira
-  $jiraUser = _ereolen_support_search_jira_user($user, $form_state);
-  if (!$jiraUser) {
-    $jiraUser = _ereolen_support_create_jira_user($user, $form_state);
+  $jira_user = _ereolen_support_search_jira_user($user, $form_state);
+  if (!$jira_user) {
+    $jira_user = _ereolen_support_create_jira_user($user, $form_state);
   }
 
   // @todo switch between jira and email This functionality is awaiting customer.
@@ -177,7 +178,10 @@ function ereolen_support_form_submit($form, &$form_state) {
 
   // Sometimes send to Jira.
   // Create issue in Jira.
-  if (!empty($jiraUser)) {
-    _ereolen_support_send_to_jira($form, $form_state, $jiraUser);
+  if (!empty($jira_user)) {
+    $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
+    if(!empty($jira_result)) {
+      drupal_set_message(t('We received your message. You may be contacted by a supporter. Thank you for improving eReolen.'), 'status');
+    }
   }
 }
