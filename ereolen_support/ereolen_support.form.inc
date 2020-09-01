@@ -7,6 +7,7 @@
  */
 
 include_once 'ereolen_support.helper.inc';
+include_once 'ereolen_support.cpr-checker.inc';
 
 /**
  * Create frontend form.
@@ -24,7 +25,9 @@ function ereolen_support_form($form, &$form_state) {
     'class' => ['node-webform']
   ];
 
-  $form['#attached'] = [];
+  $form['#attached']['css'] = [
+    drupal_get_path('module', 'ereolen_support') . '/css/styles.css'
+  ];
   $form['#attached']['js'] = [
     drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
     [
@@ -35,7 +38,28 @@ function ereolen_support_form($form, &$form_state) {
         ],
       ],
     ],
+    drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
+    [
+      'type' => 'setting'
+    ],
   ];
+
+  $form['ereolen_support_problem'] = [
+    '#type' => 'select',
+    '#title' => t('Problem'),
+    '#options' => _ereolen_support_create_select_list('ereolen_support_problem'),
+    '#description' => variable_get('ereolen_support_problem_description'),
+    '#required' => variable_get('ereolen_support_problem_required')
+  ];
+
+  $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
+  $problemValues = taxonomy_get_tree($vacabulary->vid);
+  $form['ereolen_support_help_text'] = array(
+    '#markup' => theme('ereolen_support_help_text', [
+      'problem_values' => $problemValues,
+    ]),
+  );
+
 
   $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
   $form['ereolen_support_library'] = [
@@ -50,7 +74,8 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Name'),
     '#description' => variable_get('ereolen_support_name_description'),
-    '#required' => variable_get('ereolen_support_name_required')
+    '#required' => variable_get('ereolen_support_name_required'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['ereolen_support_email'] = [
@@ -65,7 +90,35 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Support ID'),
     '#description' => variable_get('ereolen_support_id_description'),
     '#required' => variable_get('ereolen_support_id_required'),
-    '#default_value' => _ereolen_support_get_support_id()
+    '#default_value' => _ereolen_support_get_support_id(),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
+  ];
+
+  $form['ereolen_support_error_message'] = [
+    '#type' => 'textfield',
+    '#title' => t('Error message'),
+    '#description' => variable_get('ereolen_support_error_message_description'),
+    '#required' => variable_get('ereolen_support_error_message_required'),
+    '#default_value' => variable_get('ereolen_support_error_message'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
+  ];
+
+  $form['ereolen_support_login_method'] = [
+    '#type' => 'textfield',
+    '#title' => t('Login method'),
+    '#description' => variable_get('ereolen_support_login_method_description'),
+    '#required' => variable_get('ereolen_support_login_method_required'),
+    '#default_value' => variable_get('ereolen_support_login_method'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
+  ];
+
+  $form['ereolen_support_book_type'] = [
+    '#type' => 'textfield',
+    '#title' => t('Book type  '),
+    '#description' => variable_get('ereolen_support_book_type_description'),
+    '#required' => variable_get('ereolen_support_book_type_required'),
+    '#default_value' => variable_get('ereolen_support_book_type'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['ereolen_support_product'] = [
@@ -76,19 +129,12 @@ function ereolen_support_form($form, &$form_state) {
     '#required' => variable_get('ereolen_support_product_description_required')
   ];
 
-  $form['ereolen_support_problem'] = [
-    '#type' => 'select',
-    '#title' => t('Problem'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_problem'),
-    '#description' => variable_get('ereolen_support_problem_description'),
-    '#required' => variable_get('ereolen_support_problem_required')
-  ];
-
   $form['ereolen_support_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#description' => variable_get('ereolen_support_description_description'),
-    '#required' => variable_get('ereolen_support_description_required')
+    '#required' => variable_get('ereolen_support_description_required'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['ereolen_support_date'] = [
@@ -105,7 +151,8 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('What book does the problem concern?'),
     '#description' => variable_get('ereolen_support_book_title_description'),
-    '#required' => variable_get('ereolen_support_book_title_required')
+    '#required' => variable_get('ereolen_support_book_title_required'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['ereolen_support_device'] = [
@@ -120,14 +167,16 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('On what device model did you experience the problem?'),
     '#description' => variable_get('ereolen_support_model_description'),
-    '#required' => variable_get('ereolen_support_model_required')
+    '#required' => variable_get('ereolen_support_model_required'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['ereolen_support_operating_system'] = [
     '#type' => 'textfield',
     '#title' => t('On what operating system did you experience the problem?'),
     '#description' => variable_get('ereolen_support_operating_system_description'),
-    '#required' => variable_get('ereolen_support_model_operating_system')
+    '#required' => variable_get('ereolen_support_model_operating_system'),
+    '#element_validate' => array('_ereolen_support_check_cpr'),
   ];
 
   $form['submit_button'] = [
@@ -137,6 +186,7 @@ function ereolen_support_form($form, &$form_state) {
 
   return $form;
 }
+
 
 /**
  * Add a submit handler to the support form.
@@ -181,7 +231,7 @@ function ereolen_support_form_submit($form, &$form_state) {
   if (!empty($jira_user)) {
     $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
     if(!empty($jira_result)) {
-      drupal_set_message(t('We received your message. You may be contacted by a supporter. Thank you for improving eReolen.'), 'status');
+      drupal_set_message(variable_get('ereolen_support_submission_text'), 'status');
     }
   }
 }

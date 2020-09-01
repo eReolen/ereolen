@@ -135,6 +135,31 @@ function ereolen_support_config_form($form, &$form_state) {
     }
   }
 
+  $form['texts'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Form texts'),
+    '#group' => 'support_form',
+    '#collapsible' => FALSE,
+  ];
+
+  $form['texts']['ereolen_support_submission_text'] = [
+    '#type' => 'textfield',
+    '#title' => t('Support submission text'),
+    '#description' => t('The text displayed to the user when a form is submitted.'),
+    '#default_value' => variable_get('ereolen_support_submission_text'),
+  ];
+
+  $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
+  $problemValues = taxonomy_get_tree($vacabulary->vid);
+  foreach ($problemValues as $problemValue) {
+    $form['texts']['ereolen_support_problem_help_' . $problemValue->tid] = [
+      '#type' => 'textarea',
+      '#title' => t('Problem: "@problem" help text', array('@problem' => $problemValue->name)),
+      '#description' => t('The text displayed to the user when this problem is selected.'),
+      '#default_value' => variable_get('ereolen_support_problem_help_' . $problemValue->tid),
+    ];
+  }
+
   $form['publizon'] = [
     '#type' => 'fieldset',
     '#title' => t('Publizon settings'),

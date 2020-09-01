@@ -79,5 +79,12 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
       'template' => 'ereolen-support--mail-publizon',
       'path' => $path . '/templates/'
     ],
+    'ereolen_support_help_text' => [
+      'variables' => [
+        'problem_values' => NULL,
+      ],
+      'template' => 'ereolen-support--help-text',
+      'path' => $path . '/templates/'
+    ],
   ];
 }

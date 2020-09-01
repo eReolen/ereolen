@@ -176,7 +176,8 @@ function ereolen_support_uninstall() {
     'ereolen_support_operating_system_jira_field',
     'ereolen_support_problem_jira_field',
     'ereolen_support_product_jira_field',
-    'publizon_support_email'
+    'publizon_support_email',
+    'ereolen_support_submission_text'
   );
 
   // Grabbed from variable_del() to avoid clearing cache between each deletion.
