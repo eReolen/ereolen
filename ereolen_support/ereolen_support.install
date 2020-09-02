@@ -11,7 +11,12 @@ function ereolen_support_install() {
   if(empty(taxonomy_vocabulary_machine_name_load('ereolen_support_product'))) {
     // Define product list.
     $product_terms =[
-      'eReolen app'
+      'ereolen.dk',
+      'ereolengo.dk',
+      'ereolenglobal.dk',
+      'ereolen app',
+      'ereolen go app',
+      'Libby app'
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form products';
@@ -27,18 +32,14 @@ function ereolen_support_install() {
   if(empty(taxonomy_vocabulary_machine_name_load('ereolen_support_problem'))) {
     // Define problem list.
     $problem_terms = [
-      'Log ind/Log ud',
-      'Søgning',
-      'Lån og aflevering',
-      'Streaming',
+      'Log ind',
+      'Lån og reservationer',
+      'Læs og lyt',
       'Download',
-      'Reservering',
-      'Sidetal og bogmærker',
+      'Forespørgsel på titel',
       'Fejlbeskeder',
-      'Manglende titel i serie',
-      'Fejl i titel',
-      'Andet',
-
+      'Kvoter',
+      'Tekniske spørgsmål'
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form problems';
@@ -49,6 +50,40 @@ function ereolen_support_install() {
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
     _ereolen_support_create_terms($problem_terms, $vid);
+  }
+
+  if(empty(taxonomy_vocabulary_machine_name_load('ereolen_support_book_type'))) {
+    // Define book type list.
+    $book_type_terms = [
+      'Ebog',
+      'Lydbog'
+    ];
+    $vocabulary = new stdClass();
+    $vocabulary->name = 'Ereolen support form book types';
+    $vocabulary->machine_name = "ereolen_support_book_type";
+    $vocabulary->description = t('List of book types used in support form');
+    $vocabulary->module = 'taxonomy';
+
+    taxonomy_vocabulary_save($vocabulary);
+    $vid = $vocabulary->vid;
+    _ereolen_support_create_terms($book_type_terms, $vid);
+  }
+
+  if(empty(taxonomy_vocabulary_machine_name_load('ereolen_support_login_method'))) {
+    // Define book type list.
+    $login_method_terms = [
+      'Bibliotekslogin/Lånerkort',
+      'UniLogin'
+    ];
+    $vocabulary = new stdClass();
+    $vocabulary->name = 'Ereolen support form login methods';
+    $vocabulary->machine_name = "ereolen_support_login_method";
+    $vocabulary->description = t('List of login methods used in support form');
+    $vocabulary->module = 'taxonomy';
+
+    taxonomy_vocabulary_save($vocabulary);
+    $vid = $vocabulary->vid;
+    _ereolen_support_create_terms($login_method_terms, $vid);
   }
 
   if(empty(taxonomy_vocabulary_machine_name_load('ereolen_support_device'))) {

@@ -18,6 +18,8 @@ include_once 'ereolen_support.cpr-checker.inc';
  *   The state of the form.
  *
  * @return mixed
+ *
+ * @throws \Exception
  */
 function ereolen_support_form($form, &$form_state) {
   $form['#attributes'] = [
@@ -54,20 +56,10 @@ function ereolen_support_form($form, &$form_state) {
 
   $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
   $problemValues = taxonomy_get_tree($vacabulary->vid);
-  $form['ereolen_support_help_text'] = array(
+  $form['ereolen_support_help_text'] = [
     '#markup' => theme('ereolen_support_help_text', [
       'problem_values' => $problemValues,
     ]),
-  );
-
-
-  $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
-  $form['ereolen_support_library'] = [
-    '#type' => 'select',
-    '#title' => t('Library'),
-    '#options' => _ereolen_support_array_as_select($libraries),
-    '#description' => variable_get('ereolen_support_library_description'),
-    '#required' => variable_get('ereolen_support_library_required'),
   ];
 
   $form['ereolen_support_name'] = [
@@ -75,7 +67,7 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Name'),
     '#description' => variable_get('ereolen_support_name_description'),
     '#required' => variable_get('ereolen_support_name_required'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
   ];
 
   $form['ereolen_support_email'] = [
@@ -85,13 +77,49 @@ function ereolen_support_form($form, &$form_state) {
     '#required' => variable_get('ereolen_support_email_required')
   ];
 
+  $form['ereolen_support_date'] = [
+    '#type' => 'date_popup',
+    '#title' => t('Dato'),
+    '#date_format' => 'd/m/Y',
+    '#date_label_position' => 'none',
+    '#description' => variable_get('ereolen_support_date_description'),
+    '#required' => variable_get('ereolen_support_date_required'),
+  ];
+
+  $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
+  $form['ereolen_support_library'] = [
+    '#type' => 'select',
+    '#title' => t('Library'),
+    '#options' => _ereolen_support_array_as_select($libraries),
+    '#description' => variable_get('ereolen_support_library_description'),
+    '#required' => variable_get('ereolen_support_library_required'),
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Log ind'],
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
+  ];
+
   $form['ereolen_support_id'] = [
     '#type' => 'textfield',
     '#title' => t('Support ID'),
     '#description' => variable_get('ereolen_support_id_description'),
     '#required' => variable_get('ereolen_support_id_required'),
     '#default_value' => _ereolen_support_get_support_id(),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_error_message'] = [
@@ -99,26 +127,57 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Error message'),
     '#description' => variable_get('ereolen_support_error_message_description'),
     '#required' => variable_get('ereolen_support_error_message_required'),
-    '#default_value' => variable_get('ereolen_support_error_message'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_login_method'] = [
-    '#type' => 'textfield',
+    '#type' => 'select',
     '#title' => t('Login method'),
+    '#options' => _ereolen_support_create_select_list('ereolen_support_login_method'),
     '#description' => variable_get('ereolen_support_login_method_description'),
     '#required' => variable_get('ereolen_support_login_method_required'),
-    '#default_value' => variable_get('ereolen_support_login_method'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Log ind'],
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_book_type'] = [
-    '#type' => 'textfield',
-    '#title' => t('Book type  '),
+    '#type' => 'select',
+    '#title' => t('Book type'),
+    '#options' => _ereolen_support_create_select_list('ereolen_support_book_type'),
     '#description' => variable_get('ereolen_support_book_type_description'),
     '#required' => variable_get('ereolen_support_book_type_required'),
-    '#default_value' => variable_get('ereolen_support_book_type'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Forespørgsel på titel'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_product'] = [
@@ -126,7 +185,20 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Product'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_product'),
     '#description' => variable_get('ereolen_support_product_description'),
-    '#required' => variable_get('ereolen_support_product_description_required')
+    '#required' => variable_get('ereolen_support_product_description_required'),
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Log ind'],
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_description'] = [
@@ -134,17 +206,21 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Description'),
     '#description' => variable_get('ereolen_support_description_description'),
     '#required' => variable_get('ereolen_support_description_required'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
-  ];
-
-  $form['ereolen_support_date'] = [
-    '#type' => 'date_popup',
-    '#title' => t('Dato'),
-    '#date_format' => 'd/m/Y',
-    //'#date_format' => array_pop(system_get_date_formats('ding_material_lists_date'))['format'],
-    '#date_label_position' => 'none',
-    '#description' => variable_get('ereolen_support_date_description'),
-    '#required' => variable_get('ereolen_support_date_required')
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Log ind'],
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Forespørgsel på titel'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_book_title'] = [
@@ -152,7 +228,20 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('What book does the problem concern?'),
     '#description' => variable_get('ereolen_support_book_title_description'),
     '#required' => variable_get('ereolen_support_book_title_required'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Forespørgsel på titel'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_device'] = [
@@ -160,7 +249,16 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('What device did you use?'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_device'),
     '#description' => variable_get('ereolen_support_device_description'),
-    '#required' => variable_get('ereolen_support_device_required')
+    '#required' => variable_get('ereolen_support_device_required'),
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Download'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_model'] = [
@@ -168,7 +266,16 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('On what device model did you experience the problem?'),
     '#description' => variable_get('ereolen_support_model_description'),
     '#required' => variable_get('ereolen_support_model_required'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Download'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+        ],
+      ],
+    ],
   ];
 
   $form['ereolen_support_operating_system'] = [
@@ -176,7 +283,16 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('On what operating system did you experience the problem?'),
     '#description' => variable_get('ereolen_support_operating_system_description'),
     '#required' => variable_get('ereolen_support_model_operating_system'),
-    '#element_validate' => array('_ereolen_support_check_cpr'),
+    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Download'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+        ],
+      ],
+    ],
   ];
 
   $form['submit_button'] = [
