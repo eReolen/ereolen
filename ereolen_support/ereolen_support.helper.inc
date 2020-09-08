@@ -244,9 +244,9 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
  *  A vocabulary machine name.
  * @param bool $add_select
  *  If a - Select - option should be made available.
+ *
  * @return array
  *   A list of term names.
- *
  */
 function _ereolen_support_create_select_list($vocab_machine_name, $add_select = TRUE) {
   $vacabulary = taxonomy_vocabulary_machine_name_load($vocab_machine_name);
@@ -288,6 +288,7 @@ function _ereolen_support_array_as_select($array) {
  * Provide a support ID grabbed from Drupal user.
  *
  * @return string|null
+ *   If support id is found in session the id is returned else NULL
  */
 function _ereolen_support_get_support_id() {
   if (user_is_logged_in() && isset($_SESSION['ding_user']['user']['data'])) {
