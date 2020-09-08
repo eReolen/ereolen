@@ -115,14 +115,6 @@ function ereolen_support_config_form($form, &$form_state) {
           '#description' => t('Set a help text for the field in frontend')
         ];
 
-        // Build form field required.
-        $form['field_config'][$possibleField['#name'] . '_group'][$possibleField['#name'] . '_required'] = [
-          '#type' => 'checkbox',
-          '#title' => t('This field is required'),
-          '#default_value' => variable_get($possibleField['#name'] . '_required'),
-          '#description' => t('By checking this you make the field required i frontend.')
-        ];
-
         // Build form field jira field
         $form['field_config'][$possibleField['#name'] . '_group'][$possibleField['#name'] . '_jira_field'] = [
           '#type' => 'textfield',

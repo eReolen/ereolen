@@ -158,6 +158,11 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
           if($element['#type'] == 'select') {
             // Use Label as output from select lists.
             $data['fields']['customfield_' . $jira_field_id] = check_plain($element['#options'][$form_state['values'][$key]]);
+
+            // Strip '- Select -' values we don't want them in jira.
+            if($data['fields']['customfield_' . $jira_field_id] == t('- Select -')) {
+              $data['fields']['customfield_' . $jira_field_id] = '';
+            }
           }
           else {
             $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
@@ -239,14 +244,22 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
  *
  * @param string $vocab_machine_name
  *  A vocabulary machine name.
+ * @param bool $add_select
+ *  If a - Select - option should be made available.
  * @return array
  *   A list of term names.
+ *
  */
-function _ereolen_support_create_select_list($vocab_machine_name) {
+function _ereolen_support_create_select_list($vocab_machine_name, $add_select = TRUE) {
   $vacabulary = taxonomy_vocabulary_machine_name_load($vocab_machine_name);
   $terms = taxonomy_get_tree($vacabulary->vid);
   if ($terms) {
-    $list = [];
+    if ($add_select) {
+      $list['_none'] = t('- Select -');
+    } else {
+      $list = [];
+    }
+
     foreach ($terms as $term) {
       $list[$term->name] = str_repeat('-', $term->depth) . $term->name;
     }
@@ -335,4 +348,27 @@ function _ereolen_support_result_confirmed($result) {
 function _ereolen_support_set_request_type($data, $customfield_id, $request_type_value) {
   $data['fields']['customfield_' . $customfield_id] = $request_type_value;
   return $data;
+}
+
+/**
+ * Validate the required fields.
+ * Since form_states only validate frontend we need back end validation for the
+ * fields that are set as required with form_states.
+ *
+ * @param $element
+ *  The form element to check validation against.
+ *
+ * @param $form_state
+ *   The state of the form.
+ */
+function _ereolen_support_states_require_validate($element, $form_state) {
+  $required_field_key = key($element['#states']['visible']);
+  $required_field = explode('"', $required_field_key);
+  foreach ($element['#states']['required'][$required_field_key] as $field) {
+    if($form_state['values'][$required_field[1]] == $field['value']) {
+      if($form_state['values'][$element['#name']] == '' || $form_state['values'][$element['#name']] == '_none') {
+        form_set_error($element['#name'], $element['#title'].' is required.');
+      }
+    }
+  }
 }

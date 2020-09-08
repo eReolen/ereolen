@@ -65,7 +65,7 @@ class CategoriesFeed extends AbstractFeed {
             break;
 
           case ParagraphHelper::PARAGRAPH_SPOTLIGHT_BOX:
-            // @TODO: Do something clever with "author portraits"?
+            // @TODO: Do something cl$ever with "author portraits"?
         }
       }
 

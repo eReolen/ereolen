@@ -1,5 +1,5 @@
 (function () {
-  Drupal.behaviors.ereolenSupport = {
+  Drupal.behaviors.ereolenShowHelp = {
     attach: function (context, settings) {
       'use strict';
 

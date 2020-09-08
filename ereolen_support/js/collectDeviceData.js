@@ -3,7 +3,7 @@
  *   https://medium.com/creative-technology-concepts-code/detect-device-browser-and-version-using-javascript-8b511906745
  */
 (function () {
-  Drupal.behaviors.ereolenSupport = {
+  Drupal.behaviors.collectDeviceData = {
     attach: function (context, settings) {
       'use strict';
 
@@ -79,24 +79,19 @@
           return { name: 'unknown', version: 0 };
         }
       };
-
       let e = module.init();
       let deviceSelect = document.getElementById('edit-ereolen-support-device');
-      let productSelect = document.getElementById('edit-ereolen-support-product');
 
       deviceSelect.addEventListener('change', function(){
         let selectedDeviceType = deviceSelect.options[deviceSelect.selectedIndex].text;
         let deviceInput = document.getElementById('edit-ereolen-support-model');
         let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
         if (selectedDeviceType === e.os.type) {
-          // @todo Change comparison value when dropdown is defined.
-          if (productSelect.options[productSelect.selectedIndex].text === 'eReolen app') {
-            if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
-              deviceInput.value = navigator.appVersion;
-            }
-            if(document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
-              operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
-            }
+          if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
+            deviceInput.value = navigator.appVersion;
+          }
+          if(document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
+            operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
           }
         }
         else {
@@ -105,5 +100,5 @@
         }
       });
     }
-  }
+  };
 }());
