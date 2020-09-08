@@ -366,6 +366,7 @@ function ereolen_support_form($form, &$form_state) {
       '_ereolen_support_check_cpr',
       '_ereolen_support_states_require_validate'
     ],
+    '#maxlength' => 256
   ];
 
   $form['ereolen_support_operating_system'] = [
@@ -391,6 +392,7 @@ function ereolen_support_form($form, &$form_state) {
       '_ereolen_support_check_cpr',
       '_ereolen_support_states_require_validate'
     ],
+    '#maxlength' => 256
   ];
 
   $form['submit_button'] = [

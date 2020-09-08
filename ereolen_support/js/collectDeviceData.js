@@ -79,6 +79,7 @@
           return { name: 'unknown', version: 0 };
         }
       };
+
       let e = module.init();
       let deviceSelect = document.getElementById('edit-ereolen-support-device');
 
