@@ -3,8 +3,6 @@
 /**
  * @file
  * Contains helper functions for the support form.
- *
- * @todo Add hook_cron to clean up log after 30 days.
  */
 
 /**
