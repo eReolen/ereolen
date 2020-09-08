@@ -74,6 +74,7 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Email'),
     '#description' => variable_get('ereolen_support_email_description'),
     '#required' => TRUE,
+    '#default_value' => _ereolen_support_get_email(),
   ];
 
   $form['ereolen_support_date'] = [
@@ -110,6 +111,7 @@ function ereolen_support_form($form, &$form_state) {
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
     ],
+    '#default_value' => _ereolen_support_get_library(),
   ];
 
   $form['ereolen_support_id'] = [
@@ -133,7 +135,8 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr'
+      '_ereolen_support_check_cpr',
+      '_ereolen_support_support_id_validate'
     ]
   ];
 

@@ -88,3 +88,11 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_cron().
+ */
+function ereolen_support_cron() {
+  _ereolen_support_cleanup_errors();
+}
+

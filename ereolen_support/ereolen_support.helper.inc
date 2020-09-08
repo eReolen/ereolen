@@ -318,7 +318,7 @@ function _ereolen_support_result_confirmed($result) {
   if ($result->code !== '200' && $result->code !== '201') {
     $id = db_insert('ereolen_support_errors')
       ->fields([
-        'timestamp' => format_date(time()),
+        'timestamp' => format_date(time(), 'custom', 'U'),
         'request' => $result->request,
         'data' => serialize($result->data),
       ])->execute();
@@ -362,13 +362,80 @@ function _ereolen_support_set_request_type($data, $customfield_id, $request_type
  *   The state of the form.
  */
 function _ereolen_support_states_require_validate($element, $form_state) {
-  $required_field_key = key($element['#states']['visible']);
+  $required_field_key = key($element['#states']['required']);
   $required_field = explode('"', $required_field_key);
   foreach ($element['#states']['required'][$required_field_key] as $field) {
-    if($form_state['values'][$required_field[1]] == $field['value']) {
-      if($form_state['values'][$element['#name']] == '' || $form_state['values'][$element['#name']] == '_none') {
-        form_set_error($element['#name'], $element['#title'].' is required.');
+    if ($form_state['values'][$required_field[1]] == $field['value']) {
+      if ($form_state['values'][$element['#name']] == '' || $form_state['values'][$element['#name']] == '_none') {
+        form_set_error($element['#name'], $element['#title'] . ' is required.');
       }
     }
   }
+}
+
+/**
+ * Validate support id against exactly 5 characters
+ *
+ * @param $element
+ *  The form element to check validation against.
+ *
+ * @param $form_state
+ *   The state of the form.
+ */
+function _ereolen_support_support_id_validate($element, $form_state) {
+  $visible_field_key = key($element['#states']['visible']);
+    foreach ($element['#states']['visible'][$visible_field_key] as $field) {
+    if ($form_state['values']['ereolen_support_problem'] == $field['value']) {
+      if ($element['#value'] != '') {
+        // Assumes php mbstring extension enabled.
+        if (mb_strlen($element['#value']) != 5) {
+          form_set_error($element['#name'], $element['#title'].' should be 5 characters');
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Get library related to logged in user.
+ *
+ * @return string
+ *   The name of the library.
+ */
+function _ereolen_support_get_library() {
+  if (user_is_logged_in()) {
+    return publizon_get_library($_SESSION['ding_user']['user']['data']['retailer_id'])->library_name;
+  }
+  return '_none';
+}
+
+/**
+ * Get email related to logged in user.
+ *
+ * @return string
+ *   The user email.
+ */
+function _ereolen_support_get_email() {
+  if (user_is_logged_in()) {
+    $profile = profile2_load_by_user($GLOBALS['user']);
+    if($profile) {
+      $email = $profile['provider_publizon']->field_email['und'][0]['email'];
+      if(!empty($profile['provider_publizon']->field_email)) {
+        return $email;
+      }
+    }
+  }
+  return '';
+}
+
+/**
+ * Delete support error log entry after 30 days.
+ */
+function _ereolen_support_cleanup_errors() {
+  // 30 days.
+  $month_in_seconds = 2592000;
+  $now = format_date(time(), 'custom', 'U');
+  $deleted = db_delete('ereolen_support_errors')
+    ->condition('timestamp', $now - $month_in_seconds, '<')
+    ->execute();
 }
