@@ -88,10 +88,10 @@
         let deviceInput = document.getElementById('edit-ereolen-support-model');
         let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
         if (selectedDeviceType === e.os.type) {
-          if(document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
+          if (document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
             deviceInput.value = navigator.appVersion;
           }
-          if(document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
+          if (document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
             operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
           }
         }

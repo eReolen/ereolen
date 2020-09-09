@@ -96,9 +96,9 @@ function ereolen_support_config_form($form, &$form_state) {
   // Build field configuration from frontend form.
   foreach ($frontendForm as $key => $possibleField) {
     // Make sure the form entry is an array.
-    if(is_array($possibleField)) {
+    if (is_array($possibleField)) {
       // Make sure it's a field type.
-      if(in_array('#type', $possibleField) && in_array($possibleField['#type'], $fieldTypesBuild)) {
+      if (in_array('#type', $possibleField) && in_array($possibleField['#type'], $fieldTypesBuild)) {
         // Build fieldset
         $form['field_config'][$possibleField['#name'] . '_group'] = [
           '#type' => 'fieldset',

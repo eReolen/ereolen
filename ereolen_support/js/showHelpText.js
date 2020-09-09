@@ -1,3 +1,7 @@
+/**
+ * @file Show help text.
+ *   Show hide help texts depending on problem selected.
+ */
 (function () {
   Drupal.behaviors.ereolenShowHelp = {
     attach: function (context, settings) {

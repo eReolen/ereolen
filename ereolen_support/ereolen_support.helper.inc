@@ -23,7 +23,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
   $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
 
   // Inspect result.
-  if(!_ereolen_support_result_confirmed($result)) {
+  if (!_ereolen_support_result_confirmed($result)) {
     return FALSE;
   };
 
@@ -73,7 +73,7 @@ function _ereolen_support_create_jira_user($user, $form_state) {
 
   $result = drupal_http_request($requestParts['jira_path'] . '/user', $requestParts['options']);
 
-  if(!_ereolen_support_result_confirmed($result)) {
+  if (!_ereolen_support_result_confirmed($result)) {
     return NULL;
   }
 
@@ -104,7 +104,7 @@ function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
   ];
   $requestParts = _ereolen_support_get_request_parts('PUT', $data);
   $result = drupal_http_request($requestParts['jira_path'] . '/user?username=' . $jiraUser->name, $requestParts['options']);
-  if(_ereolen_support_result_confirmed($result)){
+  if (_ereolen_support_result_confirmed($result)){
     $jiraUser = json_decode($result->data);
   }
 
@@ -144,21 +144,21 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
   ];
 
   foreach ($form as $key => $element) {
-    if(is_array($element)) {
+    if (is_array($element)) {
       // Look for form fields.
-      if(strpos($key, 'ereolen_support') === 0) {
+      if (strpos($key, 'ereolen_support') === 0) {
         // Load config related to that field.
         $jira_field_id = variable_get($key . '_jira_field');
         // Make sure the config is set and has proper type.
         if (!empty($jira_field_id) && is_numeric($jira_field_id)) {
           // Add custom field to data array.
           $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
-          if($element['#type'] == 'select') {
+          if ($element['#type'] == 'select') {
             // Use Label as output from select lists.
             $data['fields']['customfield_' . $jira_field_id] = check_plain($element['#options'][$form_state['values'][$key]]);
 
             // Strip '- Select -' values we don't want them in jira.
-            if($data['fields']['customfield_' . $jira_field_id] == t('- Select -')) {
+            if ($data['fields']['customfield_' . $jira_field_id] == t('- Select -')) {
               $data['fields']['customfield_' . $jira_field_id] = '';
             }
           }
@@ -182,7 +182,7 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
 
-  if(_ereolen_support_result_confirmed($result)) {
+  if (_ereolen_support_result_confirmed($result)) {
     return $result;
   }
 
@@ -317,11 +317,10 @@ function _ereolen_support_result_confirmed($result) {
   if ($result->code !== '200' && $result->code !== '201') {
     $id = db_insert('ereolen_support_errors')
       ->fields([
-        'timestamp' => format_date(time(), 'custom', 'U'),
+        'timestamp' => time(),
         'request' => $result->request,
         'data' => serialize($result->data),
       ])->execute();
-    drupal_set_message(t('An error occurred. Your support issue was not registered.'), 'error');
 
     return FALSE;
   }
@@ -351,6 +350,7 @@ function _ereolen_support_set_request_type($data, $customfield_id, $request_type
 
 /**
  * Validate the required fields.
+ *
  * Since form_states only validate frontend we need back end validation for the
  * fields that are set as required with form_states.
  *
@@ -416,10 +416,12 @@ function _ereolen_support_get_library() {
  */
 function _ereolen_support_get_email() {
   if (user_is_logged_in()) {
-    $profile = profile2_load_by_user($GLOBALS['user']);
-    if($profile) {
-      $email = $profile['provider_publizon']->field_email['und'][0]['email'];
-      if(!empty($profile['provider_publizon']->field_email)) {
+    $profile = profile2_load_by_user($GLOBALS['user']->uid, 'provider_publizon');
+
+    if ($profile) {
+      $profile_wrapper = entity_metadata_wrapper('profile2', $profile);
+      $email = $profile_wrapper->field_email->value();
+      if (!empty($email)) {
         return $email;
       }
     }
@@ -433,8 +435,7 @@ function _ereolen_support_get_email() {
 function _ereolen_support_cleanup_errors() {
   // 30 days.
   $month_in_seconds = 2592000;
-  $now = format_date(time(), 'custom', 'U');
   $deleted = db_delete('ereolen_support_errors')
-    ->condition('timestamp', $now - $month_in_seconds, '<')
+    ->condition('timestamp', time() - $month_in_seconds, '<')
     ->execute();
 }

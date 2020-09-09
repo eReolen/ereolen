@@ -445,7 +445,7 @@ function ereolen_support_form_submit($form, &$form_state) {
   // Create issue in Jira.
   if (!empty($jira_user)) {
     $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
-    if(!empty($jira_result)) {
+    if (!empty($jira_result)) {
       drupal_set_message(variable_get('ereolen_support_submission_text'), 'status');
     }
   }

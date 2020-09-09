@@ -31,7 +31,7 @@ function _ereolen_support_check_cpr($element, &$form_state) {
  *   True if string contains a number that could be considered cpr.
  */
 function numberChk($string) {
-  if(empty($string)) {
+  if (empty($string)) {
     return FALSE;
   }
 
@@ -41,7 +41,7 @@ function numberChk($string) {
   // Search the concatenated string for 10 digits in a row.
   $numberFound = preg_match('/(^|\D)\d{10}($|\D)/', $stringConcatenated, $result);
 
-  if($numberFound) {
+  if ($numberFound) {
     $number = $result[0];
 
     // Remove prefix from number.
