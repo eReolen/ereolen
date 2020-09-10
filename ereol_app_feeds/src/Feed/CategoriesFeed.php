@@ -2,7 +2,6 @@
 
 namespace Drupal\ereol_app_feeds\Feed;
 
-use Drupal\ereol_app_feeds\Helper\NodeHelper;
 use Drupal\ereol_app_feeds\Helper\ParagraphHelper;
 
 /**
