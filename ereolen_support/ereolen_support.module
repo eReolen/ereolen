@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * @file
+ * Add eReolen support.
+ */
+
+// Required to load form with fields.
+module_load_include('inc', 'ereolen_support', 'ereolen_support.form');
+
+/**
+ * Implements hook_menu().
+ */
+function ereolen_support_menu() {
+  $items['admin/config/ereolen/support'] = [
+    'title' => 'eReolen support configuration',
+    'description' => 'Administer eReolen support form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['ereolen_support_config_form'],
+    'access arguments' => ['alter ereolen support form fields'],
+    'file' => 'ereolen_support.admin.form.inc',
+  ];
+
+  $items['support-formular'] = [
+    'title' => 'eReolen support',
+    'description' => 'eReolen support form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['ereolen_support_form'],
+    'file' => 'ereolen_support.form.inc',
+    'access callback' => TRUE,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ereolen_support_permission() {
+  return [
+    'administer ereolen support form' => [
+      'title' => t('Administer ereolen support form'),
+    ],
+    'alter ereolen support form fields' => [
+      'title' => t('Alter ereolen support form fields'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_mail().
+ */
+function ereolen_support_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'ereolen_support_publizon_support':
+      global $user;
+      $params['subject'] = t('Form submission from support form');
+      $message['subject'] = $params['subject'];
+      $message['body'][] = theme('ereolen_support_mail_publizon', [
+        'form_input' => $message['params']['form_state']['input'],
+        'user' => $user,
+        'time' => format_date(time(), 'long'),
+      ]);
+      break;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ereolen_support_theme($existing, $type, $theme, $path) {
+  return [
+    'ereolen_support_mail_publizon' => [
+      'variables' => [
+        'form_input' => NULL,
+        'user' => NULL,
+        'time' => NULL
+      ],
+      'template' => 'ereolen-support--mail-publizon',
+      'path' => $path . '/templates/'
+    ],
+    'ereolen_support_help_text' => [
+      'variables' => [
+        'problem_values' => NULL,
+      ],
+      'template' => 'ereolen-support--help-text',
+      'path' => $path . '/templates/'
+    ],
+  ];
+}
+
+/**
+ * Implements hook_cron().
+ */
+function ereolen_support_cron() {
+  _ereolen_support_cleanup_errors();
+}
+
