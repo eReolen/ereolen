@@ -47,6 +47,10 @@ function ereolen_support_form($form, &$form_state) {
     [
       'type' => 'file'
     ],
+    drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
+    [
+      'type' => 'file'
+    ],
   ];
 
   $form['ereolen_support_problem'] = [

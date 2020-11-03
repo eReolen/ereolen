@@ -10,6 +10,18 @@
   padding: 0;
 }
 
+/* Hide default description. */
+.form-item-ereolen-support-date .description {
+  display:none;
+}
+
+textarea {
+  padding: 1em;
+  font-size: 15.4px;
+  font-family: inherit;
+  font-weight: bold;
+}
+
 /* Hide disabled options. */
 select option:disabled {
   display: none;
