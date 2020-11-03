@@ -7,3 +7,14 @@
 .container-inline-date .date-padding {
   padding: 0;
 }
+
+.form-item-ereolen-support-date .description {
+  display:none;
+}
+
+textarea {
+  padding: 1em;
+  font-size: 15.4px;
+  font-family: inherit;
+  font-weight: bold;
+}
