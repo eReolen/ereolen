@@ -49,7 +49,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Problem'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_problem', FALSE),
-    '#description' => variable_get('ereolen_support_problem_description'),
+    '#description' => variable_get('ereolen_support_problem_description')['value'],
     '#required' => TRUE,
   ];
 
@@ -64,7 +64,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_name'] = [
     '#type' => 'textfield',
     '#title' => t('Name'),
-    '#description' => variable_get('ereolen_support_name_description'),
+    '#description' => variable_get('ereolen_support_name_description')['value'],
     '#required' => TRUE,
     '#element_validate' => ['_ereolen_support_check_cpr'],
   ];
@@ -72,7 +72,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_email'] = [
     '#type' => 'emailfield',
     '#title' => t('Email'),
-    '#description' => variable_get('ereolen_support_email_description'),
+    '#description' => variable_get('ereolen_support_email_description')['value'],
     '#required' => TRUE,
     '#default_value' => _ereolen_support_get_email(),
   ];
@@ -82,7 +82,7 @@ function ereolen_support_form($form, &$form_state) {
     '#title' => t('Dato'),
     '#date_format' => 'd/m/Y',
     '#date_label_position' => 'none',
-    '#description' => variable_get('ereolen_support_date_description'),
+    '#description' => variable_get('ereolen_support_date_description')['value'],
     '#required' => variable_get('ereolen_support_date_required'),
   ];
 
@@ -91,7 +91,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Library'),
     '#options' => _ereolen_support_array_as_select($libraries),
-    '#description' => variable_get('ereolen_support_library_description'),
+    '#description' => variable_get('ereolen_support_library_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -117,7 +117,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_id'] = [
     '#type' => 'textfield',
     '#title' => t('Support ID'),
-    '#description' => variable_get('ereolen_support_id_description'),
+    '#description' => variable_get('ereolen_support_id_description')['value'],
     '#default_value' => _ereolen_support_get_support_id(),
     '#states' => [
       'visible' => [
@@ -143,7 +143,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_error_message'] = [
     '#type' => 'textfield',
     '#title' => t('Error message'),
-    '#description' => variable_get('ereolen_support_error_message_description'),
+    '#description' => variable_get('ereolen_support_error_message_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -170,7 +170,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Login method'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_login_method'),
-    '#description' => variable_get('ereolen_support_login_method_description'),
+    '#description' => variable_get('ereolen_support_login_method_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -199,7 +199,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Book type'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_book_type'),
-    '#description' => variable_get('ereolen_support_book_type_description'),
+    '#description' => variable_get('ereolen_support_book_type_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -228,7 +228,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Product'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_product'),
-    '#description' => variable_get('ereolen_support_product_description'),
+    '#description' => variable_get('ereolen_support_product_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -260,7 +260,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
-    '#description' => variable_get('ereolen_support_description_description'),
+    '#description' => variable_get('ereolen_support_description_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -294,7 +294,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_book_title'] = [
     '#type' => 'textfield',
     '#title' => t('What book does the problem concern?'),
-    '#description' => variable_get('ereolen_support_book_title_description'),
+    '#description' => variable_get('ereolen_support_book_title_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -325,7 +325,7 @@ function ereolen_support_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('What device did you use?'),
     '#options' => _ereolen_support_create_select_list('ereolen_support_device'),
-    '#description' => variable_get('ereolen_support_device_description'),
+    '#description' => variable_get('ereolen_support_device_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -346,7 +346,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_model'] = [
     '#type' => 'textfield',
     '#title' => t('On what device model did you experience the problem?'),
-    '#description' => variable_get('ereolen_support_model_description'),
+    '#description' => variable_get('ereolen_support_model_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -372,7 +372,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['ereolen_support_operating_system'] = [
     '#type' => 'textfield',
     '#title' => t('On what operating system did you experience the problem?'),
-    '#description' => variable_get('ereolen_support_operating_system_description'),
+    '#description' => variable_get('ereolen_support_operating_system_description')['value'],
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
