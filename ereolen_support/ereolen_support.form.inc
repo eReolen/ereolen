@@ -43,6 +43,10 @@ function ereolen_support_form($form, &$form_state) {
     [
       'type' => 'setting'
     ],
+    drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
+    [
+      'type' => 'setting'
+    ],
   ];
 
   $form['ereolen_support_problem'] = [
