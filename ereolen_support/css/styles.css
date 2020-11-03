@@ -1,13 +1,16 @@
+/* Style help texts. */
 .ereolen-support--help-text {
   box-sizing: border-box;
   border: 1px solid rgba(180,180,180,0.5);
   padding: 1rem;
 }
 
+/* Set date padding. */
 .container-inline-date .date-padding {
   padding: 0;
 }
 
+/* Hide default description. */
 .form-item-ereolen-support-date .description {
   display:none;
 }
@@ -17,4 +20,9 @@ textarea {
   font-size: 15.4px;
   font-family: inherit;
   font-weight: bold;
+}
+
+/* Hide disabled options. */
+select option:disabled {
+  display: none;
 }
