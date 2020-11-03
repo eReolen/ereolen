@@ -387,8 +387,8 @@ function _ereolen_support_support_id_validate($element, $form_state) {
     if ($form_state['values']['ereolen_support_problem'] == $field['value']) {
       if ($element['#value'] != '') {
         // Assumes php mbstring extension enabled.
-        if (mb_strlen($element['#value']) != 5) {
-          form_set_error($element['#name'], $element['#title'].' should be 5 characters');
+        if (mb_strlen($element['#value']) != 6) {
+          form_set_error($element['#name'], $element['#title'].' should be 6 characters');
         }
       }
     }
