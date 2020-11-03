@@ -416,37 +416,38 @@ function ereolen_support_form($form, &$form_state) {
  */
 function ereolen_support_form_submit($form, &$form_state) {
   global $user;
+  $submission_text = variable_get('ereolen_support_submission_text');
+  // Switch between jira and email to publizon.
+  if ($form_state['input']['ereolen_support_problem'] == 'Læs og lyt') {
+    $language = $user->uid ? user_preferred_language($user) : language_default();
+    $headers = [
+      'MIME-Version' => '1.0',
+      'Content-Type' => 'text/html; charset=UTF-8; format=flowed; delsp=yes',
+      'Content-Transfer-Encoding' => '8Bit',
+      'X-Mailer' => 'Drupal',
+    ];
 
-  // Check for and create user in Jira
-  $jira_user = _ereolen_support_search_jira_user($user, $form_state);
-  if (!$jira_user) {
-    $jira_user = _ereolen_support_create_jira_user($user, $form_state);
+    $mail_params = [
+      'headers' => $headers,
+      'form_state' => $form_state
+    ];
+
+    drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
+    drupal_set_message($submission_text, 'status');
   }
+  else {
+    // Check for and create user in Jira
+    $jira_user = _ereolen_support_search_jira_user($user, $form_state);
+    if (!$jira_user) {
+      $jira_user = _ereolen_support_create_jira_user($user, $form_state);
+    }
 
-  // @todo switch between jira and email This functionality is awaiting customer.
-
-  // Sometimes send to publizon mail.
-  $language = $user->uid ? user_preferred_language($user) : language_default();
-  $headers = [
-    'MIME-Version' => '1.0',
-    'Content-Type' => 'text/html; charset=UTF-8; format=flowed; delsp=yes',
-    'Content-Transfer-Encoding' => '8Bit',
-    'X-Mailer' => 'Drupal',
-  ];
-
-  $mail_params = [
-    'headers' => $headers,
-    'form_state' => $form_state
-  ];
-
-  //drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
-
-  // Sometimes send to Jira.
-  // Create issue in Jira.
-  if (!empty($jira_user)) {
-    $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
-    if (!empty($jira_result)) {
-      drupal_set_message(variable_get('ereolen_support_submission_text'), 'status');
+    // Create issue in Jira.
+    if (!empty($jira_user)) {
+      $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
+      if (!empty($jira_result)) {
+        drupal_set_message($submission_text, 'status');
+      }
     }
   }
 }
