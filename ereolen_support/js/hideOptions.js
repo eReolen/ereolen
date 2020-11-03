@@ -22,8 +22,7 @@
   function hideOptions(problem) {
     let productOptions = document.getElementById("edit-ereolen-support-product").getElementsByTagName("option");
     if (problem.value === 'Download') {
-      for (var i = 0; i < productOptions.length; i++) {
-        // lowercase comparison for case-insensitivity
+      for (let i = 0; i < productOptions.length; i++) {
         if (productOptions[i].value === "ereolen.dk" ||
           productOptions[i].value === "ereolenglobal.dk" ||
           productOptions[i].value === "ereolengo.dk"
@@ -32,7 +31,7 @@
         }
       }
     } else {
-      for (var i = 0; i < productOptions.length; i++) {
+      for (let i = 0; i < productOptions.length; i++) {
         productOptions[i].removeAttribute('disabled');
       }
     }

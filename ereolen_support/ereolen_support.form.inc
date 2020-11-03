@@ -32,7 +32,7 @@ function ereolen_support_form($form, &$form_state) {
   $form['#attached']['js'] = [
     drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
     [
-      'type' => 'setting',
+      'type' => 'file',
       'data' => [
         'ereolen_support' => [
           'form_state' => $form_state,
@@ -41,11 +41,11 @@ function ereolen_support_form($form, &$form_state) {
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
     [
-      'type' => 'setting'
+      'type' => 'file'
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
     [
-      'type' => 'setting'
+      'type' => 'file'
     ],
   ];
 
