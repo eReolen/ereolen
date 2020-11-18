@@ -35,7 +35,7 @@ search/node',
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => 'Search Content | %keywords:html_safe | [current-page:pager][site:name]',
+          'value' => 'Søgning | %keywords:html_safe | [current-page:pager][site:name]',
         ),
       ),
     ),
@@ -159,6 +159,14 @@ search/ting
 <none>
 ',
     'name' => 'ereolen-search',
+    'metatag_panels' => array(
+      'enabled' => 1,
+      'metatags' => array(
+        'title' => array(
+          'value' => 'Søgning | %keywords:html_safe | [current-page:pager][site:name]',
+        ),
+      ),
+    ),
   );
   $display = new panels_display();
   $display->layout = 'twocol_stacked';
@@ -894,7 +902,7 @@ search/ting
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => 'Ting collection | %ting_collection:title_full | [current-page:pager][site:name]',
+          'value' => '%ting_collection:title_full | [current-page:pager][site:name]',
         ),
       ),
     ),
@@ -979,7 +987,7 @@ search/ting
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => 'Ting object | %ting_object:title_full | [current-page:pager][site:name]',
+          'value' => '%ting_object:title_full | [current-page:pager][site:name]',
         ),
       ),
     ),
