@@ -84,17 +84,17 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
       'variables' => [
         'form_input' => NULL,
         'user' => NULL,
-        'time' => NULL
+        'time' => NULL,
       ],
       'template' => 'ereolen-support--mail-publizon',
-      'path' => $path . '/templates/'
+      'path' => $path . '/templates/',
     ],
     'ereolen_support_help_text' => [
       'variables' => [
         'problem_values' => NULL,
       ],
       'template' => 'ereolen-support--help-text',
-      'path' => $path . '/templates/'
+      'path' => $path . '/templates/',
     ],
     'ereolen_support_lead_text' => [
       'variables' => [
@@ -112,4 +112,3 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
 function ereolen_support_cron() {
   _ereolen_support_cleanup_errors();
 }
-

@@ -13,11 +13,18 @@
  * @param array $form_state
  *   The state of the form.
  *
- * @return mixed
+ * @return array
+ *   The form.
  */
-function ereolen_support_config_form($form, &$form_state) {
+function ereolen_support_config_form(array $form, array &$form_state) {
   // The types of field we allow building through a loop later on.
-  $fieldTypesBuild = ['select', 'textfield', 'textarea', 'emailfield', 'date_popup'];
+  $fieldTypesBuild = [
+    'select',
+    'textfield',
+    'textarea',
+    'emailfield',
+    'date_popup',
+  ];
 
   // The form array used in frontend to which we create form groups later on.
   $frontendForm = drupal_get_form('ereolen_support_form');
@@ -31,7 +38,7 @@ function ereolen_support_config_form($form, &$form_state) {
     '#title' => t('Jira settings'),
     '#group' => 'support_form',
     '#collapsible' => FALSE,
-    '#access'=> user_access('administer ereolen support form')
+    '#access' => user_access('administer ereolen support form'),
   ];
 
   $form['field_config'] = [
@@ -69,7 +76,7 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('jira_project_id'),
   ];
 
-  // The desired issue type id fetched from a jira project
+  // The desired issue type id fetched from a jira project.
   $form['jira_settings']['jira_issue_type_id'] = [
     '#type' => 'textfield',
     '#title' => t('Jira issue type id'),
@@ -90,7 +97,7 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('jira_material_issue_type_id'),
   ];
 
-  // The desired request type id fetched from a jira project
+  // The desired request type id fetched from a jira project.
   $form['jira_settings']['jira_support_request_type_field_id'] = [
     '#type' => 'textfield',
     '#title' => t('Jira support request type field id'),
@@ -112,7 +119,7 @@ function ereolen_support_config_form($form, &$form_state) {
     if (is_array($possibleField)) {
       // Make sure it's a field type.
       if (isset($possibleField['#type']) && in_array($possibleField['#type'], $fieldTypesBuild)) {
-        // Build fieldset
+        // Build fieldset.
         $form['field_config'][$possibleField['#name'] . '_group'] = [
           '#type' => 'fieldset',
           '#title' => $possibleField['#title'] . ' field',
@@ -126,15 +133,15 @@ function ereolen_support_config_form($form, &$form_state) {
           '#title' => $possibleField['#title'] . ' field help text',
           '#default_value' => variable_get($possibleField['#name'] . '_description')['value'] ?? NULL,
           '#description' => t('Set a help text for the field in frontend'),
-          '#format' => 'ding_wysiwyg'
+          '#format' => 'ding_wysiwyg',
         ];
 
-        // Build form field jira field
+        // Build form field jira field.
         $form['field_config'][$possibleField['#name'] . '_group'][$possibleField['#name'] . '_jira_field'] = [
           '#type' => 'textfield',
           '#title' => 'Jira field id',
           '#default_value' => variable_get($possibleField['#name'] . '_jira_field'),
-          '#access'=> user_access('administer ereolen support form'),
+          '#access' => user_access('administer ereolen support form'),
           '#description' => t('A numeric value i.e 12345. Use this field to map eReolen fields to Jira fields.'),
         ];
       }
@@ -171,7 +178,7 @@ function ereolen_support_config_form($form, &$form_state) {
       '#title' => t('Problem: "@problem" help text', array('@problem' => $problemValue->name)),
       '#description' => t('The text displayed to the user when this problem is selected.'),
       '#default_value' => variable_get('ereolen_support_problem_help_' . $problemValue->tid)['value'] ?? NULL,
-      '#format' => 'ding_wysiwyg'
+      '#format' => 'ding_wysiwyg',
     ];
   }
 
@@ -203,7 +210,7 @@ function ereolen_support_config_form($form, &$form_state) {
     '#title' => t('Publizon settings'),
     '#group' => 'support_form',
     '#collapsible' => FALSE,
-    '#access'=> user_access('administer ereolen support form')
+    '#access' => user_access('administer ereolen support form'),
   ];
 
   $form['publizon']['publizon_support_email'] = [

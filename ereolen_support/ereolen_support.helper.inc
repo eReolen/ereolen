@@ -6,10 +6,12 @@
  */
 
 /**
- * Search for a drupal user email in Jira. We must make sure the email address
- * is not in use before attempting to create a user from it.
+ * Search for a drupal user email in Jira.
  *
- * @param \stdClass $user
+ * We must make sure the email address * is not in use before attempting to
+ * create a user from it.
+ *
+ * @param object $user
  *   A drupal user.
  *
  * @return bool|mixed
@@ -34,8 +36,7 @@ function _ereolen_support_search_jira_user($user, $form_state, $email) {
     foreach ($resultArray as $jiraUser) {
       if (is_object($jiraUser) && $jiraUser->name == $email) {
         // If user is deactivated in Jira we need to activate it.
-
-        if ($jiraUser->active == false) {
+        if ($jiraUser->active == FALSE) {
           $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
         }
 
@@ -50,7 +51,7 @@ function _ereolen_support_search_jira_user($user, $form_state, $email) {
 /**
  * Create a new Jira user.
  *
- * @param \stdClass $user
+ * @param object $user
  *   A drupal user.
  * @param array $form_state
  *   The state of the form.
@@ -60,7 +61,7 @@ function _ereolen_support_search_jira_user($user, $form_state, $email) {
  *
  * @throws \Exception
  */
-function _ereolen_support_create_jira_user($user, $form_state, $email) {
+function _ereolen_support_create_jira_user($user, array $form_state, $email) {
   $data = [
     'name' => $email,
     'emailAddress' => $email,
@@ -86,7 +87,7 @@ function _ereolen_support_create_jira_user($user, $form_state, $email) {
 /**
  * Set a Jira user to be active.
  *
- * @param \stdClass $jiraUser
+ * @param object $jiraUser
  *   A Jira user.
  * @param array $form_state
  *   The state of the form.
@@ -96,13 +97,13 @@ function _ereolen_support_create_jira_user($user, $form_state, $email) {
  *
  * @throws \Exception
  */
-function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
+function _ereolen_support_change_jira_user_status($jiraUser, array $form_state) {
   $data = [
-    'active' => true,
+    'active' => TRUE,
   ];
   $requestParts = _ereolen_support_get_request_parts('PUT', $data);
   $result = drupal_http_request($requestParts['jira_path'] . '/user?username=' . $jiraUser->name, $requestParts['options']);
-  if (_ereolen_support_result_confirmed($result)){
+  if (_ereolen_support_result_confirmed($result)) {
     $jiraUser = json_decode($result->data);
   }
 
@@ -116,7 +117,7 @@ function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
  *   The support form.
  * @param array $form_state
  *   The state of the support form.
- * @param \stdClass $jiraUser
+ * @param object $jiraUser
  *   A user in Jira.
  *
  * @return object|null
@@ -124,7 +125,7 @@ function _ereolen_support_change_jira_user_status($jiraUser, $form_state) {
  *
  * @throws \Exception
  */
-function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
+function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUser) {
   $data = [
     'fields' => [
       'project' => [
@@ -229,10 +230,8 @@ function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
  * @return array
  *   An array containing base path for the request and the options related to
  *   the request.
- *
- * @return array
  */
-  function _ereolen_support_get_request_parts($method_type, $data = [], $api = NULL) {
+function _ereolen_support_get_request_parts($method_type, array $data = [], $api = NULL) {
   $jiraUsername = variable_get('jira_username');
   $jiraPassword = variable_get('jira_password');
   // Jira requires base64_encode auth.
@@ -246,21 +245,22 @@ function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
 
   $options = [
     'method' => $method_type,
-    'timeout' => 15, // Seconds.
+  // Seconds.
+    'timeout' => 15,
     'headers' => [
       'Content-Type' => 'application/json',
-      'Authorization' => 'Basic '. $encoded_auth
+      'Authorization' => 'Basic ' . $encoded_auth,
     ],
   ];
 
   // Add data variable to POST and PUT requests.
-  if ($method_type == 'POST' || $method_type == 'PUT' ) {
+  if ($method_type == 'POST' || $method_type == 'PUT') {
     $options['data'] = json_encode($data);
   }
 
   $requestParts = [
     'jira_path' => $jira_api_path,
-    'options' => $options
+    'options' => $options,
   ];
 
   return $requestParts;
@@ -270,9 +270,9 @@ function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
  * Prepare an array for use in a select list.
  *
  * @param string $vocab_machine_name
- *  A vocabulary machine name.
+ *   A vocabulary machine name.
  * @param bool $add_select
- *  If a - Select - option should be made available.
+ *   If a - Select - option should be made available.
  *
  * @return array
  *   A list of term names.
@@ -300,12 +300,13 @@ function _ereolen_support_create_select_list($vocab_machine_name, $add_select = 
 /**
  * Set array keys as values for use in select list.
  *
- * @param $array
- *  An array of values.
+ * @param array $array
+ *   An array of values.
+ *
  * @return array
  *   An array with keys like values.
  */
-function _ereolen_support_array_as_select($array, $add_select = TRUE) {
+function _ereolen_support_array_as_select(array $array, $add_select = TRUE) {
   $list = [];
   if ($add_select) {
     $list['_none'] = t('- Select -');
@@ -336,10 +337,12 @@ function _ereolen_support_get_support_id() {
 
 /**
  * Add an entry to the eReolen support error log.
- * We use a separate error log for easier access to potential errors. This also
- * allows for future development of tools for supporters to locate errors.
  *
- * @param \stdClass $result
+ * We use a separate error log for easier access to potential errors. This
+ * also allows for future development of tools for supporters to locate
+ * errors.
+ *
+ * @param object $result
  *   The result of a jira http request.
  *
  * @return bool
@@ -367,17 +370,17 @@ function _ereolen_support_result_confirmed($result) {
  *
  * @param array $data
  *   An array of submitted data about to be sent to Jira.
- * @param $customfield_id
+ * @param string $customfield_id
  *   The id of the Customer request type custom field.
- * @param $request_type_value
+ * @param string $request_type_value
  *   The value of the request type format (project_key/requesttype_key) fetched
  *   from db table "AO_54307E_VIEWPORTFORM", db column "KEY".
- *   https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+ *   https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html.
  *
- * @return mixed
+ * @return array
  *   An array of submitted data with requesttype.
  */
-function _ereolen_support_set_request_type($data, $customfield_id, $request_type_value) {
+function _ereolen_support_set_request_type(array $data, $customfield_id, $request_type_value) {
   $data['fields']['customfield_' . $customfield_id] = $request_type_value;
   return $data;
 }
@@ -388,13 +391,12 @@ function _ereolen_support_set_request_type($data, $customfield_id, $request_type
  * Since form_states only validate frontend we need back end validation for the
  * fields that are set as required with form_states.
  *
- * @param $element
- *  The form element to check validation against.
- *
- * @param $form_state
+ * @param array $element
+ *   The form element to check validation against.
+ * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_states_require_validate($element, $form_state) {
+function _ereolen_support_states_require_validate(array $element, array $form_state) {
   $required_field_key = key($element['#states']['required']);
   $required_field = explode('"', $required_field_key);
   foreach ($element['#states']['required'][$required_field_key] as $field) {
@@ -407,22 +409,21 @@ function _ereolen_support_states_require_validate($element, $form_state) {
 }
 
 /**
- * Validate support id against exactly 5 characters
+ * Validate support id against exactly 5 characters.
  *
- * @param $element
- *  The form element to check validation against.
- *
- * @param $form_state
+ * @param array $element
+ *   The form element to check validation against.
+ * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_support_id_validate($element, $form_state) {
+function _ereolen_support_support_id_validate(array $element, array $form_state) {
   $visible_field_key = key($element['#states']['visible']);
-    foreach ($element['#states']['visible'][$visible_field_key] as $field) {
+  foreach ($element['#states']['visible'][$visible_field_key] as $field) {
     if ($form_state['values']['ereolen_support_problem'] == $field['value']) {
       if ($element['#value'] != '') {
         // Assumes php mbstring extension enabled.
         if (drupal_strlen($element['#value']) != 6) {
-          form_set_error($element['#name'], $element['#title'].' should be 6 characters');
+          form_set_error($element['#name'], $element['#title'] . ' should be 6 characters');
         }
       }
     }

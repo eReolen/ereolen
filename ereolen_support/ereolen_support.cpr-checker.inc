@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * CPR checker for form element validation.
@@ -7,14 +8,14 @@
 /**
  * Check a form element input for CPR numbers.
  *
- * @param $element
+ * @param array $element
  *   The form element to check.
- * @param $form_state
+ * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_check_cpr($element, &$form_state) {
+function _ereolen_support_check_cpr(array $element, array &$form_state) {
   $value = $element['#value'];
-  if (numberChk($value)) {
+  if (_ereolen_support_number_chk($value)) {
     form_error($element, t('%name contains a number that could well be a CPR number. Please change the text.', array(
       '%name' => $element['#title'],
     )));
@@ -24,19 +25,19 @@ function _ereolen_support_check_cpr($element, &$form_state) {
 /**
  * Check if string contains valid CPR.
  *
- * @param $string
+ * @param string $string
  *   A string input by user.
  *
  * @return bool
  *   True if string contains a number that could be considered cpr.
  */
-function numberChk($string) {
+function _ereolen_support_number_chk($string) {
   if (empty($string)) {
     return FALSE;
   }
 
   // Remove spaces and dashes to prepare for a simpler regex.
-  $stringConcatenated = str_replace(['-',' '], '', $string);
+  $stringConcatenated = str_replace(['-', ' '], '', $string);
 
   // Search the concatenated string for 10 digits in a row.
   $numberFound = preg_match('/(^|\D)\d{10}($|\D)/', $stringConcatenated, $result);
@@ -55,9 +56,9 @@ function numberChk($string) {
     }
 
     // Prepare number for modulo 11 check.
-    $arr = stringSplit($number);
+    $arr = _ereolen_support_string_split($number);
 
-    if (mod11Chk($arr, $number) && dateChk($number)) {
+    if (_ereolen_support_mod_11_chk($arr, $number) && _ereolen_support_date_chk($number)) {
       return TRUE;
     }
     else {
@@ -69,13 +70,13 @@ function numberChk($string) {
 /**
  * Create an array from a string.
  *
- * @param $numString
+ * @param string $numString
  *   A string to create an array from.
  *
  * @return array
  *   The created array of characters.
  */
-function stringSplit($numString) {
+function _ereolen_support_string_split($numString) {
   $array = [];
   for ($i = 0; $i < strlen($numString); $i++) {
     $array[$i] = substr($numString, $i, 1);
@@ -87,17 +88,15 @@ function stringSplit($numString) {
 /**
  * Check against modulo 11.
  *
- * @param $array
+ * @param array $array
  *   An array of characters.
- *
- * @param $number
+ * @param string $number
  *   A string that could be a CPR number.
  *
  * @return bool
  *   Whether the characters in union resemble a CPR number.
- *
  */
-function mod11Chk($array, $number) {
+function _ereolen_support_mod_11_chk(array $array, $number) {
   // Due to lacking capacity of valid modulo 11 numbers some years, there are
   // valid CPR numbers that don't pass modulo 11 check. In those cases we just
   // return true.
@@ -127,44 +126,54 @@ function mod11Chk($array, $number) {
     return TRUE;
   }
   // Check each digit against it's weight.
-  // Modulo 11 weights for CPR: 4, 3, 2, 7, 6, 5, 4, 3, 2, 1
+  // Modulo 11 weights for CPR: 4, 3, 2, 7, 6, 5, 4, 3, 2, 1.
   $value = 0;
-  foreach($array as $key => $v) {
-    switch($key) {
+  foreach ($array as $key => $v) {
+    switch ($key) {
       case 0:
         $value += $v * 4;
         break;
+
       case 1:
         $value += $v * 3;
         break;
+
       case 2:
         $value += $v * 2;
         break;
+
       case 3:
         $value += $v * 7;
         break;
+
       case 4:
         $value += $v * 6;
         break;
+
       case 5:
         $value += $v * 5;
         break;
+
       case 6:
         $value += $v * 4;
         break;
+
       case 7:
         $value += $v * 3;
         break;
+
       case 8:
         $value += $v * 2;
         break;
+
       case 9:
         $value += $v * 1;
         break;
     }
   }
 
-  // Check the sum against modulo 11, if remainder is 0 the number resembles CPR.
+  // Check the sum against modulo 11, if remainder is 0 the number resembles
+  // CPR.
   if ($value % 11 == 0) {
     return TRUE;
   }
@@ -176,20 +185,23 @@ function mod11Chk($array, $number) {
 /**
  * Check against valid date.
  *
- * @param $number
+ * @param string $number
  *   A string that could be a CPR number.
  *
  * @return bool
+ *   The return value.
  */
-function dateChk($number) {
+function _ereolen_support_date_chk($number) {
   $day = substr($number, 0, 2);
   $month = substr($number, 2, 2);
   $year = substr($number, 4, 2);
 
-  if ($year < 21)
+  if ($year < 21) {
     $year = "20" . $year;
-  else
+  }
+  else {
     $year = "19" . $year;
+  }
 
   return checkdate($month, $day, $year);
 }
