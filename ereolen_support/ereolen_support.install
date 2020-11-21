@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Prepare site for ereolen support module.
@@ -10,13 +11,13 @@
 function ereolen_support_install() {
   if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_product'))) {
     // Define product list.
-    $product_terms =[
+    $product_terms = [
       'ereolen.dk',
       'ereolengo.dk',
       'ereolenglobal.dk',
       'ereolen app',
       'ereolen go app',
-      'Libby app'
+      'Libby app',
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form products';
@@ -39,7 +40,7 @@ function ereolen_support_install() {
       'Forespørgsel på titel',
       'Fejlbeskeder',
       'Kvoter',
-      'Tekniske spørgsmål'
+      'Tekniske spørgsmål',
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form problems';
@@ -56,7 +57,7 @@ function ereolen_support_install() {
     // Define book type list.
     $book_type_terms = [
       'Ebog',
-      'Lydbog'
+      'Lydbog',
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form book types';
@@ -73,7 +74,7 @@ function ereolen_support_install() {
     // Define book type list.
     $login_method_terms = [
       'Bibliotekslogin/Lånerkort',
-      'UniLogin'
+      'UniLogin',
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form login methods';
@@ -92,7 +93,7 @@ function ereolen_support_install() {
       'Desktop/Laptop computer',
       'Tablet',
       'Mobiltelefon',
-      'Andet'
+      'Andet',
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form devices';
@@ -111,10 +112,10 @@ function ereolen_support_install() {
  *
  * @param array $termnames
  *   A list of term names to add to a vocabulary.
- * @param $vid
+ * @param int $vid
  *   The vocabulary id.
  */
-function _ereolen_support_create_terms($termnames, $vid) {
+function _ereolen_support_create_terms(array $termnames, $vid) {
   foreach ($termnames as $termname) {
     // Create terms.
     $newterm = new stdClass();
@@ -200,7 +201,7 @@ function ereolen_support_uninstall() {
     'ereolen_support_problem_jira_field',
     'ereolen_support_product_jira_field',
     'publizon_support_email',
-    'ereolen_support_submission_text'
+    'ereolen_support_submission_text',
   );
 
   // Grabbed from variable_del() to avoid clearing cache between each deletion.

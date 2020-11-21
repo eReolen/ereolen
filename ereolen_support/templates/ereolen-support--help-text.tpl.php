@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Template for showing a help message to the user.

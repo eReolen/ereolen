@@ -16,18 +16,19 @@ include_once 'ereolen_support.cpr-checker.inc';
  * @param array $form_state
  *   The state of the form.
  *
- * @return mixed
+ * @return array
+ *   The form.
  *
  * @throws \Exception
  */
-function ereolen_support_form($form, &$form_state) {
+function ereolen_support_form(array $form, array &$form_state) {
   $form['#attributes'] = [
     'name' => 'ereolen_support_form',
-    'class' => ['node-webform']
+    'class' => ['node-webform'],
   ];
 
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereolen_support') . '/css/styles.css'
+    drupal_get_path('module', 'ereolen_support') . '/css/styles.css',
   ];
   $form['#attached']['js'] = [
     drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
@@ -41,15 +42,15 @@ function ereolen_support_form($form, &$form_state) {
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
   ];
 
@@ -114,7 +115,7 @@ function ereolen_support_form($form, &$form_state) {
           ['value' => 'Lån og reservationer'],
           ['value' => 'Kvoter'],
         ],
-      ]
+      ],
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
@@ -137,15 +138,15 @@ function ereolen_support_form($form, &$form_state) {
       ],
       'required' => [
         ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Lån og reservationer']
+          ['value' => 'Lån og reservationer'],
         ],
       ],
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
       '_ereolen_support_check_cpr',
-      '_ereolen_support_support_id_validate'
-    ]
+      '_ereolen_support_support_id_validate',
+    ],
   ];
 
   $form['ereolen_support_error_message'] = [
@@ -170,8 +171,8 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr'
-    ]
+      '_ereolen_support_check_cpr',
+    ],
   ];
 
   $form['ereolen_support_login_method'] = [
@@ -199,8 +200,8 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr'
-    ]
+      '_ereolen_support_check_cpr',
+    ],
   ];
 
   $form['ereolen_support_book_type'] = [
@@ -229,7 +230,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-    ]
+    ],
   ];
 
   $form['ereolen_support_product'] = [
@@ -262,7 +263,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-    ]
+    ],
   ];
 
   $form['ereolen_support_description'] = [
@@ -295,7 +296,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
   ];
 
@@ -325,7 +326,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
   ];
 
@@ -372,9 +373,9 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
-    '#maxlength' => 256
+    '#maxlength' => 256,
   ];
 
   $form['ereolen_support_operating_system'] = [
@@ -398,9 +399,9 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
-    '#maxlength' => 256
+    '#maxlength' => 256,
   ];
 
   $form['submit_button'] = [
@@ -411,18 +412,17 @@ function ereolen_support_form($form, &$form_state) {
   return $form;
 }
 
-
 /**
  * Add a submit handler to the support form.
  *
- * @param $form
+ * @param array $form
  *   The form to submit.
- * @param $form_state
+ * @param array $form_state
  *   The state of the form.
  *
  * @throws \Exception
  */
-function ereolen_support_form_submit($form, &$form_state) {
+function ereolen_support_form_submit(array $form, array &$form_state) {
   global $user;
   $submission_text = variable_get('ereolen_support_submission_text');
   // Switch between jira and email to publizon.
@@ -437,14 +437,14 @@ function ereolen_support_form_submit($form, &$form_state) {
 
     $mail_params = [
       'headers' => $headers,
-      'form_state' => $form_state
+      'form_state' => $form_state,
     ];
 
     drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
     drupal_set_message($submission_text, 'status');
   }
   else {
-    // Check for and create user in Jira
+    // Check for and create user in Jira.
     $jira_user = _ereolen_support_search_jira_user($user, $form_state);
     if (!$jira_user) {
       $jira_user = _ereolen_support_create_jira_user($user, $form_state);
