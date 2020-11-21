@@ -437,7 +437,12 @@ function _ereolen_support_support_id_validate($element, $form_state) {
  */
 function _ereolen_support_get_library() {
   if (user_is_logged_in()) {
-    return publizon_get_library($_SESSION['ding_user']['user']['data']['retailer_id'])->library_name;
+    if (isset($_SESSION['ding_user']['user']['data']['retailer_id'])) {
+      $library = publizon_get_library($_SESSION['ding_user']['user']['data']['retailer_id']);
+      if (isset($library->library_name)) {
+        return $library->library_name;
+      }
+    }
   }
   return '_none';
 }

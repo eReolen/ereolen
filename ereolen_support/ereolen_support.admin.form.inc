@@ -111,7 +111,7 @@ function ereolen_support_config_form($form, &$form_state) {
     // Make sure the form entry is an array.
     if (is_array($possibleField)) {
       // Make sure it's a field type.
-      if (in_array('#type', $possibleField) && in_array($possibleField['#type'], $fieldTypesBuild)) {
+      if (isset($possibleField['#type']) && in_array($possibleField['#type'], $fieldTypesBuild)) {
         // Build fieldset
         $form['field_config'][$possibleField['#name'] . '_group'] = [
           '#type' => 'fieldset',
@@ -124,7 +124,7 @@ function ereolen_support_config_form($form, &$form_state) {
         $form['field_config'][$possibleField['#name'] . '_group'][$possibleField['#name'] . '_description'] = [
           '#type' => 'text_format',
           '#title' => $possibleField['#title'] . ' field help text',
-          '#default_value' => variable_get($possibleField['#name'] . '_description')['value'],
+          '#default_value' => variable_get($possibleField['#name'] . '_description')['value'] ?? NULL,
           '#description' => t('Set a help text for the field in frontend'),
           '#format' => 'ding_wysiwyg'
         ];
@@ -170,7 +170,7 @@ function ereolen_support_config_form($form, &$form_state) {
       '#type' => 'text_format',
       '#title' => t('Problem: "@problem" help text', array('@problem' => $problemValue->name)),
       '#description' => t('The text displayed to the user when this problem is selected.'),
-      '#default_value' => variable_get('ereolen_support_problem_help_' . $problemValue->tid)['value'],
+      '#default_value' => variable_get('ereolen_support_problem_help_' . $problemValue->tid)['value'] ?? NULL,
       '#format' => 'ding_wysiwyg'
     ];
   }
