@@ -96,7 +96,6 @@ function ereolen_support_form(array $form, array &$form_state) {
     '#date_format' => 'd/m/Y',
     '#date_label_position' => 'none',
     '#description' => variable_get('ereolen_support_date_description')['value'] ?? NULL,
-    '#required' => variable_get('ereolen_support_date_required'),
   ];
 
   $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
