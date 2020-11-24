@@ -322,8 +322,12 @@ function _ereolen_support_result_confirmed($result) {
     $id = db_insert('ereolen_support_errors')
       ->fields([
         'timestamp' => time(),
-        'request' => $result->request,
-        'data' => serialize($result->data),
+        'request' => $result->request ?? '',
+        'data' => serialize([
+          'code' => $result->code,
+          'error' => $result->error ?? NULL,
+          'data' => $result->data ?? NULL,
+        ]),
       ])->execute();
 
     return FALSE;
