@@ -170,6 +170,13 @@ function ereolen_support_config_form(array $form, array &$form_state) {
     '#format' => 'ding_wysiwyg'
   ];
 
+  $form['texts']['ereolen_support_submission_error_message'] = [
+    '#type' => 'textfield',
+    '#title' => t('Support submission error message'),
+    '#description' => t('The text displayed to the user when submitting a form fails.'),
+    '#default_value' => variable_get('ereolen_support_submission_error_message'),
+  ];
+
   $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
   $problemValues = taxonomy_get_tree($vacabulary->vid);
   foreach ($problemValues as $problemValue) {

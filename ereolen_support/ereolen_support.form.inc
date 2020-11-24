@@ -31,25 +31,29 @@ function ereolen_support_form(array $form, array &$form_state) {
     drupal_get_path('module', 'ereolen_support') . '/css/styles.css',
   ];
   $form['#attached']['js'] = [
-    drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
     [
-      'type' => 'file',
-      'data' => [
-        'ereolen_support' => [
-          'form_state' => $form_state,
-        ],
-      ],
-    ],
-    drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
-    [
+      'data' => drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
       'type' => 'file',
     ],
-    drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
+    // @FIXME What's going on here?!
+    // [
+    //   'type' => 'file',
+    //   'data' => [
+    //     'ereolen_support' => [
+    //       'form_state' => $form_state,
+    //     ],
+    //   ],
+    // ],
     [
+      'data' => drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
       'type' => 'file',
     ],
-    drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
     [
+      'data' => drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
+      'type' => 'file',
+    ],
+    [
+      'data' => drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
       'type' => 'file',
     ],
   ];
@@ -434,37 +438,51 @@ function ereolen_support_form(array $form, array &$form_state) {
 function ereolen_support_form_submit(array $form, array &$form_state) {
   global $user;
   $submission_text = variable_get('ereolen_support_submission_text');
+  $error_message = variable_get('ereolen_support_submission_error_message');
   // Switch between jira and email to publizon.
   if ($form_state['input']['ereolen_support_problem'] == 'Læs og lyt') {
-    $language = $user->uid ? user_preferred_language($user) : language_default();
-    $headers = [
-      'MIME-Version' => '1.0',
-      'Content-Type' => 'text/html; charset=UTF-8; format=flowed; delsp=yes',
-      'Content-Transfer-Encoding' => '8Bit',
-      'X-Mailer' => 'Drupal',
-    ];
+    try {
+      $language = $user->uid ? user_preferred_language($user) : language_default();
+      $headers = [
+        'MIME-Version' => '1.0',
+        'Content-Type' => 'text/html; charset=UTF-8; format=flowed; delsp=yes',
+        'Content-Transfer-Encoding' => '8Bit',
+        'X-Mailer' => 'Drupal',
+      ];
 
-    $mail_params = [
-      'headers' => $headers,
-      'form_state' => $form_state,
-    ];
+      $mail_params = [
+        'headers' => $headers,
+        'form_state' => $form_state,
+      ];
 
-    drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
-    drupal_set_message($submission_text, 'status');
+      drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
+      drupal_set_message($submission_text, 'status');
+    }
+    catch (Throwable $t) {
+      drupal_set_message($error_message, 'error');
+    }
   }
   else {
-    // Check for and create user in Jira
-    $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
-    if (!$jira_user) {
-      $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
-    }
-
-    // Create issue in Jira.
-    if (!empty($jira_user)) {
-      $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
-      if (!empty($jira_result)) {
-        drupal_set_message($submission_text, 'status');
+    try {
+      // Check for and create user in Jira
+      $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
+      if (!$jira_user) {
+        $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
       }
+
+      // Create issue in Jira.
+      if (!empty($jira_user)) {
+        $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
+        if (!empty($jira_result)) {
+          drupal_set_message($submission_text, 'status');
+          return;
+        }
+      }
+      drupal_set_message($error_message, 'error');
+
+    }
+    catch (Throwable $t) {
+      drupal_set_message($error_message, 'error');
     }
   }
 }

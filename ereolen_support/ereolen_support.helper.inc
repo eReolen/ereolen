@@ -356,7 +356,11 @@ function _ereolen_support_result_confirmed($result) {
       ->fields([
         'timestamp' => time(),
         'request' => $result->request ?? '',
-        'data' => serialize($result->data),
+        'data' => serialize([
+          'code' => $result->code,
+          'error' => $result->error ?? NULL,
+          'data' => $result->data ?? NULL,
+        ]),
       ])->execute();
 
     return FALSE;
