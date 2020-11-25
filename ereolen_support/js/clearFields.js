@@ -7,8 +7,6 @@
     attach: function (context, settings) {
       'use strict';
 
-      clearFields();
-
       let problem = document.getElementById("edit-ereolen-support-problem");
       problem.addEventListener('change', function(){
         clearFields();
