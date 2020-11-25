@@ -35,7 +35,7 @@ search/node',
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => 'Søgning | %keywords:html_safe | [current-page:pager][site:name]',
+          'value' => 'Search Content | %keywords:html_safe | [current-page:pager][site:name]',
         ),
       ),
     ),
@@ -163,7 +163,7 @@ search/ting
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => 'Søgning | %keywords:html_safe | [current-page:pager][site:name]',
+          'value' => 'Search Ting | %keywords:html_safe | [current-page:pager][site:name]',
         ),
       ),
     ),
@@ -902,7 +902,7 @@ search/ting
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => '%ting_collection:title_full | [current-page:pager][site:name]',
+          'value' => 'Ting collection | %ting_collection:title_full | [current-page:pager][site:name]',
         ),
       ),
     ),
@@ -987,7 +987,7 @@ search/ting
       'enabled' => 1,
       'metatags' => array(
         'title' => array(
-          'value' => '%ting_object:title_full | [current-page:pager][site:name]',
+          'value' => 'Ting object | %ting_object:title_full | [current-page:pager][site:name]',
         ),
       ),
     ),
