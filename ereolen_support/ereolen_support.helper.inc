@@ -167,6 +167,10 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
           else {
             $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
           }
+
+          if ($key === 'ereolen_support_date' && empty($data['fields']['customfield_' . $jira_field_id])) {
+            $data['fields']['customfield_' . $jira_field_id] = (new DateTime())->format('Y-m-d');
+          }
         }
       }
     }
