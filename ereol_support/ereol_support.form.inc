@@ -5,8 +5,8 @@
  * Add eReolen support form.
  */
 
-include_once 'ereolen_support.helper.inc';
-include_once 'ereolen_support.cpr-checker.inc';
+include_once 'ereol_support.helper.inc';
+include_once 'ereol_support.cpr-checker.inc';
 
 /**
  * Create frontend form.
@@ -21,99 +21,99 @@ include_once 'ereolen_support.cpr-checker.inc';
  *
  * @throws \Exception
  */
-function ereolen_support_form(array $form, array &$form_state) {
+function ereol_support_form(array $form, array &$form_state) {
   $form['#attributes'] = [
-    'name' => 'ereolen_support_form',
+    'name' => 'ereol_support_form',
     'class' => ['node-webform'],
   ];
 
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereolen_support') . '/css/styles.css',
+    drupal_get_path('module', 'ereol_support') . '/css/styles.css',
   ];
   $form['#attached']['js'] = [
     [
-      'data' => drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
+      'data' => drupal_get_path('module', 'ereol_support') . '/js/collectDeviceData.js',
       'type' => 'file',
     ],
     // @FIXME What's going on here?!
     // [
     //   'type' => 'file',
     //   'data' => [
-    //     'ereolen_support' => [
+    //     'ereol_support' => [
     //       'form_state' => $form_state,
     //     ],
     //   ],
     // ],
     [
-      'data' => drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
+      'data' => drupal_get_path('module', 'ereol_support') . '/js/showHelpText.js',
       'type' => 'file',
     ],
     [
-      'data' => drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
+      'data' => drupal_get_path('module', 'ereol_support') . '/js/hideOptions.js',
       'type' => 'file',
     ],
     [
-      'data' => drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
+      'data' => drupal_get_path('module', 'ereol_support') . '/js/clearFields.js',
       'type' => 'file',
     ],
   ];
 
-  $form['ereolen_support_problem'] = [
+  $form['ereol_support_problem'] = [
     '#type' => 'select',
     '#title' => t('Problem'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_problem', FALSE),
-    '#description' => variable_get('ereolen_support_problem_description')['value'] ?? NULL,
+    '#options' => _ereol_support_create_select_list('ereol_support_problem', FALSE),
+    '#description' => variable_get('ereol_support_problem_description')['value'] ?? NULL,
     '#required' => TRUE,
   ];
 
-  $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
+  $vacabulary = taxonomy_vocabulary_machine_name_load('ereol_support_problem');
   $problemValues = taxonomy_get_tree($vacabulary->vid);
-  $form['ereolen_support_help_text'] = [
-    '#markup' => theme('ereolen_support_help_text', [
+  $form['ereol_support_help_text'] = [
+    '#markup' => theme('ereol_support_help_text', [
       'problem_values' => $problemValues,
     ]),
   ];
 
-  $form['ereolen_support_name'] = [
+  $form['ereol_support_name'] = [
     '#type' => 'textfield',
     '#title' => t('Name'),
-    '#description' => variable_get('ereolen_support_name_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_name_description')['value'] ?? NULL,
     '#required' => TRUE,
-    '#element_validate' => ['_ereolen_support_check_cpr'],
+    '#element_validate' => ['_ereol_support_check_cpr'],
   ];
 
-  $form['ereolen_support_email'] = [
+  $form['ereol_support_email'] = [
     '#type' => 'emailfield',
     '#title' => t('Email'),
-    '#description' => variable_get('ereolen_support_email_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_email_description')['value'] ?? NULL,
     '#required' => TRUE,
-    '#default_value' => _ereolen_support_get_email(),
+    '#default_value' => _ereol_support_get_email(),
   ];
 
-  $form['ereolen_support_date'] = [
+  $form['ereol_support_date'] = [
     '#type' => 'date_popup',
     '#title' => t('Dato'),
     '#date_format' => 'd/m/Y',
     '#date_label_position' => 'none',
-    '#description' => variable_get('ereolen_support_date_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_date_description')['value'] ?? NULL,
   ];
 
   $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
-  $form['ereolen_support_library'] = [
+  $form['ereol_support_library'] = [
     '#type' => 'select',
     '#title' => t('Library'),
-    '#options' => _ereolen_support_array_as_select($libraries),
-    '#description' => variable_get('ereolen_support_library_description')['value'] ?? NULL,
+    '#options' => _ereol_support_array_as_select($libraries),
+    '#description' => variable_get('ereol_support_library_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Kvoter'],
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Kvoter'],
@@ -121,44 +121,44 @@ function ereolen_support_form(array $form, array &$form_state) {
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_states_require_validate',
     ],
-    '#default_value' => _ereolen_support_get_library(),
+    '#default_value' => _ereol_support_get_library(),
   ];
 
-  $form['ereolen_support_id'] = [
+  $form['ereol_support_id'] = [
     '#type' => 'textfield',
     '#title' => t('Support ID'),
-    '#description' => variable_get('ereolen_support_id_description')['value'] ?? NULL,
-    '#default_value' => _ereolen_support_get_support_id(),
+    '#description' => variable_get('ereol_support_id_description')['value'] ?? NULL,
+    '#default_value' => _ereol_support_get_support_id(),
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
           ['value' => 'Fejlbeskeder'],
           ['value' => 'Kvoter'],
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
         ],
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_support_id_validate',
+      '_ereol_support_states_require_validate',
+      '_ereol_support_check_cpr',
+      '_ereol_support_support_id_validate',
     ],
   ];
 
-  $form['ereolen_support_error_message'] = [
+  $form['ereol_support_error_message'] = [
     '#type' => 'textfield',
     '#title' => t('Error message'),
-    '#description' => variable_get('ereolen_support_error_message_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_error_message_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
           ['value' => 'Download'],
@@ -167,25 +167,25 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Fejlbeskeder'],
         ],
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr',
+      '_ereol_support_states_require_validate',
+      '_ereol_support_check_cpr',
     ],
   ];
 
-  $form['ereolen_support_login_method'] = [
+  $form['ereol_support_login_method'] = [
     '#type' => 'select',
     '#title' => t('Login method'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_login_method'),
-    '#description' => variable_get('ereolen_support_login_method_description')['value'] ?? NULL,
+    '#options' => _ereol_support_create_select_list('ereol_support_login_method'),
+    '#description' => variable_get('ereol_support_login_method_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Fejlbeskeder'],
@@ -193,7 +193,7 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Fejlbeskeder'],
@@ -202,19 +202,19 @@ function ereolen_support_form(array $form, array &$form_state) {
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr',
+      '_ereol_support_states_require_validate',
+      '_ereol_support_check_cpr',
     ],
   ];
 
-  $form['ereolen_support_book_type'] = [
+  $form['ereol_support_book_type'] = [
     '#type' => 'select',
     '#title' => t('Book type'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_book_type'),
-    '#description' => variable_get('ereolen_support_book_type_description')['value'] ?? NULL,
+    '#options' => _ereol_support_create_select_list('ereol_support_book_type'),
+    '#description' => variable_get('ereol_support_book_type_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
           ['value' => 'Download'],
@@ -225,25 +225,25 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Læs og lyt'],
           ['value' => 'Download'],
         ],
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_states_require_validate',
     ],
   ];
 
-  $form['ereolen_support_product'] = [
+  $form['ereol_support_product'] = [
     '#type' => 'select',
     '#title' => t('Product'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_product'),
-    '#description' => variable_get('ereolen_support_product_description')['value'] ?? NULL,
+    '#options' => _ereol_support_create_select_list('ereol_support_product'),
+    '#description' => variable_get('ereol_support_product_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
@@ -254,7 +254,7 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
@@ -265,17 +265,17 @@ function ereolen_support_form(array $form, array &$form_state) {
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_states_require_validate',
     ],
   ];
 
-  $form['ereolen_support_description'] = [
+  $form['ereol_support_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
-    '#description' => variable_get('ereolen_support_description_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_description_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
@@ -287,7 +287,7 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Log ind'],
           ['value' => 'Lån og reservationer'],
           ['value' => 'Forespørgsel på titel'],
@@ -298,18 +298,18 @@ function ereolen_support_form(array $form, array &$form_state) {
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_check_cpr',
+      '_ereol_support_states_require_validate',
     ],
   ];
 
-  $form['ereolen_support_book_title'] = [
+  $form['ereol_support_book_title'] = [
     '#type' => 'textfield',
     '#title' => t('What book does the problem concern?'),
-    '#description' => variable_get('ereolen_support_book_title_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_book_title_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
           ['value' => 'Download'],
@@ -320,7 +320,7 @@ function ereolen_support_form(array $form, array &$form_state) {
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Lån og reservationer'],
           ['value' => 'Læs og lyt'],
           ['value' => 'Download'],
@@ -328,26 +328,26 @@ function ereolen_support_form(array $form, array &$form_state) {
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_check_cpr',
+      '_ereol_support_states_require_validate',
     ],
   ];
 
-  $form['ereolen_support_device'] = [
+  $form['ereol_support_device'] = [
     '#type' => 'select',
     '#title' => t('What device did you use?'),
-    '#options' => _ereolen_support_create_select_list('ereolen_support_device'),
-    '#description' => variable_get('ereolen_support_device_description')['value'] ?? NULL,
+    '#options' => _ereol_support_create_select_list('ereol_support_device'),
+    '#description' => variable_get('ereol_support_device_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
           ['value' => 'Tekniske spørgsmål'],
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
         ],
@@ -355,54 +355,54 @@ function ereolen_support_form(array $form, array &$form_state) {
     ],
   ];
 
-  $form['ereolen_support_model'] = [
+  $form['ereol_support_model'] = [
     '#type' => 'textfield',
     '#title' => t('On what device model did you experience the problem?'),
-    '#description' => variable_get('ereolen_support_model_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_model_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
           ['value' => 'Tekniske spørgsmål'],
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
         ],
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_check_cpr',
+      '_ereol_support_states_require_validate',
     ],
     '#maxlength' => 256,
   ];
 
-  $form['ereolen_support_operating_system'] = [
+  $form['ereol_support_operating_system'] = [
     '#type' => 'textfield',
     '#title' => t('On what operating system did you experience the problem?'),
-    '#description' => variable_get('ereolen_support_operating_system_description')['value'] ?? NULL,
+    '#description' => variable_get('ereol_support_operating_system_description')['value'] ?? NULL,
     '#states' => [
       'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
           ['value' => 'Tekniske spørgsmål'],
         ],
       ],
       'required' => [
-        ':input[name="ereolen_support_problem"]' => [
+        ':input[name="ereol_support_problem"]' => [
           ['value' => 'Download'],
           ['value' => 'Fejlbeskeder'],
         ],
       ],
     ],
     '#element_validate' => [
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
+      '_ereol_support_check_cpr',
+      '_ereol_support_states_require_validate',
     ],
     '#maxlength' => 256,
   ];
@@ -425,12 +425,12 @@ function ereolen_support_form(array $form, array &$form_state) {
  *
  * @throws \Exception
  */
-function ereolen_support_form_submit(array $form, array &$form_state) {
+function ereol_support_form_submit(array $form, array &$form_state) {
   global $user;
-  $submission_text = variable_get('ereolen_support_submission_text');
-  $error_message = variable_get('ereolen_support_submission_error_message');
+  $submission_text = variable_get('ereol_support_submission_text');
+  $error_message = variable_get('ereol_support_submission_error_message');
   // Switch between jira and email to publizon.
-  if ($form_state['input']['ereolen_support_problem'] == 'Læs og lyt') {
+  if ($form_state['input']['ereol_support_problem'] == 'Læs og lyt') {
     try {
       $language = $user->uid ? user_preferred_language($user) : language_default();
       $headers = [
@@ -445,7 +445,7 @@ function ereolen_support_form_submit(array $form, array &$form_state) {
         'form_state' => $form_state,
       ];
 
-      drupal_mail('ereolen_support', 'ereolen_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
+      drupal_mail('ereol_support', 'ereol_support_publizon_support', variable_get('publizon_support_email'), $language, $mail_params, $from = variable_get('site_mail'));
       drupal_set_message($submission_text, 'status');
     }
     catch (Throwable $t) {
@@ -455,14 +455,14 @@ function ereolen_support_form_submit(array $form, array &$form_state) {
   else {
     try {
       // Check for and create user in Jira.
-      $jira_user = _ereolen_support_search_jira_user($user, $form_state);
+      $jira_user = _ereol_support_search_jira_user($user, $form_state);
       if (!$jira_user) {
-        $jira_user = _ereolen_support_create_jira_user($user, $form_state);
+        $jira_user = _ereol_support_create_jira_user($user, $form_state);
       }
 
       // Create issue in Jira.
       if (!empty($jira_user)) {
-        $jira_result = _ereolen_support_send_to_jira($form, $form_state, $jira_user);
+        $jira_result = _ereol_support_send_to_jira($form, $form_state, $jira_user);
         if (!empty($jira_result)) {
           drupal_set_message($submission_text, 'status');
           return;

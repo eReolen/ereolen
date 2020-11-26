@@ -7,8 +7,8 @@
     attach: function (context, settings) {
       'use strict';
 
-      let problem = document.getElementById("edit-ereolen-support-problem");
-      let texts = document.getElementsByClassName('js-ereolen-support--help-text');
+      let problem = document.getElementById("edit-ereol-support-problem");
+      let texts = document.getElementsByClassName('js-ereol-support--help-text');
       hideAll(texts);
 
       problem.addEventListener('change', function(){

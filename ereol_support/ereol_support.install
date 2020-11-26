@@ -8,8 +8,8 @@
 /**
  * Setup terms and vocabularies during install.
  */
-function ereolen_support_install() {
-  if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_product'))) {
+function ereol_support_install() {
+  if (empty(taxonomy_vocabulary_machine_name_load('ereol_support_product'))) {
     // Define product list.
     $product_terms = [
       'ereolen.dk',
@@ -21,16 +21,16 @@ function ereolen_support_install() {
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form products';
-    $vocabulary->machine_name = "ereolen_support_product";
+    $vocabulary->machine_name = "ereol_support_product";
     $vocabulary->description = t('List of products used in support form');
     $vocabulary->module = 'taxonomy';
 
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
-    _ereolen_support_create_terms($product_terms, $vid);
+    _ereol_support_create_terms($product_terms, $vid);
   }
 
-  if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_problem'))) {
+  if (empty(taxonomy_vocabulary_machine_name_load('ereol_support_problem'))) {
     // Define problem list.
     $problem_terms = [
       'Log ind',
@@ -44,16 +44,16 @@ function ereolen_support_install() {
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form problems';
-    $vocabulary->machine_name = "ereolen_support_problem";
+    $vocabulary->machine_name = "ereol_support_problem";
     $vocabulary->description = t('List of problems used in support form');
     $vocabulary->module = 'taxonomy';
 
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
-    _ereolen_support_create_terms($problem_terms, $vid);
+    _ereol_support_create_terms($problem_terms, $vid);
   }
 
-  if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_book_type'))) {
+  if (empty(taxonomy_vocabulary_machine_name_load('ereol_support_book_type'))) {
     // Define book type list.
     $book_type_terms = [
       'Ebog',
@@ -61,16 +61,16 @@ function ereolen_support_install() {
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form book types';
-    $vocabulary->machine_name = "ereolen_support_book_type";
+    $vocabulary->machine_name = "ereol_support_book_type";
     $vocabulary->description = t('List of book types used in support form');
     $vocabulary->module = 'taxonomy';
 
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
-    _ereolen_support_create_terms($book_type_terms, $vid);
+    _ereol_support_create_terms($book_type_terms, $vid);
   }
 
-  if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_login_method'))) {
+  if (empty(taxonomy_vocabulary_machine_name_load('ereol_support_login_method'))) {
     // Define book type list.
     $login_method_terms = [
       'Bibliotekslogin/Lånerkort',
@@ -78,16 +78,16 @@ function ereolen_support_install() {
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form login methods';
-    $vocabulary->machine_name = "ereolen_support_login_method";
+    $vocabulary->machine_name = "ereol_support_login_method";
     $vocabulary->description = t('List of login methods used in support form');
     $vocabulary->module = 'taxonomy';
 
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
-    _ereolen_support_create_terms($login_method_terms, $vid);
+    _ereol_support_create_terms($login_method_terms, $vid);
   }
 
-  if (empty(taxonomy_vocabulary_machine_name_load('ereolen_support_device'))) {
+  if (empty(taxonomy_vocabulary_machine_name_load('ereol_support_device'))) {
     // Define device list.
     $device_terms = [
       'Desktop/Laptop computer',
@@ -97,13 +97,13 @@ function ereolen_support_install() {
     ];
     $vocabulary = new stdClass();
     $vocabulary->name = 'Ereolen support form devices';
-    $vocabulary->machine_name = "ereolen_support_device";
+    $vocabulary->machine_name = "ereol_support_device";
     $vocabulary->description = t('List of devices used in support form');
     $vocabulary->module = 'taxonomy';
 
     taxonomy_vocabulary_save($vocabulary);
     $vid = $vocabulary->vid;
-    _ereolen_support_create_terms($device_terms, $vid);
+    _ereol_support_create_terms($device_terms, $vid);
   }
 }
 
@@ -115,7 +115,7 @@ function ereolen_support_install() {
  * @param int $vid
  *   The vocabulary id.
  */
-function _ereolen_support_create_terms(array $termnames, $vid) {
+function _ereol_support_create_terms(array $termnames, $vid) {
   foreach ($termnames as $termname) {
     // Create terms.
     $newterm = new stdClass();
@@ -129,8 +129,8 @@ function _ereolen_support_create_terms(array $termnames, $vid) {
 /**
  * Implements hook_schema().
  */
-function ereolen_support_schema() {
-  $schema['ereolen_support_errors'] = [
+function ereol_support_schema() {
+  $schema['ereol_support_errors'] = [
     'description' => 'Table for errors during support form submit',
     'fields' => [
       'id' => [
@@ -170,20 +170,20 @@ function ereolen_support_schema() {
 /**
  * Implements hook_uninstall().
  */
-function ereolen_support_uninstall() {
+function ereol_support_uninstall() {
   $custom_variables = array(
-    'ereolen_support_library_description',
-    'ereolen_support_name_description',
-    'ereolen_support_id_description',
-    'ereolen_support_product_description',
-    'ereolen_support_problem_description',
-    'ereolen_support_description_description',
-    'ereolen_support_date_description',
-    'ereolen_support_book_title_description',
-    'ereolen_support_device_description',
-    'ereolen_support_model_description',
-    'ereolen_support_operating_system_description',
-    'ereolen_support_model_operating_system',
+    'ereol_support_library_description',
+    'ereol_support_name_description',
+    'ereol_support_id_description',
+    'ereol_support_product_description',
+    'ereol_support_problem_description',
+    'ereol_support_description_description',
+    'ereol_support_date_description',
+    'ereol_support_book_title_description',
+    'ereol_support_device_description',
+    'ereol_support_model_description',
+    'ereol_support_operating_system_description',
+    'ereol_support_model_operating_system',
     'jira_domain',
     'jira_username',
     'jira_password',
@@ -191,17 +191,17 @@ function ereolen_support_uninstall() {
     'jira_issue_type_id',
     'jira_support_request_type_field_id',
     'jira_support_request_type_field_value',
-    'ereolen_support_book_title_jira_field',
-    'ereolen_support_device_jira_field',
-    'ereolen_support_model_jira_field',
-    'ereolen_support_library_jira_field',
-    'ereolen_support_id_jira_field',
-    'ereolen_support_name_jira_field',
-    'ereolen_support_operating_system_jira_field',
-    'ereolen_support_problem_jira_field',
-    'ereolen_support_product_jira_field',
+    'ereol_support_book_title_jira_field',
+    'ereol_support_device_jira_field',
+    'ereol_support_model_jira_field',
+    'ereol_support_library_jira_field',
+    'ereol_support_id_jira_field',
+    'ereol_support_name_jira_field',
+    'ereol_support_operating_system_jira_field',
+    'ereol_support_problem_jira_field',
+    'ereol_support_product_jira_field',
     'publizon_support_email',
-    'ereolen_support_submission_text',
+    'ereol_support_submission_text',
   );
 
   // Grabbed from variable_del() to avoid clearing cache between each deletion.

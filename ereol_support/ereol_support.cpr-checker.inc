@@ -13,9 +13,9 @@
  * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_check_cpr(array $element, array &$form_state) {
+function _ereol_support_check_cpr(array $element, array &$form_state) {
   $value = $element['#value'];
-  if (_ereolen_support_number_chk($value)) {
+  if (_ereol_support_number_chk($value)) {
     form_error($element, t('%name contains a number that could well be a CPR number. Please change the text.', array(
       '%name' => $element['#title'],
     )));
@@ -31,7 +31,7 @@ function _ereolen_support_check_cpr(array $element, array &$form_state) {
  * @return bool
  *   True if string contains a number that could be considered cpr.
  */
-function _ereolen_support_number_chk($string) {
+function _ereol_support_number_chk($string) {
   if (empty($string)) {
     return FALSE;
   }
@@ -58,7 +58,7 @@ function _ereolen_support_number_chk($string) {
     // Prepare number for modulo 11 check.
     $arr = str_split($number);
 
-    if (_ereolen_support_mod_11_chk($arr, $number) && _ereolen_support_date_chk($number)) {
+    if (_ereol_support_mod_11_chk($arr, $number) && _ereol_support_date_chk($number)) {
       return TRUE;
     }
     else {
@@ -78,7 +78,7 @@ function _ereolen_support_number_chk($string) {
  * @return bool
  *   Whether the characters in union resemble a CPR number.
  */
-function _ereolen_support_mod_11_chk(array $array, $number) {
+function _ereol_support_mod_11_chk(array $array, $number) {
   // Due to lacking capacity of valid modulo 11 numbers some years, there are
   // valid CPR numbers that don't pass modulo 11 check. In those cases we just
   // return true.
@@ -173,7 +173,7 @@ function _ereolen_support_mod_11_chk(array $array, $number) {
  * @return bool
  *   The return value.
  */
-function _ereolen_support_date_chk($number) {
+function _ereol_support_date_chk($number) {
   $day = substr($number, 0, 2);
   $month = substr($number, 2, 2);
   $year = substr($number, 4, 2);

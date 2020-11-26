@@ -19,13 +19,13 @@
  *
  * @throws \Exception
  */
-function _ereolen_support_search_jira_user($user, $form_state) {
-  $form_email = $form_state['values']['ereolen_support_email'];
-  $requestParts = _ereolen_support_get_request_parts('GET');
+function _ereol_support_search_jira_user($user, $form_state) {
+  $form_email = $form_state['values']['ereol_support_email'];
+  $requestParts = _ereol_support_get_request_parts('GET');
   $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
 
   // Inspect result.
-  if (!_ereolen_support_result_confirmed($result)) {
+  if (!_ereol_support_result_confirmed($result)) {
     return FALSE;
   };
 
@@ -38,7 +38,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
       if (is_object($jiraUser) && $jiraUser->name == $form_email) {
         // If user is deactivated in Jira we need to activate it.
         if ($jiraUser->active == FALSE) {
-          $jiraUser = _ereolen_support_change_jira_user_status($jiraUser, $form_state);
+          $jiraUser = _ereol_support_change_jira_user_status($jiraUser, $form_state);
         }
 
         return $jiraUser;
@@ -62,19 +62,19 @@ function _ereolen_support_search_jira_user($user, $form_state) {
  *
  * @throws \Exception
  */
-function _ereolen_support_create_jira_user($user, array $form_state) {
-  $form_email = $form_state['values']['ereolen_support_email'];
+function _ereol_support_create_jira_user($user, array $form_state) {
+  $form_email = $form_state['values']['ereol_support_email'];
   $data = [
     'name' => $form_email,
     'emailAddress' => $form_email,
     'displayName' => $form_email,
   ];
 
-  $requestParts = _ereolen_support_get_request_parts('POST', $data);
+  $requestParts = _ereol_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/user', $requestParts['options']);
 
-  if (!_ereolen_support_result_confirmed($result)) {
+  if (!_ereol_support_result_confirmed($result)) {
     return NULL;
   }
 
@@ -99,13 +99,13 @@ function _ereolen_support_create_jira_user($user, array $form_state) {
  *
  * @throws \Exception
  */
-function _ereolen_support_change_jira_user_status($jiraUser, array $form_state) {
+function _ereol_support_change_jira_user_status($jiraUser, array $form_state) {
   $data = [
     'active' => TRUE,
   ];
-  $requestParts = _ereolen_support_get_request_parts('PUT', $data);
+  $requestParts = _ereol_support_get_request_parts('PUT', $data);
   $result = drupal_http_request($requestParts['jira_path'] . '/user?username=' . $jiraUser->name, $requestParts['options']);
-  if (_ereolen_support_result_confirmed($result)) {
+  if (_ereol_support_result_confirmed($result)) {
     $jiraUser = json_decode($result->data);
   }
 
@@ -127,7 +127,7 @@ function _ereolen_support_change_jira_user_status($jiraUser, array $form_state) 
  *
  * @throws \Exception
  */
-function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUser) {
+function _ereol_support_send_to_jira(array $form, array &$form_state, $jiraUser) {
   $data = [
     'fields' => [
       'project' => [
@@ -136,8 +136,8 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
       'issuetype' => [
         'id' => variable_get('jira_issue_type_id'),
       ],
-      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereolen_support_problem']))), 0, 20),
-      'description' => $form_state['values']['ereolen_support_description'],
+      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereol_support_problem']))), 0, 20),
+      'description' => $form_state['values']['ereol_support_description'],
       'reporter' => [
         'name' => $jiraUser->emailAddress,
       ],
@@ -147,7 +147,7 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
   foreach ($form as $key => $element) {
     if (is_array($element)) {
       // Look for form fields.
-      if (strpos($key, 'ereolen_support') === 0) {
+      if (strpos($key, 'ereol_support') === 0) {
         // Load config related to that field.
         $jira_field_id = variable_get($key . '_jira_field');
         // Make sure the config is set and has proper type.
@@ -167,7 +167,7 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
             $data['fields']['customfield_' . $jira_field_id] = check_plain($form_state['values'][$key]);
           }
 
-          if ($key === 'ereolen_support_date' && empty($data['fields']['customfield_' . $jira_field_id])) {
+          if ($key === 'ereol_support_date' && empty($data['fields']['customfield_' . $jira_field_id])) {
             $data['fields']['customfield_' . $jira_field_id] = (new DateTime())->format('Y-m-d');
           }
         }
@@ -177,17 +177,17 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
 
   // Set Jira customer request type.
   // https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
-  $data = _ereolen_support_set_request_type(
+  $data = _ereol_support_set_request_type(
     $data,
     variable_get('jira_support_request_type_field_id'),
     variable_get('jira_support_request_type_field_value')
   );
 
-  $requestParts = _ereolen_support_get_request_parts('POST', $data);
+  $requestParts = _ereol_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
 
-  if (_ereolen_support_result_confirmed($result)) {
+  if (_ereol_support_result_confirmed($result)) {
     return $result;
   }
 
@@ -206,7 +206,7 @@ function _ereolen_support_send_to_jira(array $form, array &$form_state, $jiraUse
  *   An array containing base path for the request and the options related to
  *   the request.
  */
-function _ereolen_support_get_request_parts($method_type, array $data = [], $api = NULL) {
+function _ereol_support_get_request_parts($method_type, array $data = [], $api = NULL) {
   $jiraUsername = variable_get('jira_username');
   $jiraPassword = variable_get('jira_password');
   // Jira requires base64_encode auth.
@@ -252,7 +252,7 @@ function _ereolen_support_get_request_parts($method_type, array $data = [], $api
  * @return array
  *   A list of term names.
  */
-function _ereolen_support_create_select_list($vocab_machine_name, $add_select = TRUE) {
+function _ereol_support_create_select_list($vocab_machine_name, $add_select = TRUE) {
   $vacabulary = taxonomy_vocabulary_machine_name_load($vocab_machine_name);
   $terms = taxonomy_get_tree($vacabulary->vid);
   if ($terms) {
@@ -281,7 +281,7 @@ function _ereolen_support_create_select_list($vocab_machine_name, $add_select = 
  * @return array
  *   An array with keys like values.
  */
-function _ereolen_support_array_as_select(array $array) {
+function _ereol_support_array_as_select(array $array) {
   $list = [];
   foreach ($array as $value) {
     $list[$value] = $value;
@@ -296,7 +296,7 @@ function _ereolen_support_array_as_select(array $array) {
  * @return string|null
  *   If support id is found in session the id is returned else NULL
  */
-function _ereolen_support_get_support_id() {
+function _ereol_support_get_support_id() {
   if (user_is_logged_in() && isset($_SESSION['ding_user']['user']['data'])) {
     $user_data = $_SESSION['ding_user']['user']['data'];
     if (isset($user_data['support_id'])) {
@@ -321,9 +321,9 @@ function _ereolen_support_get_support_id() {
  *
  * @throws \Exception
  */
-function _ereolen_support_result_confirmed($result) {
+function _ereol_support_result_confirmed($result) {
   if ($result->code !== '200' && $result->code !== '201') {
-    $id = db_insert('ereolen_support_errors')
+    $id = db_insert('ereol_support_errors')
       ->fields([
         'timestamp' => time(),
         'request' => $result->request ?? '',
@@ -355,7 +355,7 @@ function _ereolen_support_result_confirmed($result) {
  * @return array
  *   An array of submitted data with requesttype.
  */
-function _ereolen_support_set_request_type(array $data, $customfield_id, $request_type_value) {
+function _ereol_support_set_request_type(array $data, $customfield_id, $request_type_value) {
   $data['fields']['customfield_' . $customfield_id] = $request_type_value;
   return $data;
 }
@@ -371,7 +371,7 @@ function _ereolen_support_set_request_type(array $data, $customfield_id, $reques
  * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_states_require_validate(array $element, array $form_state) {
+function _ereol_support_states_require_validate(array $element, array $form_state) {
   $required_field_key = key($element['#states']['required']);
   $required_field = explode('"', $required_field_key);
   foreach ($element['#states']['required'][$required_field_key] as $field) {
@@ -391,10 +391,10 @@ function _ereolen_support_states_require_validate(array $element, array $form_st
  * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_support_id_validate(array $element, array $form_state) {
+function _ereol_support_support_id_validate(array $element, array $form_state) {
   $visible_field_key = key($element['#states']['visible']);
   foreach ($element['#states']['visible'][$visible_field_key] as $field) {
-    if ($form_state['values']['ereolen_support_problem'] == $field['value']) {
+    if ($form_state['values']['ereol_support_problem'] == $field['value']) {
       if ($element['#value'] != '') {
         // Assumes php mbstring extension enabled.
         if (drupal_strlen($element['#value']) != 6) {
@@ -411,7 +411,7 @@ function _ereolen_support_support_id_validate(array $element, array $form_state)
  * @return string
  *   The name of the library.
  */
-function _ereolen_support_get_library() {
+function _ereol_support_get_library() {
   if (user_is_logged_in()) {
     if (isset($_SESSION['ding_user']['user']['data']['retailer_id'])) {
       $library = publizon_get_library($_SESSION['ding_user']['user']['data']['retailer_id']);
@@ -429,7 +429,7 @@ function _ereolen_support_get_library() {
  * @return string
  *   The user email.
  */
-function _ereolen_support_get_email() {
+function _ereol_support_get_email() {
   if (user_is_logged_in()) {
     $profile = profile2_load_by_user($GLOBALS['user']->uid, 'provider_publizon');
 
@@ -447,10 +447,10 @@ function _ereolen_support_get_email() {
 /**
  * Delete support error log entry after 30 days.
  */
-function _ereolen_support_cleanup_errors() {
+function _ereol_support_cleanup_errors() {
   // 30 days.
   $month_in_seconds = 2592000;
-  $deleted = db_delete('ereolen_support_errors')
+  $deleted = db_delete('ereol_support_errors')
     ->condition('timestamp', time() - $month_in_seconds, '<')
     ->execute();
 }
