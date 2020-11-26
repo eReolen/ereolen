@@ -1,5 +1,5 @@
 /* Style help texts. */
-.ereolen-support--help-text {
+.ereol-support--help-text {
   box-sizing: border-box;
   border: 1px solid rgba(180,180,180,0.5);
   padding: 1rem;
@@ -11,7 +11,7 @@
 }
 
 /* Hide default description. */
-.form-item-ereolen-support-date .description {
+.form-item-ereol-support-date .description {
   display:none;
 }
 
