@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Prepare site for ereolen support module.
+ * Prepare site for eReolen support module.
  */
 
 /**
@@ -20,7 +20,7 @@ function ereol_support_install() {
       'Libby app',
     ];
     $vocabulary = new stdClass();
-    $vocabulary->name = 'Ereolen support form products';
+    $vocabulary->name = 'eReolen support form products';
     $vocabulary->machine_name = "ereol_support_product";
     $vocabulary->description = t('List of products used in support form');
     $vocabulary->module = 'taxonomy';
@@ -43,7 +43,7 @@ function ereol_support_install() {
       'Tekniske spørgsmål',
     ];
     $vocabulary = new stdClass();
-    $vocabulary->name = 'Ereolen support form problems';
+    $vocabulary->name = 'eReolen support form problems';
     $vocabulary->machine_name = "ereol_support_problem";
     $vocabulary->description = t('List of problems used in support form');
     $vocabulary->module = 'taxonomy';
@@ -60,7 +60,7 @@ function ereol_support_install() {
       'Lydbog',
     ];
     $vocabulary = new stdClass();
-    $vocabulary->name = 'Ereolen support form book types';
+    $vocabulary->name = 'eReolen support form book types';
     $vocabulary->machine_name = "ereol_support_book_type";
     $vocabulary->description = t('List of book types used in support form');
     $vocabulary->module = 'taxonomy';
@@ -77,7 +77,7 @@ function ereol_support_install() {
       'UniLogin',
     ];
     $vocabulary = new stdClass();
-    $vocabulary->name = 'Ereolen support form login methods';
+    $vocabulary->name = 'eReolen support form login methods';
     $vocabulary->machine_name = "ereol_support_login_method";
     $vocabulary->description = t('List of login methods used in support form');
     $vocabulary->module = 'taxonomy';
@@ -96,7 +96,7 @@ function ereol_support_install() {
       'Andet',
     ];
     $vocabulary = new stdClass();
-    $vocabulary->name = 'Ereolen support form devices';
+    $vocabulary->name = 'eReolen support form devices';
     $vocabulary->machine_name = "ereol_support_device";
     $vocabulary->description = t('List of devices used in support form');
     $vocabulary->module = 'taxonomy';
