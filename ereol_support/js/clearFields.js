@@ -7,7 +7,7 @@
     attach: function (context, settings) {
       'use strict';
 
-      let problem = document.getElementById("edit-ereolen-support-problem");
+      let problem = document.getElementById("edit-ereol-support-problem");
       problem.addEventListener('change', function(){
         clearFields();
       });
@@ -21,9 +21,9 @@
     // Clear most textfields.
     let textFields = document.querySelectorAll('.form-type-textfield input');
     for (i = 0; i < textFields.length; ++i) {
-      if(textFields[i].id !== 'edit-ereolen-support-name' &&
-        textFields[i].id !== 'edit-ereolen-support-date-datepicker-popup-0' &&
-        textFields[i].id !== 'edit-ereolen-support-id')
+      if(textFields[i].id !== 'edit-ereol-support-name' &&
+        textFields[i].id !== 'edit-ereol-support-date-datepicker-popup-0' &&
+        textFields[i].id !== 'edit-ereol-support-id')
       {
         textFields[i].value = "";
       }
@@ -32,8 +32,8 @@
     // Clear most select fields.
     let selectFields = document.querySelectorAll('.form-type-select select');
     for (i = 0; i < selectFields.length; ++i) {
-      if(selectFields[i].id !== 'edit-ereolen-support-problem' &&
-        selectFields[i].id !== 'edit-ereolen-support-library')
+      if(selectFields[i].id !== 'edit-ereol-support-problem' &&
+        selectFields[i].id !== 'edit-ereol-support-library')
       {
         selectFields[i].value = "_none";
       }

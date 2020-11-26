@@ -16,7 +16,7 @@
  * @return array
  *   The form.
  */
-function ereolen_support_config_form(array $form, array &$form_state) {
+function ereol_support_config_form(array $form, array &$form_state) {
   // The types of field we allow building through a loop later on.
   $fieldTypesBuild = [
     'select',
@@ -27,7 +27,7 @@ function ereolen_support_config_form(array $form, array &$form_state) {
   ];
 
   // The form array used in frontend to which we create form groups later on.
-  $frontendForm = drupal_get_form('ereolen_support_form');
+  $frontendForm = drupal_get_form('ereol_support_form');
 
   $form['support_form'] = [
     '#type' => 'vertical_tabs',
@@ -38,7 +38,7 @@ function ereolen_support_config_form(array $form, array &$form_state) {
     '#title' => t('Jira settings'),
     '#group' => 'support_form',
     '#collapsible' => FALSE,
-    '#access' => user_access('administer ereolen support form'),
+    '#access' => user_access('administer ereol support form'),
   ];
 
   $form['field_config'] = [
@@ -141,7 +141,7 @@ function ereolen_support_config_form(array $form, array &$form_state) {
           '#type' => 'textfield',
           '#title' => 'Jira field id',
           '#default_value' => variable_get($possibleField['#name'] . '_jira_field'),
-          '#access' => user_access('administer ereolen support form'),
+          '#access' => user_access('administer ereol support form'),
           '#description' => t('A numeric value i.e 12345. Use this field to map eReolen fields to Jira fields.'),
         ];
       }
@@ -155,11 +155,11 @@ function ereolen_support_config_form(array $form, array &$form_state) {
     '#collapsible' => FALSE,
   ];
 
-  $form['texts']['ereolen_support_submission_text'] = [
+  $form['texts']['ereol_support_submission_text'] = [
     '#type' => 'textfield',
     '#title' => t('Support submission text'),
     '#description' => t('The text displayed to the user when a form is submitted.'),
-    '#default_value' => variable_get('ereolen_support_submission_text'),
+    '#default_value' => variable_get('ereol_support_submission_text'),
   ];
 
   $form['texts']['ereolen_support_lead'] = [
@@ -170,21 +170,21 @@ function ereolen_support_config_form(array $form, array &$form_state) {
     '#format' => 'ding_wysiwyg'
   ];
 
-  $form['texts']['ereolen_support_submission_error_message'] = [
+  $form['texts']['ereol_support_submission_error_message'] = [
     '#type' => 'textfield',
     '#title' => t('Support submission error message'),
     '#description' => t('The text displayed to the user when submitting a form fails.'),
-    '#default_value' => variable_get('ereolen_support_submission_error_message'),
+    '#default_value' => variable_get('ereol_support_submission_error_message'),
   ];
 
-  $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
+  $vacabulary = taxonomy_vocabulary_machine_name_load('ereol_support_problem');
   $problemValues = taxonomy_get_tree($vacabulary->vid);
   foreach ($problemValues as $problemValue) {
-    $form['texts']['ereolen_support_problem_help_' . $problemValue->tid] = [
+    $form['texts']['ereol_support_problem_help_' . $problemValue->tid] = [
       '#type' => 'text_format',
       '#title' => t('Problem: "@problem" help text', array('@problem' => $problemValue->name)),
       '#description' => t('The text displayed to the user when this problem is selected.'),
-      '#default_value' => variable_get('ereolen_support_problem_help_' . $problemValue->tid)['value'] ?? NULL,
+      '#default_value' => variable_get('ereol_support_problem_help_' . $problemValue->tid)['value'] ?? NULL,
       '#format' => 'ding_wysiwyg',
     ];
   }
@@ -217,7 +217,7 @@ function ereolen_support_config_form(array $form, array &$form_state) {
     '#title' => t('Publizon settings'),
     '#group' => 'support_form',
     '#collapsible' => FALSE,
-    '#access' => user_access('administer ereolen support form'),
+    '#access' => user_access('administer ereol support form'),
   ];
 
   $form['publizon']['publizon_support_email'] = [

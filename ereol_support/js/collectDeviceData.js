@@ -81,17 +81,17 @@
       };
 
       let e = module.init();
-      let deviceSelect = document.getElementById('edit-ereolen-support-device');
+      let deviceSelect = document.getElementById('edit-ereol-support-device');
 
       deviceSelect.addEventListener('change', function(){
         let selectedDeviceType = deviceSelect.options[deviceSelect.selectedIndex].text;
-        let deviceInput = document.getElementById('edit-ereolen-support-model');
-        let operatingSystemInput = document.getElementById('edit-ereolen-support-operating-system');
+        let deviceInput = document.getElementById('edit-ereol-support-model');
+        let operatingSystemInput = document.getElementById('edit-ereol-support-operating-system');
         if (selectedDeviceType === e.os.type) {
-          if (document.forms['ereolen_support_form']['ereolen_support_model'].value.length === 0) {
+          if (document.forms['ereol_support_form']['ereol_support_model'].value.length === 0) {
             deviceInput.value = navigator.appVersion;
           }
-          if (document.forms['ereolen_support_form']['ereolen_support_operating_system'].value.length === 0) {
+          if (document.forms['ereol_support_form']['ereol_support_operating_system'].value.length === 0) {
             operatingSystemInput.value = e.os.name + ': ' + e.os.version + '(' + e.browser.name + ': ' + e.browser.version + ')';
           }
         }

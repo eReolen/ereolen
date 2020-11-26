@@ -7,7 +7,7 @@
     attach: function (context, settings) {
       'use strict';
 
-      let problem = document.getElementById("edit-ereolen-support-problem");
+      let problem = document.getElementById("edit-ereol-support-problem");
       hideOptions(problem);
 
       problem.addEventListener('change', function(){
@@ -20,7 +20,7 @@
    * Hide options
    */
   function hideOptions(problem) {
-    let productOptions = document.getElementById("edit-ereolen-support-product").getElementsByTagName("option");
+    let productOptions = document.getElementById("edit-ereol-support-product").getElementsByTagName("option");
     if (problem.value === 'Download') {
       for (let i = 0; i < productOptions.length; i++) {
         if (productOptions[i].value === "ereolen.dk" ||
