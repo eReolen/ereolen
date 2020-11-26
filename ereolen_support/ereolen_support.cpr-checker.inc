@@ -56,7 +56,7 @@ function _ereolen_support_number_chk($string) {
     }
 
     // Prepare number for modulo 11 check.
-    $arr = _ereolen_support_string_split($number);
+    $arr = str_split($number);
 
     if (_ereolen_support_mod_11_chk($arr, $number) && _ereolen_support_date_chk($number)) {
       return TRUE;
@@ -65,24 +65,6 @@ function _ereolen_support_number_chk($string) {
       return FALSE;
     }
   }
-}
-
-/**
- * Create an array from a string.
- *
- * @param string $numString
- *   A string to create an array from.
- *
- * @return array
- *   The created array of characters.
- */
-function _ereolen_support_string_split($numString) {
-  $array = [];
-  for ($i = 0; $i < strlen($numString); $i++) {
-    $array[$i] = substr($numString, $i, 1);
-  }
-
-  return $array;
 }
 
 /**
