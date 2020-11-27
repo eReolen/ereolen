@@ -35,15 +35,6 @@ function ereol_support_form(array $form, array &$form_state) {
       'data' => drupal_get_path('module', 'ereol_support') . '/js/collectDeviceData.js',
       'type' => 'file',
     ],
-    // @FIXME What's going on here?!
-    // [
-    //   'type' => 'file',
-    //   'data' => [
-    //     'ereol_support' => [
-    //       'form_state' => $form_state,
-    //     ],
-    //   ],
-    // ],
     [
       'data' => drupal_get_path('module', 'ereol_support') . '/js/showHelpText.js',
       'type' => 'file',
