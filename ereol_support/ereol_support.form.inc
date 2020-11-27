@@ -27,24 +27,25 @@ function ereol_support_form(array $form, array &$form_state) {
     'class' => ['node-webform'],
   ];
 
+  $module_path = drupal_get_path('module', 'ereol_support');
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereol_support') . '/css/styles.css',
+    $module_path . '/css/styles.css',
   ];
   $form['#attached']['js'] = [
     [
-      'data' => drupal_get_path('module', 'ereol_support') . '/js/collectDeviceData.js',
+      'data' => $module_path . '/js/collectDeviceData.js',
       'type' => 'file',
     ],
     [
-      'data' => drupal_get_path('module', 'ereol_support') . '/js/showHelpText.js',
+      'data' => $module_path . '/js/showHelpText.js',
       'type' => 'file',
     ],
     [
-      'data' => drupal_get_path('module', 'ereol_support') . '/js/hideOptions.js',
+      'data' => $module_path . '/js/hideOptions.js',
       'type' => 'file',
     ],
     [
-      'data' => drupal_get_path('module', 'ereol_support') . '/js/clearFields.js',
+      'data' => $module_path . '/js/clearFields.js',
       'type' => 'file',
     ],
   ];
