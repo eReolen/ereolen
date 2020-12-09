@@ -159,6 +159,14 @@ search/ting
 <none>
 ',
     'name' => 'ereolen-search',
+    'metatag_panels' => array(
+      'enabled' => 1,
+      'metatags' => array(
+        'title' => array(
+          'value' => 'Search Ting | %keywords:html_safe | [current-page:pager][site:name]',
+        ),
+      ),
+    ),
   );
   $display = new panels_display();
   $display->layout = 'twocol_stacked';
