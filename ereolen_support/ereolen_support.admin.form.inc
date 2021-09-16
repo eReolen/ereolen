@@ -142,6 +142,14 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('ereolen_support_submission_text'),
   ];
 
+  $form['texts']['ereolen_support_lead'] = [
+    '#type' => 'text_format',
+    '#title' => t('Lead text'),
+    '#description' => t('The text displayed above the form.'),
+    '#default_value' => variable_get('ereolen_support_lead')['value'] ?? NULL,
+    '#format' => 'ding_wysiwyg'
+  ];
+
   $vacabulary = taxonomy_vocabulary_machine_name_load('ereolen_support_problem');
   $problemValues = taxonomy_get_tree($vacabulary->vid);
   foreach ($problemValues as $problemValue) {
