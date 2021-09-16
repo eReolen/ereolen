@@ -53,6 +53,10 @@ function ereolen_support_form($form, &$form_state) {
     ],
   ];
 
+  $form['ereolen_support_lead'] = [
+    '#markup' => theme('ereolen_support_lead_text'),
+  ];
+
   $form['ereolen_support_problem'] = [
     '#type' => 'select',
     '#title' => t('Problem'),
