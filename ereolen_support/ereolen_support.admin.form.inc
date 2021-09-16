@@ -146,7 +146,7 @@ function ereolen_support_config_form($form, &$form_state) {
     '#type' => 'text_format',
     '#title' => t('Lead text'),
     '#description' => t('The text displayed above the form.'),
-    '#default_value' => variable_get('ereolen_support_lead')['value'],
+    '#default_value' => variable_get('ereolen_support_lead')['value'] ?? NULL,
     '#format' => 'ding_wysiwyg'
   ];
 
