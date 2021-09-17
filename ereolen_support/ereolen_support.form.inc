@@ -97,7 +97,8 @@ function ereolen_support_form($form, &$form_state) {
     '#date_format' => 'd/m/Y',
     '#date_label_position' => 'none',
     '#description' => isset(variable_get('ereolen_support_date_description')['value']) ? variable_get('ereolen_support_date_description')['value'] : '',
-    '#required' => variable_get('ereolen_support_date_required'),
+    '#required' => TRUE,
+    '#default_value' => (new \DateTime())->format('Y-m-d'),
   ];
 
   $libraries = module_exists('publizon') ? publizon_get_libraries_list() : [];
