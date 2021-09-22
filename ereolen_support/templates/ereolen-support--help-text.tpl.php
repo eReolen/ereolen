@@ -6,7 +6,7 @@
 ?>
 <div class="form-item">
   <?php foreach ($problem_values as $problem) : ?>
-    <?php $text = variable_get('ereolen_support_problem_help_' . $problem->tid)['value'] ?>
+    <?php $text = isset(variable_get('ereolen_support_problem_help_' . $problem->tid)['value']) ? variable_get('ereolen_support_problem_help_' . $problem->tid)['value'] : '' ?>
     <?php if (!empty($text)) : ?>
       <div style="display: none;" class="ereolen-support--help-text js-ereolen-support--help-text" data-problem="<?php print $problem->name; ?>">
         <?php print $text; ?>

@@ -86,6 +86,13 @@ function ereolen_support_theme($existing, $type, $theme, $path) {
       'template' => 'ereolen-support--help-text',
       'path' => $path . '/templates/'
     ],
+    'ereolen_support_lead_text' => [
+      'variables' => [
+        'text' => NULL,
+      ],
+      'template' => 'ereolen-support--lead-text',
+      'path' => $path . '/templates/'
+    ]
   ];
 }
 
