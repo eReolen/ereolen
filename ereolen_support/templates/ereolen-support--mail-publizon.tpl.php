@@ -21,6 +21,7 @@
   <?php print t('Email');?>: <?php print $form_input['ereolen_support_email']; ?><br>
   <?php print t('What is the problem?');?>: <?php print $form_input['ereolen_support_problem']; ?><br>
   <?php print t('Title');?>: <?php print $form_input['ereolen_support_book_title']; ?><br>
+  <?php print t('Description');?>: <?php print $form_input['ereolen_support_description']; ?><br>
   <?php print t('Time');?>: <?php print $form_input['ereolen_support_date']['date']; ?><br>
   <?php print t('Device');?>: <?php print $form_input['ereolen_support_device']; ?><br>
   <?php print t('Model no.');?>: <?php print $form_input['ereolen_support_model']; ?><br>

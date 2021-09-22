@@ -135,10 +135,13 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
       'issuetype' => [
         'id' => variable_get('jira_issue_type_id'),
       ],
-      'summary' => substr(preg_replace('/\s+/', ' ', trim(check_plain($form_state['values']['ereolen_support_problem']))), 0, 20),
+      'summary' => preg_replace('/\s+/', ' ', check_plain(trim(substr($form_state['values']['ereolen_support_problem'], 0, 30)))),
       'description' => $form_state['values']['ereolen_support_description'],
       'reporter' => [
         'name' => $jiraUser->emailAddress,
+      ],
+      'labels' => [
+        preg_replace('/\s+/', '_', $form_state['values']['ereolen_support_problem'])
       ],
     ],
   ];
