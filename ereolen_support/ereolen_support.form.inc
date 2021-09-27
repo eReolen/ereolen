@@ -23,8 +23,7 @@ include_once 'ereolen_support.cpr-checker.inc';
 function ereolen_support_form($form, &$form_state) {
   $form['#attributes'] = [
     'name' => 'ereolen_support_form',
-    'class' => ['node-webform'],
-    'onsubmit' => 'op.disabled = true; return true;'
+    'class' => ['node-webform']
   ];
 
   $form['#attached']['css'] = [
