@@ -178,8 +178,8 @@ function ereol_video_field_default_field_instances() {
         'label' => 'hidden',
         'module' => 'reol_field_carousel',
         'settings' => array(
-          'render_method' => 'cover',
-          'search_link' => FALSE,
+          'render_method' => 'material',
+          'search_link' => 1,
         ),
         'type' => 'reol_field_carousel_notabs',
         'weight' => 3,
@@ -336,10 +336,10 @@ function ereol_video_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Body');
   t('Carousel');
+  t('Description');
   t('Entity type');
   t('Title');
   t('Video');
-  t('Description');
 
   return $field_instances;
 }
