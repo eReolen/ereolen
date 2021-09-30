@@ -98,3 +98,10 @@ function ereol_base_update_7109() {
     variable_set($name, $value);
   }
 }
+
+/**
+ * Enable VideoTool media module.
+ */
+function ereol_base_update_7110() {
+  module_enable(array('media_videotool'), TRUE);
+}
