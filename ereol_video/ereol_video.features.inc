@@ -47,7 +47,7 @@ function ereol_video_node_info() {
 function ereol_video_paragraphs_info() {
   $items = array(
     'video_bundle' => array(
-      'name' => 'Videobundt',
+      'name' => t('Video bundle'),
       'bundle' => 'video_bundle',
       'locked' => '1',
     ),
