@@ -207,6 +207,7 @@ function ereol_inspiration_field_default_field_instances() {
         'review' => -1,
         'spotlight_box' => 'spotlight_box',
         'video' => -1,
+        'video_bundle' => 'video_bundle',
       ),
       'bundle_weights' => array(
         'article_carousel' => 2,
@@ -221,6 +222,7 @@ function ereol_inspiration_field_default_field_instances() {
         'review' => 5,
         'spotlight_box' => 6,
         'video' => 18,
+        'video_bundle' => 32,
       ),
       'default_edit_mode' => 'open',
       'title' => 'Element',
