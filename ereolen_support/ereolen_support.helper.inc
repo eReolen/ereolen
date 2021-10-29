@@ -257,7 +257,8 @@ function _ereolen_support_create_select_list($vocab_machine_name, $add_select = 
   if ($terms) {
     if ($add_select) {
       $list['_none'] = t('- Select -');
-    } else {
+    }
+    else {
       $list = [];
     }
 
@@ -278,8 +279,14 @@ function _ereolen_support_create_select_list($vocab_machine_name, $add_select = 
  * @return array
  *   An array with keys like values.
  */
-function _ereolen_support_array_as_select($array) {
-  $list = [];
+function _ereolen_support_array_as_select($array, $add_select = TRUE) {
+  if ($add_select) {
+    $list['_none'] = t('- Select -');
+  }
+  else {
+    $list = [];
+  }
+
   foreach ($array as $value) {
     $list[$value] = $value;
   }
@@ -321,7 +328,7 @@ function _ereolen_support_result_confirmed($result) {
     $id = db_insert('ereolen_support_errors')
       ->fields([
         'timestamp' => time(),
-        'request' => $result->request,
+        'request' => $result->request ?? '',
         'data' => serialize($result->data),
       ])->execute();
 
