@@ -280,11 +280,9 @@ function _ereolen_support_create_select_list($vocab_machine_name, $add_select = 
  *   An array with keys like values.
  */
 function _ereolen_support_array_as_select($array, $add_select = TRUE) {
+  $list = [];
   if ($add_select) {
     $list['_none'] = t('- Select -');
-  }
-  else {
-    $list = [];
   }
 
   foreach ($array as $value) {
