@@ -207,6 +207,42 @@ function ereol_video_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'paragraphs_item-video_bundle-field_link_color'.
+  $field_instances['paragraphs_item-video_bundle-field_link_color'] = array(
+    'bundle' => 'video_bundle',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'color_field',
+        'settings' => array(),
+        'type' => 'color_field_default_formatter',
+        'weight' => 4,
+      ),
+      'paragraphs_editor_preview' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'paragraphs_item',
+    'field_name' => 'field_link_color',
+    'label' => 'Color',
+    'required' => FALSE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'color_field',
+      'settings' => array(),
+      'type' => 'color_field_default_widget',
+      'weight' => 8,
+    ),
+  );
+
   // Exported field_instance:
   // 'paragraphs_item-video_bundle-field_video_description'.
   $field_instances['paragraphs_item-video_bundle-field_video_description'] = array(
@@ -338,6 +374,7 @@ function ereol_video_field_default_field_instances() {
   t('Carousel');
   t('Description');
   t('Entity type');
+  t('Color');
   t('Title');
   t('Video');
 
