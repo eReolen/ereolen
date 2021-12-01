@@ -105,3 +105,30 @@ function ereol_base_update_7109() {
 function ereol_base_update_7110() {
   module_enable(array('media_videotool'), TRUE);
 }
+
+
+/**
+ * Enable Menu Attributes module.
+ */
+function ereol_base_update_7111() {
+  module_enable(array('menu_attributes'), TRUE);
+
+  // Add default classes to items in main-menu.
+  // Map from menu item title to css class name.
+  $default_classes = [
+    'Forside' => 'iconmenu-home',
+    'E-bøger' => 'iconmenu-e-books',
+    'Lydbøger' => 'iconmenu-audiobooks',
+    'Inspiration' => 'iconmenu-inspiration',
+    'Hjælp' => 'iconmenu-help',
+    'Min side' => 'iconmenu-userprofile',
+  ];
+  $links = menu_load_links('main-menu');
+  foreach ($links as $link) {
+    $title = $link['link_title'];
+    if (isset($default_classes[$title])) {
+      $link['options']['item_attributes']['class'] = $default_classes[$title];
+      menu_link_save($link);
+    }
+  }
+}
