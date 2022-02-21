@@ -417,7 +417,7 @@ function ereolen_support_form($form, &$form_state) {
   ];
 
   honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
-  
+
   return $form;
 }
 
