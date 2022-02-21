@@ -132,3 +132,11 @@ function ereol_base_update_7111() {
     }
   }
 }
+
+
+/**
+ * Enable honeypot module.
+ */
+function ereol_base_update_7112() {
+  module_enable(array('honeypot'), TRUE);
+}
