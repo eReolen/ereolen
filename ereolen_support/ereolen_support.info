@@ -5,3 +5,4 @@ package = eReolen
 dependencies[] = date_popup
 dependencies[] = elements
 dependencies[] = publizon
+dependencies[] = honeypot

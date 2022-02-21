@@ -106,7 +106,6 @@ function ereol_base_update_7110() {
   module_enable(array('media_videotool'), TRUE);
 }
 
-
 /**
  * Enable Menu Attributes module.
  */
@@ -131,4 +130,11 @@ function ereol_base_update_7111() {
       menu_link_save($link);
     }
   }
+}
+
+/**
+ * Enable honeypot module.
+ */
+function ereol_base_update_7112() {
+  module_enable(array('honeypot'), TRUE);
 }
