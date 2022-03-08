@@ -6,3 +6,11 @@
  */
 
 include_once 'ereol_inspiration.features.inc';
+
+/**
+ * Implements hook_paragraphs_item_access().
+ */
+function ereol_inspiration_paragraphs_item_access(ParagraphsItemEntity $entity, string $op, $account) {
+  // Deny view access to blue titles info paragraphs.
+  return ('view' === $op && 'blue_titles_info' === $entity->bundle()) ? PARAGRAPHS_ITEM_ACCESS_DENY : PARAGRAPHS_ITEM_ACCESS_IGNORE;
+}
