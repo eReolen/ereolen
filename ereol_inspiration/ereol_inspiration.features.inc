@@ -30,3 +30,17 @@ function ereol_inspiration_node_info() {
   drupal_alter('node_info', $items);
   return $items;
 }
+
+/**
+ * Implements hook_paragraphs_info().
+ */
+function ereol_inspiration_paragraphs_info() {
+  $items = array(
+    'blue_titles_info' => array(
+      'name' => 'blue titles info',
+      'bundle' => 'blue_titles_info',
+      'locked' => '1',
+    ),
+  );
+  return $items;
+}
