@@ -105,3 +105,10 @@ function ereol_base_update_7109() {
 function ereol_base_update_7110() {
   module_enable(array('media_videotool'), TRUE);
 }
+
+/**
+ * Enable honeypot module.
+ */
+function ereol_base_update_7111() {
+  module_enable(array('honeypot'), TRUE);
+}
