@@ -317,7 +317,7 @@ function ereol_inspiration_field_default_field_instances() {
   t('Categories');
   t('Category query');
   t('Elementer');
-  t('Søgestreng for hovedkategorien');
+  t('Query for the main category');
 
   return $field_instances;
 }
