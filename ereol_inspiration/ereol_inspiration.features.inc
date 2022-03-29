@@ -39,6 +39,10 @@ function ereol_inspiration_paragraphs_info() {
     'blue_titles_info' => array(
       'name' => 'blue titles info',
       'bundle' => 'blue_titles_info',
+    ),
+    'category_list' => array(
+      'name' => 'Category list',
+      'bundle' => 'category_list',
       'locked' => '1',
     ),
   );
