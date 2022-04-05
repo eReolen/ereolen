@@ -10,13 +10,13 @@
 function ereol_video_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_promoted_materials'.
-  $field_bases['field_promoted_materials'] = array(
+  // Exported field_base: 'field_video_bundle_materials'.
+  $field_bases['field_video_bundle_materials'] = array(
     'active' => 1,
     'cardinality' => 4,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_promoted_materials',
+    'field_name' => 'field_video_bundle_materials',
     'indexes' => array(),
     'locked' => 0,
     'module' => 'ting_reference',
