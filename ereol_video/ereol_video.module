@@ -76,9 +76,10 @@ function ereol_video_preprocess_entity(&$variables) {
     $wrapper = $variables['paragraphs_item']->wrapper();
 
     $color = $wrapper->field_link_color->value();
+    $variables['classes_array'][] = 'video-bundle-colored';
+    // Use #ffffff as background color if none selected.
+    $variables['classes_array'][] = '#000000' === reol_base_get_contrast_color($color['rgb'] ?? '#ffffff') ? 'video-bundle-color-dark' : 'video-bundle-color-light';
     if (isset($color['rgb'])) {
-      $variables['classes_array'][] = 'video-bundle-colored';
-      $variables['classes_array'][] = '#000000' === reol_base_get_contrast_color($color['rgb']) ? 'video-bundle-color-dark' : 'video-bundle-color-light';
       $variables['attributes_array']['style'] = 'background-color: ' . $color['rgb'] . ';';
     }
   }
