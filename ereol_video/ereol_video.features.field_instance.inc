@@ -203,8 +203,8 @@ function ereol_video_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'paragraphs_item-video_bundle-field_promoted_materials'.
-  $field_instances['paragraphs_item-video_bundle-field_promoted_materials'] = array(
+  // 'paragraphs_item-video_bundle-field_video_bundle_materials'.
+  $field_instances['paragraphs_item-video_bundle-field_video_bundle_materials'] = array(
     'bundle' => 'video_bundle',
     'default_value' => NULL,
     'deleted' => 0,
@@ -227,7 +227,7 @@ function ereol_video_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'paragraphs_item',
-    'field_name' => 'field_promoted_materials',
+    'field_name' => 'field_video_bundle_materials',
     'label' => 'Promoted materials',
     'required' => 0,
     'settings' => array(
