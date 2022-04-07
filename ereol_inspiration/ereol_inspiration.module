@@ -14,3 +14,14 @@ function ereol_inspiration_paragraphs_item_access(ParagraphsItemEntity $entity, 
   // Deny view access to blue titles info paragraphs.
   return ('view' === $op && 'blue_titles_info' === $entity->bundle()) ? PARAGRAPHS_ITEM_ACCESS_DENY : PARAGRAPHS_ITEM_ACCESS_IGNORE;
 }
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ereol_inspiration_entity_info_alter(&$entity_info) {
+  // Add custom “List item” view mode to nodes.
+  $entity_info['node']['view modes']['list_item'] = [
+    'label' => t('List item'),
+    'custom settings' => TRUE,
+  ];
+}

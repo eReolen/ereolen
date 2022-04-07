@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the ereol_video module.
+ */
+
+/**
+ * Remove carousel field from video bundle.
+ */
+function ereol_video_update_7101() {
+  $field_instance = field_info_instance('paragraphs_item', 'field_carousel', 'video_bundle');
+  if (NULL !== $field_instance) {
+    field_delete_instance($field_instance);
+  }
+}
