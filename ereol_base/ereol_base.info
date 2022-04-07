@@ -9,3 +9,4 @@ dependencies[] = ereol_inspiration
 dependencies[] = ereol_video
 dependencies[] = reol_base
 dependencies[] = reol_widget
+dependencies[] = menu_attributes

@@ -23,6 +23,12 @@ function ereol_inspiration_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 2,
       ),
+      'list_item' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -57,6 +63,12 @@ function ereol_inspiration_field_default_field_instances() {
         'settings' => array(),
         'type' => 'hidden',
         'weight' => 3,
+      ),
+      'list_item' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -138,6 +150,12 @@ function ereol_inspiration_field_default_field_instances() {
         'type' => 'hidden',
         'weight' => 1,
       ),
+      'list_item' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -180,6 +198,12 @@ function ereol_inspiration_field_default_field_instances() {
         'type' => 'paragraphs_view',
         'weight' => 0,
       ),
+      'list_item' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -199,6 +223,7 @@ function ereol_inspiration_field_default_field_instances() {
         'author_portrait' => -1,
         'author_quote' => -1,
         'blue_titles_info' => 'blue_titles_info',
+        'category_list' => 'category_list',
         'linkbox' => -1,
         'material_carousel' => 'material_carousel',
         'newsletter_signup' => 'newsletter_signup',
@@ -216,6 +241,7 @@ function ereol_inspiration_field_default_field_instances() {
         'author_portrait' => 10,
         'author_quote' => 11,
         'blue_titles_info' => 38,
+        'category_list' => 39,
         'linkbox' => 3,
         'material_carousel' => 4,
         'newsletter_signup' => 14,
@@ -240,10 +266,55 @@ function ereol_inspiration_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'paragraphs_item-category_list-field_categories'.
+  $field_instances['paragraphs_item-category_list-field_categories'] = array(
+    'bundle' => 'category_list',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'entityreference',
+        'settings' => array(
+          'links' => 0,
+          'view_mode' => 'list_item',
+        ),
+        'type' => 'entityreference_entity_view',
+        'weight' => 0,
+      ),
+      'paragraphs_editor_preview' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'paragraphs_item',
+    'field_name' => 'field_categories',
+    'label' => 'Categories',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'size' => 60,
+      ),
+      'type' => 'entityreference_autocomplete',
+      'weight' => 1,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('App feed color');
   t('App feed image');
+  t('Categories');
   t('Category query');
   t('Elementer');
   t('Query for the main category');
