@@ -76,7 +76,6 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('jira_issue_type_id'),
   ];
 
-
   // The jira project id fetched from a jira project.
   $form['jira_settings']['jira_material_project_id'] = [
     '#type' => 'textfield',
