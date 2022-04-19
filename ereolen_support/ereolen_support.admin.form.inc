@@ -76,6 +76,21 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('jira_issue_type_id'),
   ];
 
+
+  // The jira project id fetched from a jira project.
+  $form['jira_settings']['jira_material_project_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material project id'),
+    '#default_value' => variable_get('jira_material_project_id'),
+  ];
+
+  // The desired issue type id fetched from a jira project
+  $form['jira_settings']['jira_material_issue_type_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material issue type id'),
+    '#default_value' => variable_get('jira_material_issue_type_id'),
+  ];
+
   // The desired request type id fetched from a jira project
   $form['jira_settings']['jira_support_request_type_field_id'] = [
     '#type' => 'textfield',
@@ -161,6 +176,29 @@ function ereolen_support_config_form($form, &$form_state) {
       '#format' => 'ding_wysiwyg'
     ];
   }
+
+  $form['material_texts'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Form material selection texts'),
+    '#group' => 'support_form',
+    '#collapsible' => FALSE,
+  ];
+
+  $form['material_texts']['ereolen_material_submission_text'] = [
+    '#type' => 'textfield',
+    '#title' => t('Material selection submission text'),
+    '#description' => t('The text displayed to the user when a form is submitted.'),
+    '#default_value' => variable_get('ereolen_material_submission_text'),
+  ];
+
+  $form['material_texts']['ereolen_material_lead'] = [
+    '#type' => 'text_format',
+    '#title' => t('Lead text'),
+    '#description' => t('The text displayed above the form.'),
+    '#default_value' => variable_get('ereolen_material_lead')['value'] ?? NULL,
+    '#format' => 'ding_wysiwyg'
+  ];
+
 
   $form['publizon'] = [
     '#type' => 'fieldset',

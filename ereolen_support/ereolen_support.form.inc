@@ -455,9 +455,9 @@ function ereolen_support_form_submit($form, &$form_state) {
   }
   else {
     // Check for and create user in Jira
-    $jira_user = _ereolen_support_search_jira_user($user, $form_state);
+    $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
     if (!$jira_user) {
-      $jira_user = _ereolen_support_create_jira_user($user, $form_state);
+      $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
     }
 
     // Create issue in Jira.
