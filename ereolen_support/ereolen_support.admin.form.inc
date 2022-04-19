@@ -106,7 +106,6 @@ function ereolen_support_config_form($form, &$form_state) {
     '#description' => t('This value is fetched from Jira db table "AO_54307E_VIEWPORTFORM", db column "KEY" and combined with project key [project_key/request_type_key]'),
   ];
 
-
   // Build field configuration from frontend form.
   foreach ($frontendForm as $key => $possibleField) {
     // Make sure the form entry is an array.

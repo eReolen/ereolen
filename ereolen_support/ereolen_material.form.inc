@@ -22,8 +22,7 @@ include_once 'ereolen_support.helper.inc';
 function ereolen_material_form($form, &$form_state) {
   $form['#attributes'] = [
     'name' => 'ereolen_material_form',
-    'class' => ['node-webform'],
-    'onsubmit' => 'op.disabled = true; return true;'
+    'class' => ['node-webform']
   ];
 
   $form['#attached']['css'] = [
@@ -53,7 +52,7 @@ function ereolen_material_form($form, &$form_state) {
     '#value' => t('Send'),
   ];
 
-  honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
+  honeypot_add_form_protection($form, $form_state, ['honeypot', 'time_restriction']);
 
   return $form;
 }
