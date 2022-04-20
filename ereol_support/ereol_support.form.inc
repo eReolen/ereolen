@@ -50,9 +50,9 @@ function ereol_support_form(array $form, array &$form_state) {
     ],
   ];
 
-  $form['ereolen_support_lead'] = [
-    '#markup' => theme('ereolen_support_lead_text', [
-      'text' =>  variable_get('ereolen_support_lead')['value'] ?? NULL,
+  $form['ereol_support_lead'] = [
+    '#markup' => theme('ereol_support_lead_text', [
+      'text' =>  variable_get('ereol_support_lead')['value'] ?? NULL,
     ]),
   ];
 
@@ -457,9 +457,9 @@ function ereol_support_form_submit(array $form, array &$form_state) {
   else {
     try {
       // Check for and create user in Jira
-      $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
+      $jira_user = _ereol_support_search_jira_user($user, $form_state, $form_state['values']['ereol_support_email']);
       if (!$jira_user) {
-        $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_support_email']);
+        $jira_user = _ereol_support_create_jira_user($user, $form_state, $form_state['values']['ereol_support_email']);
       }
 
       // Create issue in Jira.

@@ -19,8 +19,8 @@
  *
  * @throws \Exception
  */
-function _ereolen_support_search_jira_user($user, $form_state, $email) {
-  $requestParts = _ereolen_support_get_request_parts('GET');
+function _ereol_support_search_jira_user($user, $form_state, $email) {
+  $requestParts = _ereol_support_get_request_parts('GET');
   $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $email, $requestParts['options']);
 
   // Inspect result.
@@ -61,7 +61,7 @@ function _ereolen_support_search_jira_user($user, $form_state, $email) {
  *
  * @throws \Exception
  */
-function _ereolen_support_create_jira_user($user, array $form_state, $email) {
+function _ereol_support_create_jira_user($user, array $form_state, $email) {
   $data = [
     'name' => $email,
     'emailAddress' => $email,
@@ -140,7 +140,7 @@ function _ereol_support_send_to_jira(array $form, array &$form_state, $jiraUser)
         'name' => $jiraUser->emailAddress,
       ],
       'labels' => [
-        preg_replace('/\s+/', '_', $form_state['values']['ereolen_support_problem'])
+        preg_replace('/\s+/', '_', $form_state['values']['ereol_support_problem'])
       ],
     ],
   ];
@@ -195,7 +195,7 @@ function _ereol_support_send_to_jira(array $form, array &$form_state, $jiraUser)
   return NULL;
 }
 
-function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
+function _ereol_material_send_to_jira($form, &$form_state, $jiraUser) {
   $data = [
     'fields' => [
       'project' => [
@@ -204,19 +204,19 @@ function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
       'issuetype' => [
         'id' => variable_get('jira_material_issue_type_id'),
       ],
-      'summary' => preg_replace('/\s+/', ' ', check_plain(trim(substr($form_state['values']['ereolen_material_description'], 0, 30)))),
-      'description' => $form_state['values']['ereolen_material_description'],
+      'summary' => preg_replace('/\s+/', ' ', check_plain(trim(substr($form_state['values']['ereol_material_description'], 0, 30)))),
+      'description' => $form_state['values']['ereol_material_description'],
       'reporter' => [
         'name' => $jiraUser->emailAddress,
       ],
     ],
   ];
 
-  $requestParts = _ereolen_support_get_request_parts('POST', $data);
+  $requestParts = _ereol_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
 
-  if (_ereolen_support_result_confirmed($result)) {
+  if (_ereol_support_result_confirmed($result)) {
     return $result;
   }
 
@@ -310,7 +310,7 @@ function _ereol_support_create_select_list($vocab_machine_name, $add_select = TR
  * @return array
  *   An array with keys like values.
  */
-function _ereolen_support_array_as_select(array $array, $add_select = TRUE) {
+function _ereol_support_array_as_select(array $array, $add_select = TRUE) {
   $list = [];
   if ($add_select) {
     $list['_none'] = t('- Select -');

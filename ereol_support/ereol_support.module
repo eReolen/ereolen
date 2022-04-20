@@ -6,8 +6,8 @@
  */
 
 // Required to load form with fields.
-module_load_include('inc', 'ereolen_support', 'ereolen_support.form');
-module_load_include('inc', 'ereolen_support', 'ereolen_material.form');
+module_load_include('inc', 'ereol_support', 'ereol_support.form');
+module_load_include('inc', 'ereol_support', 'ereol_material.form');
 
 /**
  * Implements hook_menu().
@@ -35,8 +35,8 @@ function ereol_support_menu() {
     'title' => 'eReolen materialevalg',
     'description' => 'eReolen materialevalg',
     'page callback' => 'drupal_get_form',
-    'page arguments' => ['ereolen_material_form'],
-    'file' => 'ereolen_material.form.inc',
+    'page arguments' => ['ereol_material_form'],
+    'file' => 'ereol_material.form.inc',
     'access callback' => TRUE,
   ];
 
@@ -96,11 +96,11 @@ function ereol_support_theme($existing, $type, $theme, $path) {
       'template' => 'ereol-support--help-text',
       'path' => $path . '/templates/',
     ],
-    'ereolen_support_lead_text' => [
+    'ereol_support_lead_text' => [
       'variables' => [
         'text' => NULL,
       ],
-      'template' => 'ereolen-support--lead-text',
+      'template' => 'ereol-support--lead-text',
       'path' => $path . '/templates/'
     ]
   ];

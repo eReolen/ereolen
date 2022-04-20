@@ -6,7 +6,7 @@
 ?>
 <?php if (!empty($text)) : ?>
   <div class="form-item">
-    <div class="ereolen-support--lead-text text">
+    <div class="ereol-support--lead-text text">
       <?php print $text; ?>
     </div>
   </div>

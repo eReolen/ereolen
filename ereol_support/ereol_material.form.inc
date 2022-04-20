@@ -5,7 +5,7 @@
  * Add eReolen material selection form.
  */
 
-include_once 'ereolen_support.helper.inc';
+include_once 'ereol_support.helper.inc';
 
 /**
  * Create material selection form.
@@ -19,29 +19,29 @@ include_once 'ereolen_support.helper.inc';
  *
  * @throws \Exception
  */
-function ereolen_material_form($form, &$form_state) {
+function ereol_material_form($form, &$form_state) {
   $form['#attributes'] = [
-    'name' => 'ereolen_material_form',
+    'name' => 'ereol_material_form',
     'class' => ['node-webform']
   ];
 
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereolen_support') . '/css/styles.css'
+    drupal_get_path('module', 'ereol_support') . '/css/styles.css'
   ];
 
-  $form['ereolen_material_lead'] = [
-    '#markup' => theme('ereolen_support_lead_text', [
-      'text' =>  variable_get('ereolen_material_lead')['value'] ?? NULL,
+  $form['ereol_material_lead'] = [
+    '#markup' => theme('ereol_support_lead_text', [
+      'text' =>  variable_get('ereol_material_lead')['value'] ?? NULL,
     ]),
   ];
 
-  $form['ereolen_material_email'] = [
+  $form['ereol_material_email'] = [
     '#type' => 'emailfield',
     '#title' => t('Email'),
     '#required' => TRUE,
   ];
 
-  $form['ereolen_material_description'] = [
+  $form['ereol_material_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#required' => TRUE,
@@ -67,19 +67,19 @@ function ereolen_material_form($form, &$form_state) {
  *
  * @throws \Exception
  */
-function ereolen_material_form_submit($form, &$form_state) {
+function ereol_material_form_submit($form, &$form_state) {
   global $user;
-  $submission_text = variable_get('ereolen_material_submission_text');
+  $submission_text = variable_get('ereol_material_submission_text');
 
   // Check for and create user in Jira
-  $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_material_email']);
+  $jira_user = _ereol_support_search_jira_user($user, $form_state, $form_state['values']['ereol_material_email']);
   if (!$jira_user) {
-    $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_material_email']);
+    $jira_user = _ereol_support_create_jira_user($user, $form_state, $form_state['values']['ereol_material_email']);
   }
 
   // Create issue in Jira.
   if (!empty($jira_user)) {
-    $jira_result = _ereolen_material_send_to_jira($form, $form_state, $jira_user);
+    $jira_result = _ereol_material_send_to_jira($form, $form_state, $jira_user);
     if (!empty($jira_result)) {
       drupal_set_message($submission_text, 'status');
     }

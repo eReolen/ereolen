@@ -162,11 +162,11 @@ function ereol_support_config_form(array $form, array &$form_state) {
     '#default_value' => variable_get('ereol_support_submission_text'),
   ];
 
-  $form['texts']['ereolen_support_lead'] = [
+  $form['texts']['ereol_support_lead'] = [
     '#type' => 'text_format',
     '#title' => t('Lead text'),
     '#description' => t('The text displayed above the form.'),
-    '#default_value' => variable_get('ereolen_support_lead')['value'] ?? NULL,
+    '#default_value' => variable_get('ereol_support_lead')['value'] ?? NULL,
     '#format' => 'ding_wysiwyg'
   ];
 
@@ -196,18 +196,18 @@ function ereol_support_config_form(array $form, array &$form_state) {
     '#collapsible' => FALSE,
   ];
 
-  $form['material_texts']['ereolen_material_submission_text'] = [
+  $form['material_texts']['ereol_material_submission_text'] = [
     '#type' => 'textfield',
     '#title' => t('Material selection submission text'),
     '#description' => t('The text displayed to the user when a form is submitted.'),
-    '#default_value' => variable_get('ereolen_material_submission_text'),
+    '#default_value' => variable_get('ereol_material_submission_text'),
   ];
 
-  $form['material_texts']['ereolen_material_lead'] = [
+  $form['material_texts']['ereol_material_lead'] = [
     '#type' => 'text_format',
     '#title' => t('Lead text'),
     '#description' => t('The text displayed above the form.'),
-    '#default_value' => variable_get('ereolen_material_lead')['value'] ?? NULL,
+    '#default_value' => variable_get('ereol_material_lead')['value'] ?? NULL,
     '#format' => 'ding_wysiwyg'
   ];
 
