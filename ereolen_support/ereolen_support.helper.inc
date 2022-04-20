@@ -17,10 +17,9 @@
  *
  * @throws \Exception
  */
-function _ereolen_support_search_jira_user($user, $form_state) {
-  $form_email = $form_state['values']['ereolen_support_email'];
+function _ereolen_support_search_jira_user($user, $form_state, $email) {
   $requestParts = _ereolen_support_get_request_parts('GET');
-  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $form_email, $requestParts['options']);
+  $result = drupal_http_request($requestParts['jira_path'] . '/user/search?includeInactive=true&username=' . $email, $requestParts['options']);
 
   // Inspect result.
   if (!_ereolen_support_result_confirmed($result)) {
@@ -33,7 +32,7 @@ function _ereolen_support_search_jira_user($user, $form_state) {
   // multiple results.
   if (!empty($resultArray)) {
     foreach ($resultArray as $jiraUser) {
-      if (is_object($jiraUser) && $jiraUser->name == $form_email) {
+      if (is_object($jiraUser) && $jiraUser->name == $email) {
         // If user is deactivated in Jira we need to activate it.
 
         if ($jiraUser->active == false) {
@@ -61,12 +60,11 @@ function _ereolen_support_search_jira_user($user, $form_state) {
  *
  * @throws \Exception
  */
-function _ereolen_support_create_jira_user($user, $form_state) {
-  $form_email = $form_state['values']['ereolen_support_email'];
+function _ereolen_support_create_jira_user($user, $form_state, $email) {
   $data = [
-    'name' => $form_email,
-    'emailAddress' => $form_email,
-    'displayName' => $form_email,
+    'name' => $email,
+    'emailAddress' => $email,
+    'displayName' => $email,
   ];
 
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
@@ -180,6 +178,34 @@ function _ereolen_support_send_to_jira($form, &$form_state, $jiraUser) {
     variable_get('jira_support_request_type_field_id'),
     variable_get('jira_support_request_type_field_value')
   );
+
+  $requestParts = _ereolen_support_get_request_parts('POST', $data);
+
+  $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);
+
+  if (_ereolen_support_result_confirmed($result)) {
+    return $result;
+  }
+
+  return NULL;
+}
+
+function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
+  $data = [
+    'fields' => [
+      'project' => [
+        'id' => variable_get('jira_material_project_id'),
+      ],
+      'issuetype' => [
+        'id' => variable_get('jira_material_issue_type_id'),
+      ],
+      'summary' => preg_replace('/\s+/', ' ', check_plain(trim(substr($form_state['values']['ereolen_material_description'], 0, 30)))),
+      'description' => $form_state['values']['ereolen_material_description'],
+      'reporter' => [
+        'name' => $jiraUser->emailAddress,
+      ],
+    ],
+  ];
 
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
 
