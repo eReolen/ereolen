@@ -207,6 +207,14 @@ function _ereolen_material_send_to_jira($form, &$form_state, $jiraUser) {
     ],
   ];
 
+  // Set Jira customer request type.
+  // https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+  $data = _ereolen_support_set_request_type(
+    $data,
+    variable_get('jira_material_request_type_field_id'),
+    variable_get('jira_material_request_type_field_value')
+  );
+
   $requestParts = _ereolen_support_get_request_parts('POST', $data);
 
   $result = drupal_http_request($requestParts['jira_path'] . '/issue', $requestParts['options']);

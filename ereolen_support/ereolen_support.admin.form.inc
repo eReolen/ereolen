@@ -106,6 +106,22 @@ function ereolen_support_config_form($form, &$form_state) {
     '#description' => t('This value is fetched from Jira db table "AO_54307E_VIEWPORTFORM", db column "KEY" and combined with project key [project_key/request_type_key]'),
   ];
 
+  // The desired request type id fetched from a jira project
+  $form['jira_settings']['jira_material_request_type_field_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material request type field id'),
+    '#default_value' => variable_get('jira_material_request_type_field_id'),
+  ];
+
+  // The desired request type value fetched from a jira DB.
+  // https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+  $form['jira_settings']['jira_material_request_type_field_value'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material request type value'),
+    '#default_value' => variable_get('jira_material_request_type_field_value'),
+    '#description' => t('This value is fetched from Jira db table "AO_54307E_VIEWPORTFORM", db column "KEY" and combined with project key [project_key/request_type_key]'),
+  ];
+
   // Build field configuration from frontend form.
   foreach ($frontendForm as $key => $possibleField) {
     // Make sure the form entry is an array.
