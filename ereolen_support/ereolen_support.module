@@ -7,6 +7,7 @@
 
 // Required to load form with fields.
 module_load_include('inc', 'ereolen_support', 'ereolen_support.form');
+module_load_include('inc', 'ereolen_support', 'ereolen_material.form');
 
 /**
  * Implements hook_menu().
@@ -27,6 +28,15 @@ function ereolen_support_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => ['ereolen_support_form'],
     'file' => 'ereolen_support.form.inc',
+    'access callback' => TRUE,
+  ];
+
+  $items['materialevalg-formular'] = [
+    'title' => 'eReolen materialevalg',
+    'description' => 'eReolen materialevalg',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['ereolen_material_form'],
+    'file' => 'ereolen_material.form.inc',
     'access callback' => TRUE,
   ];
 

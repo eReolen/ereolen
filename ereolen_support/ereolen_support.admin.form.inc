@@ -76,6 +76,20 @@ function ereolen_support_config_form($form, &$form_state) {
     '#default_value' => variable_get('jira_issue_type_id'),
   ];
 
+  // The jira project id fetched from a jira project.
+  $form['jira_settings']['jira_material_project_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material project id'),
+    '#default_value' => variable_get('jira_material_project_id'),
+  ];
+
+  // The desired issue type id fetched from a jira project
+  $form['jira_settings']['jira_material_issue_type_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material issue type id'),
+    '#default_value' => variable_get('jira_material_issue_type_id'),
+  ];
+
   // The desired request type id fetched from a jira project
   $form['jira_settings']['jira_support_request_type_field_id'] = [
     '#type' => 'textfield',
@@ -92,6 +106,21 @@ function ereolen_support_config_form($form, &$form_state) {
     '#description' => t('This value is fetched from Jira db table "AO_54307E_VIEWPORTFORM", db column "KEY" and combined with project key [project_key/request_type_key]'),
   ];
 
+  // The desired request type id fetched from a jira project
+  $form['jira_settings']['jira_material_request_type_field_id'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material request type field id'),
+    '#default_value' => variable_get('jira_material_request_type_field_id'),
+  ];
+
+  // The desired request type value fetched from a jira DB.
+  // https://confluence.atlassian.com/jirakb/how-to-set-request-type-when-creating-an-issue-via-rest-api-using-rest-api-2-issue-endpoint-938041214.html
+  $form['jira_settings']['jira_material_request_type_field_value'] = [
+    '#type' => 'textfield',
+    '#title' => t('Jira material request type value'),
+    '#default_value' => variable_get('jira_material_request_type_field_value'),
+    '#description' => t('This value is fetched from Jira db table "AO_54307E_VIEWPORTFORM", db column "KEY" and combined with project key [project_key/request_type_key]'),
+  ];
 
   // Build field configuration from frontend form.
   foreach ($frontendForm as $key => $possibleField) {
@@ -161,6 +190,29 @@ function ereolen_support_config_form($form, &$form_state) {
       '#format' => 'ding_wysiwyg'
     ];
   }
+
+  $form['material_texts'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Form material selection texts'),
+    '#group' => 'support_form',
+    '#collapsible' => FALSE,
+  ];
+
+  $form['material_texts']['ereolen_material_submission_text'] = [
+    '#type' => 'textfield',
+    '#title' => t('Material selection submission text'),
+    '#description' => t('The text displayed to the user when a form is submitted.'),
+    '#default_value' => variable_get('ereolen_material_submission_text'),
+  ];
+
+  $form['material_texts']['ereolen_material_lead'] = [
+    '#type' => 'text_format',
+    '#title' => t('Lead text'),
+    '#description' => t('The text displayed above the form.'),
+    '#default_value' => variable_get('ereolen_material_lead')['value'] ?? NULL,
+    '#format' => 'ding_wysiwyg'
+  ];
+
 
   $form['publizon'] = [
     '#type' => 'fieldset',
