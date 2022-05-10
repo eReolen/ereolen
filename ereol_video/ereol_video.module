@@ -82,5 +82,46 @@ function ereol_video_preprocess_entity(&$variables) {
     if (isset($color['rgb'])) {
       $variables['attributes_array']['style'] = 'background-color: ' . $color['rgb'] . ';';
     }
+
+    // If we have no promoted materials and have a search string, we build a
+    // list of promoted materials from the search string.
+    if (!isset($variables['content']['field_video_bundle_materials'])
+      && $search = trim($wrapper->field_search_string->value())) {
+      // Execute query and get object ids.
+      $result = opensearch_do_search($search, 1, 4, ['reply_only' => TRUE]);
+      $entity_ids = [];
+      foreach ($result->collections as $collection) {
+        $id = $collection->objects[0]->id;
+        $object = ting_object_load($id);
+        if ($object) {
+          $entity_id = $object->tid;
+          if (!in_array($entity_id, $entity_ids)) {
+            $entity_ids[] = $entity_id;
+          }
+        }
+      }
+
+      // Render the materials if any.
+      if (!empty($entity_ids)) {
+        $variables['content']['field_video_bundle_materials'] = [
+          '#theme' => 'field',
+          '#bundle' => 'ereol_video',
+          '#label_display' => 'hidden',
+          '#field_name' => 'field_video_bundle_materials',
+          '#field_type' => 'ting_reference',
+        ];
+        foreach ($entity_ids as $delta => $entity_id) {
+          $variables['content']['field_video_bundle_materials']['#items'][] = $delta;
+          $variables['content']['field_video_bundle_materials'][$delta] = [
+            '#theme' => 'ting_reference_item',
+            '#entity_id' => $entity_id,
+            '#view_mode' => 'teaser',
+          ];
+        }
+
+        // Add JavaScript to make the material display work.
+        drupal_add_js(drupal_get_path('module', 'ting_reference') . '/js/ting_reference_ajax.js');
+      }
+    }
   }
 }
