@@ -41,6 +41,17 @@ function ereolen_material_form($form, &$form_state) {
     '#required' => TRUE,
   ];
 
+  $form['ereolen_material_type'] = [
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#options' => [
+      t('E-Book') => t('E-Book'),
+      t('Audiobook') => t('Audiobook'),
+      t('E- and audiobook') => t('E- and audiobook'),
+    ],
+    '#required' => TRUE,
+  ];
+
   $form['ereolen_material_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
