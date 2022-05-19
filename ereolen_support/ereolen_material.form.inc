@@ -45,9 +45,9 @@ function ereolen_material_form($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Type'),
     '#options' => [
-      t('E-Book') => t('E-Book'),
+      t('E-book') => t('E-book'),
       t('Audiobook') => t('Audiobook'),
-      t('E- and audiobook') => t('E- and audiobook'),
+      t('E-book and audiobook') => t('E-book and audiobook'),
     ],
     '#required' => TRUE,
   ];
