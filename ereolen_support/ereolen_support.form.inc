@@ -273,6 +273,36 @@ function ereolen_support_form($form, &$form_state) {
     ]
   ];
 
+  $form['ereolen_support_book_title'] = [
+    '#type' => 'textfield',
+    '#title' => t('What book does the problem concern?'),
+    '#description' => isset(variable_get('ereolen_support_book_title_description')['value']) ? variable_get('ereolen_support_description_description')['value'] : '',
+    '#states' => [
+      'visible' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+          ['value' => 'Forespørgsel på titel'],
+          ['value' => 'Fejlbeskeder'],
+          ['value' => 'Tekniske spørgsmål'],
+          ['value' => 'Kvoter'],
+        ],
+      ],
+      'required' => [
+        ':input[name="ereolen_support_problem"]' => [
+          ['value' => 'Lån og reservationer'],
+          ['value' => 'Læs og lyt'],
+          ['value' => 'Download'],
+        ],
+      ],
+    ],
+    '#element_validate' => [
+      '_ereolen_support_check_cpr',
+      '_ereolen_support_states_require_validate'
+    ],
+  ];
+
   $form['ereolen_support_description'] = [
     '#type' => 'textarea',
     '#title' => t('Description'),
@@ -298,36 +328,6 @@ function ereolen_support_form($form, &$form_state) {
           ['value' => 'Fejlbeskeder'],
           ['value' => 'Tekniske spørgsmål'],
           ['value' => 'Kvoter'],
-        ],
-      ],
-    ],
-    '#element_validate' => [
-      '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
-    ],
-  ];
-
-  $form['ereolen_support_book_title'] = [
-    '#type' => 'textfield',
-    '#title' => t('What book does the problem concern?'),
-    '#description' => isset(variable_get('ereolen_support_book_title_description')['value']) ? variable_get('ereolen_support_description_description')['value'] : '',
-    '#states' => [
-      'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Læs og lyt'],
-          ['value' => 'Download'],
-          ['value' => 'Forespørgsel på titel'],
-          ['value' => 'Fejlbeskeder'],
-          ['value' => 'Tekniske spørgsmål'],
-          ['value' => 'Kvoter'],
-        ],
-      ],
-      'required' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Læs og lyt'],
-          ['value' => 'Download'],
         ],
       ],
     ],
