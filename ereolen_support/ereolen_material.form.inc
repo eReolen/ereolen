@@ -58,6 +58,11 @@ function ereolen_material_form($form, &$form_state) {
     '#required' => TRUE,
   ];
 
+  $form['captcha'] = array(
+    '#type' => 'captcha',
+    '#captcha_type' => 'image_captcha/Image',
+  );
+
   $form['submit_button'] = [
     '#type' => 'submit',
     '#value' => t('Send'),

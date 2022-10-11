@@ -138,3 +138,22 @@ function ereol_base_update_7112() {
     }
   }
 }
+
+/**
+ * Enable captcha and image captcha.
+ */
+function ereol_base_update_7113() {
+  module_enable(array('captcha', 'image_captcha'), TRUE);
+}
+
+/**
+ * Disable default captcha on all drupal core forms.
+ */
+function ereol_base_update_7114() {
+  $num_updated = db_update('captcha_points')
+    ->fields([
+      'captcha_type' => NULL,
+      'module' => NULL
+    ])
+    ->execute();
+}
