@@ -411,6 +411,11 @@ function ereolen_support_form($form, &$form_state) {
     '#maxlength' => 256
   ];
 
+  $form['captcha'] = array(
+    '#type' => 'captcha',
+    '#captcha_type' => 'image_captcha/Image',
+  );
+
   $form['submit_button'] = [
     '#type' => 'submit',
     '#value' => t('Send'),
