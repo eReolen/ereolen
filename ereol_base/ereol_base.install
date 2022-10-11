@@ -150,7 +150,7 @@ function ereol_base_update_7113() {
  * Disable default captcha on all drupal core forms.
  */
 function ereol_base_update_7114() {
-  $num_updated =  db_update('captcha_points')
+  $num_updated = db_update('captcha_points')
     ->fields([
       'captcha_type' => NULL,
       'module' => NULL
