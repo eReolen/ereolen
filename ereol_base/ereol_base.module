@@ -24,7 +24,7 @@ function ereol_base_form_alter(&$form, $form_state, $form_id) {
       if (module_exists('ding_adgangsplatformen')) {
         $form['adgangsplatformen-wrapper'] = array(
           '#type' => 'fieldset',
-          '#description' => t('Sign in with adgangsplatformen'),
+          '#description' => '<p class="adgangsplatformen-title">'. t('Sign in with adgangsplatformen') . '</p>',
           '#weight' => 10,
         );
 
