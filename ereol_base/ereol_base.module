@@ -50,6 +50,21 @@ function ereol_base_form_alter(&$form, $form_state, $form_id) {
             '#suffix' => '</div>',
           );
         }
+
+        $form['adgangsplatformen-wrapper']['disable'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Do not show this popup for the next 30 days'),
+          '#weight' => 100,
+          '#attributes' => array(
+            'class' => array(
+              'js-adgangsplatformen-checkbox',
+            ),
+          ),
+        );
+
+        $form['#attached']['js'] = array(
+          drupal_get_path('module', 'ereol_base') . '/js/ereolen_base_adgangsplatformen.js',
+        );
       }
       break;
   }
