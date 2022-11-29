@@ -17,6 +17,56 @@ function ereol_base_form_alter(&$form, $form_state, $form_id) {
       unset($form['actions_container']);
       unset($form['#submit']);
       break;
+
+    case 'user_login':
+    case 'user_login_block':
+    case 'ding_user_authenticate_form':
+      if (module_exists('ding_adgangsplatformen')) {
+        $form['adgangsplatformen-wrapper'] = array(
+          '#type' => 'fieldset',
+          '#description' => '<p class="adgangsplatformen-title">'. t('Sign in with adgangsplatformen') . '</p>',
+          '#weight' => 10,
+        );
+
+        $form['adgangsplatformen-wrapper']['button'] = array(
+          '#attributes' => array(
+            'class' => array(
+              'adgangsplatformen-button',
+            ),
+          ),
+          '#type' => 'link',
+          '#href' => DING_ADGANGSPLATFORMEN_LOGIN_URL,
+          '#title' => t('Login'),
+          '#options' => array('html' => TRUE),
+          '#prefix' => '<div class="adgangsplatformen-wrapper">',
+          '#suffix' => '</div>',
+        );
+
+        $default = variable_get('ding_adgangsplatformen_notifications', array());
+        if (!empty($default)) {
+          $form['adgangsplatformen-wrapper']['text'] = array(
+            '#markup' => check_markup($default['text']['value'], $default['text']['format']),
+            '#prefix' => '<div class="adgangsplatformen-notification-text">',
+            '#suffix' => '</div>',
+          );
+        }
+
+        $form['adgangsplatformen-wrapper']['disable'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Do not show this popup for the next 30 days'),
+          '#weight' => 100,
+          '#attributes' => array(
+            'class' => array(
+              'js-adgangsplatformen-checkbox',
+            ),
+          ),
+        );
+
+        $form['#attached']['js'] = array(
+          drupal_get_path('module', 'ereol_base') . '/js/ereolen_base_adgangsplatformen.js',
+        );
+      }
+      break;
   }
 }
 
@@ -34,15 +84,6 @@ function ereol_base_preprocess_menu_link(&$variables) {
     // Logged in icon.
     if ($element['#original_link']['router_path'] == 'user') {
       $element['#localized_options']['attributes']['class'][] = 'user-logged-in-link';
-    }
-  }
-
-  if (module_exists('ding_adgangsplatformen')) {
-    // Rewrite login links if adgangsplatformen is enabled.
-    if (isset($element['#original_link']['menu_name']) && $element['#original_link']['menu_name'] == 'main-menu') {
-      if ($element['#href'] == 'login/nojs') {
-        $element['#href'] = DING_ADGANGSPLATFORMEN_LOGIN_URL;
-      }
     }
   }
 }

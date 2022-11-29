@@ -15,6 +15,32 @@ function ereol_base_install() {
 }
 
 /**
+ * Remove dead entity type field ref.
+ *
+ * @see https://www.drupal.org/docs/7/modules/views/data-fix-field-field-refers-to-nonexistent-entity-type-type
+ *
+ * @param array $field_names
+ *   Field names.
+ * @param string $entity_type
+ *   The entity type to remove for the fields.
+ *
+ * @return void
+ */
+function ereol_base_remove_dead_entity_type(array $field_names, string $entity_type) {
+  foreach ($field_names as $field_name) {
+    $instances = field_read_instances([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type
+    ], ['include_inactive' => TRUE]);
+    if (!empty($instances)) {
+      foreach ($instances as $instance) {
+        field_delete_instance($instance, TRUE);
+      }
+    }
+  }
+}
+
+/**
  * Enable ereol_inspiration.
  */
 function ereol_base_update_7101() {
@@ -156,4 +182,63 @@ function ereol_base_update_7114() {
       'module' => NULL
     ])
     ->execute();
+}
+
+/**
+ * Removed dead entity type "ding_type"
+ */
+function ereol_base_update_7115() {
+  $field_names = array(
+    'field_weight',
+    'field_state',
+    'field_content_status',
+    'field_ding_content_tags',
+    'field_ding_list',
+    'field_ding_list_permission',
+    'field_ding_list_permissions',
+    'field_ding_list_status',
+    'field_ding_list_user',
+    'field_element_type',
+    'field_list_objects',
+    'field_list_type',
+    'field_note',
+    'field_notes',
+    'field_search_query',
+    'field_search_title',
+    'field_taxonomy_term',
+    'field_ting_object',
+    'field_value',
+    'field_ding_interaction_body',
+    'field_ding_interaction_links',
+    'field_ding_interaction_status',
+  );
+
+  ereol_base_remove_dead_entity_type($field_names, 'ding_type');
+}
+
+/**
+ * Removed dead entity type "message"
+ */
+function ereol_base_update_7116() {
+  $field_names = array(
+    'field_first_element',
+    'field_last_check',
+    'field_last_element',
+    'field_list_id',
+    'field_new_count',
+    'field_state',
+  );
+
+  ereol_base_remove_dead_entity_type($field_names, 'message');
+}
+
+/**
+ * Removed dead entity type "message_type"
+ */
+function ereol_base_update_7117() {
+  $field_names = array(
+    'message_text',
+  );
+
+  ereol_base_remove_dead_entity_type($field_names, 'message_type');
 }
