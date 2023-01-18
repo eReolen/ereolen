@@ -87,19 +87,32 @@ function ereol_video_preprocess_entity(&$variables) {
     // list of promoted materials from the search string.
     if (!isset($variables['content']['field_video_bundle_materials'])
       && $search = trim($wrapper->field_search_string->value())) {
+      $max_number_of_items = 4;
       // Execute query and get object ids.
-      $result = opensearch_do_search($search, 1, 4, ['reply_only' => TRUE]);
+      // Note: Rather than passing ['collectionType' => 'manifestation'] to
+      // opensearch_do_search we get all ids from the returned collections to
+      // make sure that works (i.e. related ebooks and audio books) are shown
+      // together.
+      $result = opensearch_do_search($search, 1, $max_number_of_items, [
+        'reply_only' => TRUE,
+      ]);
       $entity_ids = [];
       foreach ($result->collections as $collection) {
-        $id = $collection->objects[0]->id;
-        $object = ting_object_load($id);
-        if ($object) {
-          $entity_id = $object->tid;
-          if (!in_array($entity_id, $entity_ids)) {
-            $entity_ids[] = $entity_id;
+        if (isset($collection->objects) && is_array($collection->objects)) {
+          foreach ($collection->objects as $object) {
+            $id = $object->id;
+            $object = ting_object_load($id);
+            if ($object) {
+              $entity_id = $object->tid;
+              if (!in_array($entity_id, $entity_ids)) {
+                $entity_ids[] = $entity_id;
+              }
+            }
           }
         }
       }
+
+      $entity_ids = array_slice($entity_ids, 0, $max_number_of_items);
 
       // Render the materials if any.
       if (!empty($entity_ids)) {
