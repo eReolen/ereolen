@@ -33,11 +33,12 @@ function ereol_frontend_image_default_styles() {
   $styles['ereol_cover_base'] = array(
     'label' => 'eReol cover base',
     'effects' => array(
-      1 => array(
-        'name' => 'image_scale_and_crop',
+      2 => array(
+        'name' => 'image_scale',
         'data' => array(
-          'width' => 260,
-          'height' => 375,
+          'width' => '',
+          'height' => 270,
+          'upscale' => 0,
         ),
         'weight' => 1,
       ),
