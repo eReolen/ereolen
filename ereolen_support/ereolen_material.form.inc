@@ -86,20 +86,23 @@ function ereolen_material_form($form, &$form_state) {
  * @throws \Exception
  */
 function ereolen_material_form_submit($form, &$form_state) {
-  global $user;
   $submission_text = variable_get('ereolen_material_submission_text');
 
-  // Check for and create user in Jira
-  $jira_user = _ereolen_support_search_jira_user($user, $form_state, $form_state['values']['ereolen_material_email']);
-  if (!$jira_user) {
-    $jira_user = _ereolen_support_create_jira_user($user, $form_state, $form_state['values']['ereolen_material_email']);
+  // Search for a user.
+  $jiraUserId = _ereolen_search_user($form_state['values']['ereolen_material_email']);
+
+  // Create user if none are found.
+  if (empty($jiraUserId)) {
+    $jiraUser = _ereolen_support_create_customer($form_state['values']['ereolen_material_email']);
+    $jiraUserId = $jiraUser['content']->accountId;
   }
 
   // Create issue in Jira.
-  if (!empty($jira_user)) {
-    $jira_result = _ereolen_material_send_to_jira($form, $form_state, $jira_user);
-    if (!empty($jira_result)) {
-      drupal_set_message($submission_text, 'status');
-    }
+  $jira_result = _ereolen_material_send_to_jira($form_state, $jiraUserId);
+  if (!empty($jira_result)) {
+    drupal_set_message($submission_text);
+  }
+  else {
+    drupal_set_message(t('Submission failed'));
   }
 }
