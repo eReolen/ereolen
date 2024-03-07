@@ -15,7 +15,7 @@
  *   Account id of the user.
  */
 function _ereolen_support_search_user(string $email): ?string {
-  $searchQueryResult = _ereolen_support_call_api('/user/search?query=' . $email, 'GET');
+  $searchQueryResult = _ereolen_support_call_api('/user/search?' . http_build_query(['query' => $email]), 'GET');
   // Endpoint searches in all fields, so we must ensure email matches.
   foreach ($searchQueryResult['content'] as $match) {
     // Atlassian accounts have their email stripped from user results,
@@ -39,7 +39,7 @@ function _ereolen_support_search_user(string $email): ?string {
  */
 function _ereolen_support_create_customer(string $email): array {
   return _ereolen_support_call_api(
-    '/customer?strictConflictStatusCode=true',
+    '/customer?' . http_build_query(['strictConflictStatusCode' => 'true']),
     'POST',
     [
       'displayName' => $email,
