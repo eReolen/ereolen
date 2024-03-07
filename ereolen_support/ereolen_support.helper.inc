@@ -14,18 +14,18 @@
  * @return string|null
  *   Account id of the user.
  */
-function _ereolen_search_user(string $email): ?string {
-  $accountId = NULL;
+function  _ereolen_support_search_user(string $email): ?string {
   $requestParts = _ereolen_support_get_request_parts('/user/search?query=' . $email, 'GET');
   $searchQueryResult = _ereolen_support_callApi($requestParts);
-  // Endpoint searches in all fields, so we must ensure email match.
+  // Endpoint searches in all fields, so we must ensure email matches.
   foreach ($searchQueryResult['content'] as $match) {
+    // Atlassian accounts have their email stripped from user results, so in that case we have no email to match up against.
     if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
-      $accountId = $match->accountId;
+      return $match->accountId;
     }
   }
 
-  return $accountId;
+  return NULL;
 }
 
 /**
@@ -445,7 +445,8 @@ function _ereolen_support_callApi(array $requestParts): array {
       'content' => json_decode($result),
       'info' => [
         'error_code' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
-        'error' => curl_errno($curl) ? curl_error($curl): '']
+        'error' => curl_errno($curl) ? curl_error($curl): '',
+      ]
     ];
 
     curl_close($curl);

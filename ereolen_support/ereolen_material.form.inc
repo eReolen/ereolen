@@ -89,12 +89,17 @@ function ereolen_material_form_submit($form, &$form_state) {
   $submission_text = variable_get('ereolen_material_submission_text');
 
   // Search for a user.
-  $jiraUserId = _ereolen_search_user($form_state['values']['ereolen_material_email']);
+  $jiraUserId = _ereolen_support_search_user($form_state['values']['ereolen_material_email']);
 
   // Create user if none are found.
   if (empty($jiraUserId)) {
-    $jiraUser = _ereolen_support_create_customer($form_state['values']['ereolen_material_email']);
-    $jiraUserId = $jiraUser['content']->accountId;
+    try{
+      $jiraUser = _ereolen_support_create_customer($form_state['values']['ereolen_material_email']);
+      $jiraUserId = $jiraUser['content']->accountId;
+    } catch (Exception $e) {
+      watchdog('ereolen_support', $e);
+      drupal_set_message(t('Submission failed'));
+    }
   }
 
   // Create issue in Jira.

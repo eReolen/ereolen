@@ -441,7 +441,7 @@ function ereolen_support_form_submit($form, &$form_state) {
   $submission_text = variable_get('ereolen_support_submission_text');
 
   // Search for a user.
-  $jiraUserId = _ereolen_search_user($form_state['values']['ereolen_support_email']);
+  $jiraUserId = _ereolen_support_search_user($form_state['values']['ereolen_support_email']);
 
   // Create user if none are found.
   if (empty($jiraUserId)) {
