@@ -171,11 +171,8 @@ function _ereolen_material_send_to_jira($form_state, $jiraUserId): ?array {
  *   the request.
  */
 function _ereolen_support_get_request_parts($apiEndpoint, string $method_type, array $data = [], $api = NULL) {
-  if ($api == 'servicedesk') {
-    $jira_api_path = variable_get('jira_domain') . '/rest/servicedeskapi';
-  }
-  else {
-    $jira_api_path = variable_get('jira_domain') . '/rest/api/latest';
+  $jira_api_path = variable_get('jira_domain')
+    . ('servicedesk' === $api ? '/rest/servicedeskapi' : '/rest/api/latest');
   }
 
   return [
