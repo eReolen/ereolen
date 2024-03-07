@@ -14,12 +14,12 @@
  * @return string|null
  *   Account id of the user.
  */
-function  _ereolen_support_search_user(string $email): ?string {
-  $requestParts = _ereolen_support_get_request_parts('/user/search?query=' . $email, 'GET');
-  $searchQueryResult = _ereolen_support_callApi($requestParts);
+function _ereolen_support_search_user(string $email): ?string {
+  $searchQueryResult = _ereolen_support_call_api('/user/search?query=' . $email, 'GET');
   // Endpoint searches in all fields, so we must ensure email matches.
   foreach ($searchQueryResult['content'] as $match) {
-    // Atlassian accounts have their email stripped from user results, so in that case we have no email to match up against.
+    // Atlassian accounts have their email stripped from user results,
+    // so in that case we have no email to match up against.
     if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
       return $match->accountId;
     }
@@ -29,19 +29,24 @@ function  _ereolen_support_search_user(string $email): ?string {
 }
 
 /**
- * Create a customer
+ * Create a customer.
  *
- * @param $email
+ * @param string $email
  *   Email of the customer to create.
  *
  * @return array
  *   The result of the request.
  */
-function _ereolen_support_create_customer($email): array {
-  // Always create jira user
-  $requestParts = _ereolen_support_get_request_parts('/customer?strictConflictStatusCode=true', 'POST', ['displayName' => $email, 'email' => $email], 'servicedesk');
-
-  return _ereolen_support_callApi($requestParts);
+function _ereolen_support_create_customer(string $email): array {
+  return _ereolen_support_call_api(
+    '/customer?strictConflictStatusCode=true',
+    'POST',
+    [
+      'displayName' => $email,
+      'email' => $email,
+    ],
+    'servicedesk'
+  );
 }
 
 /**
@@ -61,7 +66,7 @@ function _ereolen_support_create_customer($email): array {
  */
 function _ereolen_support_send_to_jira(array $form, array $form_state, string $jiraUserId): ?array {
   $data = [
-    'isAdfRequest' => false,
+    'isAdfRequest' => FALSE,
     'requestFieldValues' => [
       'description' => $form_state['values']['ereolen_support_description'],
     ],
@@ -103,10 +108,9 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
 
   $data['requestTypeId'] = _ereolen_get_problem_id_from_string($form_state['values']['ereolen_support_problem']);
 
-  $requestParts = _ereolen_support_get_request_parts('/request', 'POST', $data, 'servicedesk');
-  $result = _ereolen_support_callApi($requestParts);
+  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 
-  if (_ereolen_support_result_confirmed($result, $requestParts)) {
+  if (_ereolen_support_result_confirmed($result)) {
     return $result;
   }
 
@@ -114,20 +118,21 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
 }
 
 /**
- * Send material service desk request to Jira
+ * Send material service desk request to Jira.
  *
- * @param $form_state
+ * @param array $form_state
  *   State of the form.
- * @param $jiraUserId
+ * @param string $jiraUserId
  *   Jira user accountId.
  *
  * @return array|null
+ *   The result of the request.
  *
  * @throws \Exception
  */
-function _ereolen_material_send_to_jira($form_state, $jiraUserId): ?array {
+function _ereolen_material_send_to_jira(array $form_state, string $jiraUserId): ?array {
   $data = [
-    'isAdfRequest' => false,
+    'isAdfRequest' => FALSE,
     'requestFieldValues' => [
       'description' => $form_state['values']['ereolen_material_description'],
     ],
@@ -136,10 +141,9 @@ function _ereolen_material_send_to_jira($form_state, $jiraUserId): ?array {
     'requestTypeId' => variable_get('jira_material_service_desk_request_type_id'),
   ];
 
-  $requestParts = _ereolen_support_get_request_parts('/request', 'POST', $data, 'servicedesk');
-  $result = _ereolen_support_callApi($requestParts);
+  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 
-  if (_ereolen_support_result_confirmed($result, $requestParts)) {
+  if (_ereolen_support_result_confirmed($result)) {
     return $result;
   }
 
@@ -147,33 +151,24 @@ function _ereolen_material_send_to_jira($form_state, $jiraUserId): ?array {
 }
 
 /**
- * @param $apiEndpoint
+ * Group all parts needed to make a request into an array.
+ *
+ * @param string $apiEndpoint
  *   The api endpoint.
  * @param string $method_type
  *   The method to be used.
  * @param array $data
  *   Data for post request methods.
- * @param $api
+ * @param string|null $api
  *   Api to use. Service desk or jira core.
- *
- * Create the parts required to make a drupal_http_request.
- *
- * @param string $method_type
- *   The request method.
- * @param array $data
- *   An optional data array.
- *
- * @return array
-
  *
  * @return array
  *   An array containing mehod, path, data and auth for the request.
  *   the request.
  */
-function _ereolen_support_get_request_parts($apiEndpoint, string $method_type, array $data = [], $api = NULL) {
+function _ereolen_support_get_request_parts(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): array {
   $jira_api_path = variable_get('jira_domain')
     . ('servicedesk' === $api ? '/rest/servicedeskapi' : '/rest/api/latest');
-  }
 
   return [
     'method' => $method_type,
@@ -191,9 +186,9 @@ function _ereolen_support_get_request_parts($apiEndpoint, string $method_type, a
  * Prepare an array for use in a select list.
  *
  * @param string $vocab_machine_name
- *  A vocabulary machine name.
+ *   A vocabulary machine name.
  * @param bool $add_select
- *  If a - Select - option should be made available.
+ *   If a - Select - option should be made available.
  *
  * @return array
  *   A list of term names.
@@ -221,12 +216,13 @@ function _ereolen_support_create_select_list(string $vocab_machine_name, bool $a
 /**
  * Set array keys as values for use in select list.
  *
- * @param $array
- *  An array of values.
+ * @param array $array
+ *   An array of values.
+ *
  * @return array
  *   An array with keys like values.
  */
-function _ereolen_support_array_as_select($array, $add_select = TRUE): array {
+function _ereolen_support_array_as_select(array $array, $add_select = TRUE): array {
   $list = [];
   if ($add_select) {
     $list['_none'] = t('- Select -');
@@ -257,30 +253,27 @@ function _ereolen_support_get_support_id(): ?string {
 
 /**
  * Add an entry to the eReolen support error log.
+ *
  * We use a separate error log for easier access to potential errors. This also
  * allows for future development of tools for supporters to locate errors.
  *
  * @param array $result
  *   The result of a jira http request.
- * @param array $requestParts
- *   The parts of the request.
  *
  * @return bool
  *   Whether the result code implies success or failure.
  *
- * @return bool
- *
  * @throws \Exception
  */
-function _ereolen_support_result_confirmed(array $result, array $requestParts): bool {
+function _ereolen_support_result_confirmed(array $result): bool {
   if ($result['info']['error_code'] !== 200 && $result['info']['error_code'] !== 201) {
     $id = db_insert('ereolen_support_errors')
-        ->fields(['timestamp', 'request', 'data'])
-        ->values([
-            time(),
-            $requestParts ? serialize($requestParts) : '',
-            serialize($result['info'])
-        ])->execute();
+      ->fields(['timestamp', 'request', 'data'])
+      ->values([
+        time(),
+        $result['info']['request_parts'] ? serialize($result['info']['request_parts']) : '',
+        serialize($result['info']),
+      ])->execute();
 
     return FALSE;
   }
@@ -294,13 +287,12 @@ function _ereolen_support_result_confirmed(array $result, array $requestParts): 
  * Since form_states only validate frontend we need back end validation for the
  * fields that are set as required with form_states.
  *
- * @param $element
- *  The form element to check validation against.
- *
- * @param $form_state
+ * @param array $element
+ *   The form element to check validation against.
+ * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_states_require_validate($element, $form_state) {
+function _ereolen_support_states_require_validate(array $element, array $form_state) {
   $required_field_key = key($element['#states']['required']);
   $required_field = explode('"', $required_field_key);
   foreach ($element['#states']['required'][$required_field_key] as $field) {
@@ -313,22 +305,21 @@ function _ereolen_support_states_require_validate($element, $form_state) {
 }
 
 /**
- * Validate support id against exactly 5 characters
+ * Validate support id against exactly 5 characters.
  *
- * @param $element
- *  The form element to check validation against.
- *
- * @param $form_state
+ * @param array $element
+ *   The form element to check validation against.
+ * @param array $form_state
  *   The state of the form.
  */
-function _ereolen_support_support_id_validate($element, $form_state) {
+function _ereolen_support_support_id_validate(array $element, array $form_state) {
   $visible_field_key = key($element['#states']['visible']);
-    foreach ($element['#states']['visible'][$visible_field_key] as $field) {
+  foreach ($element['#states']['visible'][$visible_field_key] as $field) {
     if ($form_state['values']['ereolen_support_problem'] == $field['value']) {
       if ($element['#value'] != '') {
         // Assumes php mbstring extension enabled.
         if (drupal_strlen($element['#value']) != 6) {
-          form_set_error($element['#name'], $element['#title'].' should be 6 characters');
+          form_set_error($element['#name'], $element['#title'] . ' should be 6 characters');
         }
       }
     }
@@ -348,7 +339,16 @@ function _ereolen_support_get_library(): string {
   return '_none';
 }
 
-function _ereolen_get_problem_id_from_string($problem) {
+/**
+ * Get the id of support problem from the problem string.
+ *
+ * @param string $problem
+ *   The problem as presented as string.
+ *
+ * @return mixed
+ *   The id related to that problem.
+ */
+function _ereolen_get_problem_id_from_string(string $problem) {
   $problems = variable_get('ereolen_support_problems');
 
   return $problems[$problem];
@@ -391,62 +391,74 @@ function _ereolen_support_cleanup_errors() {
 /**
  * Curl setup for requesting Jira API.
  *
- * @param array $requestParts
- *   An array containing info for the request.
+ * @param string $apiEndpoint
+ *   The api endpoint.
+ * @param string $method_type
+ *   The method type.
+ * @param array $data
+ *   The data to add to the request.
+ * @param string|null $api
+ *   The api endpoint to use.
  *
  * @return array
- *   Result wrapped in an array.
+ *   The relevant parts of the result of the request wrapped in an array.
  */
-function _ereolen_support_callApi(array $requestParts): array {
-    $headers = [
-      'Accept: application/json',
-      'Content-Type: application/json',
-    ];
+function _ereolen_support_call_api(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): array {
+  $requestParts = _ereolen_support_get_request_parts($apiEndpoint, $method_type, $data, $api);
 
-    // Initialize curl.
-    $curl = curl_init();
+  $headers = [
+    'Accept: application/json',
+    'Content-Type: application/json',
+  ];
 
-    // Set method specific options.
-    switch ($requestParts['method']){
-        case 'POST':
-            curl_setopt($curl, CURLOPT_POST, 1);
+  // Initialize curl.
+  $curl = curl_init();
 
-            if ($requestParts['data'])
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($requestParts['data']));
-            break;
-        case 'PUT':
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+  // Set method specific options.
+  switch ($requestParts['method']) {
+    case 'POST':
+      curl_setopt($curl, CURLOPT_POST, 1);
 
-            if ($requestParts['data'])
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($requestParts['data']));
-            break;
-        default:
-    }
+      if ($requestParts['data']) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($requestParts['data']));
+      }
+      break;
 
-    // Set global options.
-    curl_setopt_array($curl, [
-      CURLOPT_URL => $requestParts['base_url'] . $requestParts['endpoint'],
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
-      CURLOPT_HTTPHEADER => $headers,
-      CURLOPT_USERPWD => $requestParts['auth']['user_name']. ':' . $requestParts['auth']['token'],
-      CURLOPT_CONNECTTIMEOUT => 0,
-      CURLOPT_TIMEOUT => 15,
-      CURLOPT_FAILONERROR => true
-    ]);
+    case 'PUT':
+      curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
 
+      if ($requestParts['data']) {
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($requestParts['data']));
+      }
+      break;
 
-    $result = curl_exec($curl);
+    default:
+  }
 
-    $output = [
-      'content' => json_decode($result),
-      'info' => [
-        'error_code' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
-        'error' => curl_errno($curl) ? curl_error($curl): '',
-      ]
-    ];
+  // Set global options.
+  curl_setopt_array($curl, [
+    CURLOPT_URL => $requestParts['base_url'] . $requestParts['endpoint'],
+    CURLOPT_RETURNTRANSFER => TRUE,
+    CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_USERPWD => $requestParts['auth']['user_name'] . ':' . $requestParts['auth']['token'],
+    CURLOPT_CONNECTTIMEOUT => 0,
+    CURLOPT_TIMEOUT => 15,
+    CURLOPT_FAILONERROR => TRUE,
+  ]);
 
-    curl_close($curl);
+  $result = curl_exec($curl);
 
-    return $output;
+  $output = [
+    'content' => json_decode($result),
+    'info' => [
+      'error_code' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
+      'error' => curl_errno($curl) ? curl_error($curl) : '',
+      'request_parts' => $requestParts,
+    ],
+  ];
+
+  curl_close($curl);
+
+  return $output;
 }

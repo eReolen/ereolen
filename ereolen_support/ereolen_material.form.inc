@@ -16,22 +16,23 @@ include_once 'ereolen_support.helper.inc';
  *   The state of the form.
  *
  * @return mixed
+ *   Material form array.
  *
  * @throws \Exception
  */
-function ereolen_material_form($form, &$form_state) {
+function ereolen_material_form(array $form, array &$form_state) {
   $form['#attributes'] = [
     'name' => 'ereolen_material_form',
-    'class' => ['node-webform']
+    'class' => ['node-webform'],
   ];
 
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereolen_support') . '/css/styles.css'
+    drupal_get_path('module', 'ereolen_support') . '/css/styles.css',
   ];
 
   $form['ereolen_material_lead'] = [
     '#markup' => theme('ereolen_support_lead_text', [
-      'text' =>  variable_get('ereolen_material_lead')['value'] ?? NULL,
+      'text' => variable_get('ereolen_material_lead')['value'] ?? NULL,
     ]),
   ];
 
@@ -70,7 +71,11 @@ function ereolen_material_form($form, &$form_state) {
     '#value' => t('Send'),
   ];
 
-  honeypot_add_form_protection($form, $form_state, ['honeypot', 'time_restriction']);
+  honeypot_add_form_protection(
+    $form,
+    $form_state,
+    ['honeypot', 'time_restriction']
+  );
 
   return $form;
 }
@@ -78,14 +83,14 @@ function ereolen_material_form($form, &$form_state) {
 /**
  * Add a submit handler to the support form.
  *
- * @param $form
+ * @param array $form
  *   The form to submit.
- * @param $form_state
+ * @param array $form_state
  *   The state of the form.
  *
  * @throws \Exception
  */
-function ereolen_material_form_submit($form, &$form_state) {
+function ereolen_material_form_submit(array $form, array &$form_state) {
   $submission_text = variable_get('ereolen_material_submission_text');
 
   // Search for a user.
@@ -93,10 +98,11 @@ function ereolen_material_form_submit($form, &$form_state) {
 
   // Create user if none are found.
   if (empty($jiraUserId)) {
-    try{
+    try {
       $jiraUser = _ereolen_support_create_customer($form_state['values']['ereolen_material_email']);
       $jiraUserId = $jiraUser['content']->accountId;
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       watchdog('ereolen_support', $e);
       drupal_set_message(t('Submission failed'));
     }

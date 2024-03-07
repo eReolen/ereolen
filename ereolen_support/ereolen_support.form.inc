@@ -17,18 +17,19 @@ include_once 'ereolen_support.cpr-checker.inc';
  *   The state of the form.
  *
  * @return mixed
+ *   Support form array.
  *
  * @throws \Exception
  */
-function ereolen_support_form($form, &$form_state) {
+function ereolen_support_form(array $form, array &$form_state) {
   $form['#attributes'] = [
     'name' => 'ereolen_support_form',
     'class' => ['node-webform'],
-    'onsubmit' => 'op.disabled = true; return true;'
+    'onsubmit' => 'op.disabled = true; return true;',
   ];
 
   $form['#attached']['css'] = [
-    drupal_get_path('module', 'ereolen_support') . '/css/styles.css'
+    drupal_get_path('module', 'ereolen_support') . '/css/styles.css',
   ];
   $form['#attached']['js'] = [
     drupal_get_path('module', 'ereolen_support') . '/js/collectDeviceData.js',
@@ -42,21 +43,21 @@ function ereolen_support_form($form, &$form_state) {
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/showHelpText.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/hideOptions.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
     drupal_get_path('module', 'ereolen_support') . '/js/clearFields.js',
     [
-      'type' => 'file'
+      'type' => 'file',
     ],
   ];
 
   $form['ereolen_support_lead'] = [
     '#markup' => theme('ereolen_support_lead_text', [
-      'text' =>  variable_get('ereolen_support_lead')['value'] ?? NULL,
+      'text' => variable_get('ereolen_support_lead')['value'] ?? NULL,
     ]),
   ];
 
@@ -122,7 +123,7 @@ function ereolen_support_form($form, &$form_state) {
           ['value' => 'Lån og reservationer'],
           ['value' => 'Kvoter'],
         ],
-      ]
+      ],
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
@@ -145,15 +146,15 @@ function ereolen_support_form($form, &$form_state) {
       ],
       'required' => [
         ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Lån og reservationer']
+          ['value' => 'Lån og reservationer'],
         ],
       ],
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
       '_ereolen_support_check_cpr',
-      '_ereolen_support_support_id_validate'
-    ]
+      '_ereolen_support_support_id_validate',
+    ],
   ];
 
   $form['ereolen_support_error_message'] = [
@@ -178,8 +179,8 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr'
-    ]
+      '_ereolen_support_check_cpr',
+    ],
   ];
 
   $form['ereolen_support_login_method'] = [
@@ -207,8 +208,8 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-      '_ereolen_support_check_cpr'
-    ]
+      '_ereolen_support_check_cpr',
+    ],
   ];
 
   $form['ereolen_support_book_type'] = [
@@ -237,7 +238,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-    ]
+    ],
   ];
 
   $form['ereolen_support_product'] = [
@@ -270,7 +271,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_states_require_validate',
-    ]
+    ],
   ];
 
   $form['ereolen_support_book_title'] = [
@@ -299,7 +300,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
   ];
 
@@ -333,7 +334,7 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
   ];
 
@@ -380,15 +381,15 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
-    '#maxlength' => 256
+    '#maxlength' => 256,
   ];
 
   $form['ereolen_support_operating_system'] = [
     '#type' => 'textfield',
     '#title' => t('On what operating system did you experience the problem?'),
-    '#description' => isset (variable_get('ereolen_support_operating_system_description')['value']) ? variable_get('ereolen_support_operating_system_description')['value'] :'',
+    '#description' => isset(variable_get('ereolen_support_operating_system_description')['value']) ? variable_get('ereolen_support_operating_system_description')['value'] : '',
     '#states' => [
       'visible' => [
         ':input[name="ereolen_support_problem"]' => [
@@ -406,9 +407,9 @@ function ereolen_support_form($form, &$form_state) {
     ],
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate'
+      '_ereolen_support_states_require_validate',
     ],
-    '#maxlength' => 256
+    '#maxlength' => 256,
   ];
 
   $form['captcha'] = array(
@@ -421,23 +422,26 @@ function ereolen_support_form($form, &$form_state) {
     '#value' => t('Send'),
   ];
 
-  honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
+  honeypot_add_form_protection(
+    $form,
+    $form_state,
+    array('honeypot', 'time_restriction')
+  );
 
   return $form;
 }
 
-
 /**
  * Add a submit handler to the support form.
  *
- * @param $form
+ * @param array $form
  *   The form to submit.
- * @param $form_state
+ * @param array $form_state
  *   The state of the form.
  *
  * @throws \Exception
  */
-function ereolen_support_form_submit($form, &$form_state) {
+function ereolen_support_form_submit(array $form, array &$form_state) {
   $submission_text = variable_get('ereolen_support_submission_text');
 
   // Search for a user.
