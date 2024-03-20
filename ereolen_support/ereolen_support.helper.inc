@@ -134,6 +134,7 @@ function _ereolen_material_send_to_jira(array $form_state, string $jiraUserId): 
   $data = [
     'isAdfRequest' => FALSE,
     'requestFieldValues' => [
+      'summary' => $form_state['values']['ereolen_material_type'],
       'description' => $form_state['values']['ereolen_material_description'],
     ],
     'raiseOnBehalfOf' => $jiraUserId,
