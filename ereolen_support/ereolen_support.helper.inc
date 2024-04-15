@@ -334,8 +334,12 @@ function _ereolen_support_support_id_validate(array $element, array $form_state)
  *   The name of the library.
  */
 function _ereolen_support_get_library(): string {
-  if (user_is_logged_in()) {
-    return publizon_get_library($_SESSION['ding_user']['user']['data']['retailer_id'])->library_name;
+  if (user_is_logged_in()
+    && $retailerId = ($_SESSION['ding_user']['user']['data']['retailer_id'] ?? NULL)) {
+    $library = publizon_get_library($retailerId);
+    if ($library instanceof PublizonConfiguredLibrary) {
+      return $library->library_name;
+    }
   }
   return '_none';
 }
