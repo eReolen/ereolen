@@ -17,11 +17,14 @@
 function _ereolen_support_search_user(string $email): ?string {
   $searchQueryResult = _ereolen_support_call_api('/user/search?' . http_build_query(['query' => $email]), 'GET');
   // Endpoint searches in all fields, so we must ensure email matches.
-  foreach ($searchQueryResult['content'] as $match) {
-    // Atlassian accounts have their email stripped from user results,
-    // so in that case we have no email to match up against.
-    if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
-      return $match->accountId;
+  $content = $searchQueryResult['content'] ?? NULL;
+  if (is_array($content)) {
+    foreach ($content as $match) {
+      // Atlassian accounts have their email stripped from user results,
+      // so in that case we have no email to match up against.
+      if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
+        return $match->accountId;
+      }
     }
   }
 
