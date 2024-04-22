@@ -68,10 +68,16 @@ function _ereolen_support_create_customer(string $email): array {
  * @throws \Exception
  */
 function _ereolen_support_send_to_jira(array $form, array $form_state, string $jiraUserId): ?array {
+  // 'description" must not be blank in Jira.
+  $description = trim($form_state['values']['ereolen_support_description']);
+  if (empty($description)) {
+    $description = '.';
+  }
+
   $data = [
     'isAdfRequest' => FALSE,
     'requestFieldValues' => [
-      'description' => $form_state['values']['ereolen_support_description'],
+      'description' => $description,
     ],
     'raiseOnBehalfOf' => $jiraUserId,
     'serviceDeskId' => variable_get('jira_support_service_desk_id'),
