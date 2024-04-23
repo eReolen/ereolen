@@ -311,33 +311,9 @@ function ereolen_support_form(array $form, array &$form_state) {
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#description' => isset(variable_get('ereolen_support_description_description')['value']) ? variable_get('ereolen_support_description_description')['value'] : '',
-    '#states' => [
-      'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Log ind'],
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Læs og lyt'],
-          ['value' => 'Download'],
-          ['value' => 'Forespørgsel på titel'],
-          ['value' => 'Fejlbeskeder'],
-          ['value' => 'Tekniske spørgsmål'],
-          ['value' => 'Kvoter'],
-        ],
-      ],
-      'required' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Log ind'],
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Forespørgsel på titel'],
-          ['value' => 'Fejlbeskeder'],
-          ['value' => 'Tekniske spørgsmål'],
-          ['value' => 'Kvoter'],
-        ],
-      ],
-    ],
+    '#required' => TRUE,
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
     ],
   ];
 
