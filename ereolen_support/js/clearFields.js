@@ -21,7 +21,8 @@
     // Clear most textfields.
     let textFields = document.querySelectorAll('.form-type-textfield input');
     for (i = 0; i < textFields.length; ++i) {
-      if(textFields[i].id !== 'edit-ereolen-support-name' &&
+      if(textFields[i].id !== 'edit-ereolen-support-id' &&
+         textFields[i].id !== 'edit-ereolen-support-name' &&
         textFields[i].id !== 'edit-ereolen-support-date-datepicker-popup-0')
       {
         textFields[i].value = "";
