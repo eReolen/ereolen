@@ -37,10 +37,10 @@ function _ereolen_support_search_user(string $email): ?string {
  * @param string $email
  *   Email of the customer to create.
  *
- * @return array
+ * @return array|null
  *   The result of the request.
  */
-function _ereolen_support_create_customer(string $email): array {
+function _ereolen_support_create_customer(string $email): ?array {
   return _ereolen_support_call_api(
     '/customer?' . http_build_query(['strictConflictStatusCode' => 'true']),
     'POST',
@@ -117,13 +117,7 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
 
   $data['requestTypeId'] = _ereolen_get_problem_id_from_string($form_state['values']['ereolen_support_problem']);
 
-  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
-
-  if (_ereolen_support_result_confirmed($result)) {
-    return $result;
-  }
-
-  return NULL;
+  return _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 }
 
 /**
@@ -151,13 +145,7 @@ function _ereolen_material_send_to_jira(array $form_state, string $jiraUserId): 
     'requestTypeId' => variable_get('jira_material_service_desk_request_type_id'),
   ];
 
-  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
-
-  if (_ereolen_support_result_confirmed($result)) {
-    return $result;
-  }
-
-  return NULL;
+  return _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 }
 
 /**
@@ -267,6 +255,11 @@ function _ereolen_support_get_support_id(): ?string {
  * We use a separate error log for easier access to potential errors. This also
  * allows for future development of tools for supporters to locate errors.
  *
+ * <code>
+ * SELECT FROM_UNIXTIME(timestamp), JSON_DETAILED(request), JSON_DETAILED(data)
+ *   FROM ereolen_support_errors\G
+ * </code>
+ *
  * @param array $result
  *   The result of a jira http request.
  *
@@ -281,8 +274,8 @@ function _ereolen_support_result_confirmed(array $result): bool {
       ->fields(['timestamp', 'request', 'data'])
       ->values([
         time(),
-        $result['info']['request_parts'] ? serialize($result['info']['request_parts']) : '',
-        serialize($result['info']),
+        json_encode($result['info']['request_parts'] ?? NULL),
+        json_encode($result),
       ])->execute();
 
     return FALSE;
@@ -414,10 +407,10 @@ function _ereolen_support_cleanup_errors() {
  * @param string|null $api
  *   The api endpoint to use.
  *
- * @return array
+ * @return array|null
  *   The relevant parts of the result of the request wrapped in an array.
  */
-function _ereolen_support_call_api(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): array {
+function _ereolen_support_call_api(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): ?array {
   $requestParts = _ereolen_support_get_request_parts($apiEndpoint, $method_type, $data, $api);
 
   $headers = [
@@ -454,11 +447,11 @@ function _ereolen_support_call_api(string $apiEndpoint, string $method_type, arr
     CURLOPT_URL => $requestParts['base_url'] . $requestParts['endpoint'],
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+    CURLOPT_FOLLOWLOCATION => TRUE,
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_USERPWD => $requestParts['auth']['user_name'] . ':' . $requestParts['auth']['token'],
     CURLOPT_CONNECTTIMEOUT => 0,
     CURLOPT_TIMEOUT => 15,
-    CURLOPT_FAILONERROR => TRUE,
   ]);
 
   $result = curl_exec($curl);
@@ -473,6 +466,10 @@ function _ereolen_support_call_api(string $apiEndpoint, string $method_type, arr
   ];
 
   curl_close($curl);
+
+  if (!_ereolen_support_result_confirmed($output)) {
+    return NULL;
+  }
 
   return $output;
 }
