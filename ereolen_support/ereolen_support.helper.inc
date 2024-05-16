@@ -89,6 +89,9 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
     if (is_array($element)) {
       // Look for form fields.
       if (strpos($key, 'ereolen_support') === 0) {
+        if (!_ereolen_support_element_is_visible($element, $form_state)) {
+          continue;
+        }
         // Load config related to that field.
         $jira_field_id = variable_get($key . '_jira_field');
         // Make sure the config is set and has proper type.
@@ -305,6 +308,46 @@ function _ereolen_support_states_require_validate(array $element, array $form_st
       }
     }
   }
+}
+
+/**
+ * Decide if an element is visible based on states.
+ *
+ * NOTE: This is a very limited implementation basically handling only the
+ * support form case, i.e.
+ *
+ * <code>
+ *  '#states' => [
+ *    'visible' => [
+ *      ':input[name="ereolen_support_problem"]' => [
+ *         ['value' => '…'],
+ *         ['value' => '…'],
+ *         …
+ *       ],
+ *     ],
+ *   ],
+ * </code>
+ *
+ * @param array $element
+ *   The form element to check visibility of.
+ * @param array $form_state
+ *   The state of the form.
+ */
+function _ereolen_support_element_is_visible(array $element, array $form_state): bool {
+  if (isset($element['#states']['visible'])) {
+    foreach ($element['#states']['visible'] as $selector => $spec) {
+      if (preg_match('/^:input\[name="(?P<name>[^"]+)"]/', $selector, $matches)) {
+        $value = $form_state['values'][$matches['name']] ?? NULL;
+        if ($value && is_array($spec)) {
+          $required_values = array_column($spec, 'value');
+
+          return in_array($value, $required_values);
+        }
+      }
+    }
+  }
+
+  return TRUE;
 }
 
 /**
