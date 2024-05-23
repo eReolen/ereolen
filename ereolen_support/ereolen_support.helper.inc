@@ -17,11 +17,14 @@
 function _ereolen_support_search_user(string $email): ?string {
   $searchQueryResult = _ereolen_support_call_api('/user/search?' . http_build_query(['query' => $email]), 'GET');
   // Endpoint searches in all fields, so we must ensure email matches.
-  foreach ($searchQueryResult['content'] as $match) {
-    // Atlassian accounts have their email stripped from user results,
-    // so in that case we have no email to match up against.
-    if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
-      return $match->accountId;
+  $content = $searchQueryResult['content'] ?? NULL;
+  if (is_array($content)) {
+    foreach ($content as $match) {
+      // Atlassian accounts have their email stripped from user results,
+      // so in that case we have no email to match up against.
+      if ($match->emailAddress === $email || (empty($match->emailAddress) && $match->accountType === 'atlassian')) {
+        return $match->accountId;
+      }
     }
   }
 
@@ -34,10 +37,10 @@ function _ereolen_support_search_user(string $email): ?string {
  * @param string $email
  *   Email of the customer to create.
  *
- * @return array
+ * @return array|null
  *   The result of the request.
  */
-function _ereolen_support_create_customer(string $email): array {
+function _ereolen_support_create_customer(string $email): ?array {
   return _ereolen_support_call_api(
     '/customer?' . http_build_query(['strictConflictStatusCode' => 'true']),
     'POST',
@@ -65,10 +68,16 @@ function _ereolen_support_create_customer(string $email): array {
  * @throws \Exception
  */
 function _ereolen_support_send_to_jira(array $form, array $form_state, string $jiraUserId): ?array {
+  // 'description" must not be blank in Jira.
+  $description = trim($form_state['values']['ereolen_support_description']);
+  if (empty($description)) {
+    $description = '.';
+  }
+
   $data = [
     'isAdfRequest' => FALSE,
     'requestFieldValues' => [
-      'description' => $form_state['values']['ereolen_support_description'],
+      'description' => $description,
     ],
     'raiseOnBehalfOf' => $jiraUserId,
     'serviceDeskId' => variable_get('jira_support_service_desk_id'),
@@ -80,6 +89,9 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
     if (is_array($element)) {
       // Look for form fields.
       if (strpos($key, 'ereolen_support') === 0) {
+        if (!_ereolen_support_element_is_visible($element, $form_state)) {
+          continue;
+        }
         // Load config related to that field.
         $jira_field_id = variable_get($key . '_jira_field');
         // Make sure the config is set and has proper type.
@@ -108,13 +120,7 @@ function _ereolen_support_send_to_jira(array $form, array $form_state, string $j
 
   $data['requestTypeId'] = _ereolen_get_problem_id_from_string($form_state['values']['ereolen_support_problem']);
 
-  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
-
-  if (_ereolen_support_result_confirmed($result)) {
-    return $result;
-  }
-
-  return NULL;
+  return _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 }
 
 /**
@@ -142,13 +148,7 @@ function _ereolen_material_send_to_jira(array $form_state, string $jiraUserId): 
     'requestTypeId' => variable_get('jira_material_service_desk_request_type_id'),
   ];
 
-  $result = _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
-
-  if (_ereolen_support_result_confirmed($result)) {
-    return $result;
-  }
-
-  return NULL;
+  return _ereolen_support_call_api('/request', 'POST', $data, 'servicedesk');
 }
 
 /**
@@ -258,6 +258,11 @@ function _ereolen_support_get_support_id(): ?string {
  * We use a separate error log for easier access to potential errors. This also
  * allows for future development of tools for supporters to locate errors.
  *
+ * <code>
+ * SELECT FROM_UNIXTIME(timestamp), JSON_DETAILED(request), JSON_DETAILED(data)
+ *   FROM ereolen_support_errors\G
+ * </code>
+ *
  * @param array $result
  *   The result of a jira http request.
  *
@@ -272,8 +277,8 @@ function _ereolen_support_result_confirmed(array $result): bool {
       ->fields(['timestamp', 'request', 'data'])
       ->values([
         time(),
-        $result['info']['request_parts'] ? serialize($result['info']['request_parts']) : '',
-        serialize($result['info']),
+        json_encode($result['info']['request_parts'] ?? NULL),
+        json_encode($result),
       ])->execute();
 
     return FALSE;
@@ -303,6 +308,46 @@ function _ereolen_support_states_require_validate(array $element, array $form_st
       }
     }
   }
+}
+
+/**
+ * Decide if an element is visible based on states.
+ *
+ * NOTE: This is a very limited implementation basically handling only the
+ * support form case, i.e.
+ *
+ * <code>
+ *  '#states' => [
+ *    'visible' => [
+ *      ':input[name="ereolen_support_problem"]' => [
+ *         ['value' => '…'],
+ *         ['value' => '…'],
+ *         …
+ *       ],
+ *     ],
+ *   ],
+ * </code>
+ *
+ * @param array $element
+ *   The form element to check visibility of.
+ * @param array $form_state
+ *   The state of the form.
+ */
+function _ereolen_support_element_is_visible(array $element, array $form_state): bool {
+  if (isset($element['#states']['visible'])) {
+    foreach ($element['#states']['visible'] as $selector => $spec) {
+      if (preg_match('/^:input\[name="(?P<name>[^"]+)"]/', $selector, $matches)) {
+        $value = $form_state['values'][$matches['name']] ?? NULL;
+        if ($value && is_array($spec)) {
+          $required_values = array_column($spec, 'value');
+
+          return in_array($value, $required_values);
+        }
+      }
+    }
+  }
+
+  return TRUE;
 }
 
 /**
@@ -405,10 +450,10 @@ function _ereolen_support_cleanup_errors() {
  * @param string|null $api
  *   The api endpoint to use.
  *
- * @return array
+ * @return array|null
  *   The relevant parts of the result of the request wrapped in an array.
  */
-function _ereolen_support_call_api(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): array {
+function _ereolen_support_call_api(string $apiEndpoint, string $method_type, array $data = [], string $api = NULL): ?array {
   $requestParts = _ereolen_support_get_request_parts($apiEndpoint, $method_type, $data, $api);
 
   $headers = [
@@ -445,11 +490,11 @@ function _ereolen_support_call_api(string $apiEndpoint, string $method_type, arr
     CURLOPT_URL => $requestParts['base_url'] . $requestParts['endpoint'],
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+    CURLOPT_FOLLOWLOCATION => TRUE,
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_USERPWD => $requestParts['auth']['user_name'] . ':' . $requestParts['auth']['token'],
     CURLOPT_CONNECTTIMEOUT => 0,
     CURLOPT_TIMEOUT => 15,
-    CURLOPT_FAILONERROR => TRUE,
   ]);
 
   $result = curl_exec($curl);
@@ -464,6 +509,10 @@ function _ereolen_support_call_api(string $apiEndpoint, string $method_type, arr
   ];
 
   curl_close($curl);
+
+  if (!_ereolen_support_result_confirmed($output)) {
+    return NULL;
+  }
 
   return $output;
 }
