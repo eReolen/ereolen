@@ -219,3 +219,26 @@ function ereolen_support_uninstall() {
     unset($conf[$name]);
   }
 }
+
+/**
+ * Convert from PHP serialized values to JSON.
+ */
+function ereolen_support_update_7001(&$sandbox) {
+  $rows = db_select('ereolen_support_errors', 't')
+    ->fields('t', ['id', 'request', 'data'])
+    ->execute()
+    ->fetchAllAssoc('id');
+  foreach ($rows as $id => $row) {
+    // Update values if they can be successfully unserialized.
+    $fields = array_filter([
+      'request' => unserialize($row->request),
+      'data' => unserialize($row->data),
+    ]);
+    if (!empty($fields)) {
+      db_update('ereolen_support_errors')
+        ->fields(array_map('json_encode', $fields))
+        ->condition('id', $id)
+        ->execute();
+    }
+  }
+}

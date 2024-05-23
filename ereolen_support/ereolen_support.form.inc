@@ -311,33 +311,9 @@ function ereolen_support_form(array $form, array &$form_state) {
     '#type' => 'textarea',
     '#title' => t('Description'),
     '#description' => isset(variable_get('ereolen_support_description_description')['value']) ? variable_get('ereolen_support_description_description')['value'] : '',
-    '#states' => [
-      'visible' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Log ind'],
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Læs og lyt'],
-          ['value' => 'Download'],
-          ['value' => 'Forespørgsel på titel'],
-          ['value' => 'Fejlbeskeder'],
-          ['value' => 'Tekniske spørgsmål'],
-          ['value' => 'Kvoter'],
-        ],
-      ],
-      'required' => [
-        ':input[name="ereolen_support_problem"]' => [
-          ['value' => 'Log ind'],
-          ['value' => 'Lån og reservationer'],
-          ['value' => 'Forespørgsel på titel'],
-          ['value' => 'Fejlbeskeder'],
-          ['value' => 'Tekniske spørgsmål'],
-          ['value' => 'Kvoter'],
-        ],
-      ],
-    ],
+    '#required' => TRUE,
     '#element_validate' => [
       '_ereolen_support_check_cpr',
-      '_ereolen_support_states_require_validate',
     ],
   ];
 
@@ -447,13 +423,24 @@ function ereolen_support_form(array $form, array &$form_state) {
 function ereolen_support_form_submit(array $form, array &$form_state) {
   $submission_text = variable_get('ereolen_support_submission_text');
 
+  $email = $form_state['values']['ereolen_support_email'];
   // Search for a user.
-  $jiraUserId = _ereolen_support_search_user($form_state['values']['ereolen_support_email']);
+  $jiraUserId = _ereolen_support_search_user($email);
 
   // Create user if none are found.
   if (empty($jiraUserId)) {
-    $jiraUser = _ereolen_support_create_customer($form_state['values']['ereolen_support_email']);
-    $jiraUserId = $jiraUser['content']->accountId;
+    try {
+      $jiraUser = _ereolen_support_create_customer($email);
+      if (empty($jiraUser)) {
+        throw new RuntimeException('Error creating Jira user');
+      }
+      $jiraUserId = $jiraUser['content']->accountId;
+    }
+    catch (Exception $e) {
+      watchdog('ereolen_support', $e);
+      drupal_set_message(t('Submission failed'));
+      return;
+    }
   }
 
   // Create issue in Jira.
